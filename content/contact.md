@@ -15,14 +15,8 @@ title: 联系与支持
 ### GitHub
 > https://github.com/1949hacker
 
-（用于代码、工程、技术项目交流）
-
-### Email
-> ly4012@hw.ac.uk
->com.hackerbs@gmail.com
-
-（适合技术交流、合作、严肃沟通）
-
+### 原博客 - 已迁移至⬇
+> https://blog.hackerbs.com
 ---
 
 ## 💬 适合联系我的场景
