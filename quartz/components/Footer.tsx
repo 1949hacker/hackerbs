@@ -13,18 +13,16 @@ export default ((opts?: Options) => {
     const links = opts?.links ?? []
     return (
       <footer class={`${displayClass ?? ""}`}>
+        <p>© {year} hackerbs Knowledge Base · Engineering Knowledge System</p>
         <p>
-          © {year} hackerbs Knowledge Base ·{" "}
+          Built on{" "}
           <a href="https://quartz.jzhao.xyz/" target="_blank" rel="noreferrer">
             Quartz v{version}
           </a>
-        </p> 
+        </p>
         <ul>
-          {Object.entries(links).map(([text, link]) => (
-            <li>
-              <a href={link}>{text}</a>
-            </li>
-          ))}
+          <li><a href="https://github.com/1949hacker/hackerbs">GitHub</a></li>
+          <li><a href="/index.xml">RSS</a></li>
         </ul>
       </footer>
     )
