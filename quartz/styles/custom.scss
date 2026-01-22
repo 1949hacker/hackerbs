@@ -1,3 +1,45 @@
 @use "./base.scss";
 
-// put your custom CSS here!
+body {
+  line-height: 1.75;
+  font-size: 16px;
+}
+
+/* 内容卡片化（基于 Quartz 原生变量） */
+.page, .content, .article {
+  background: var(--light);
+  border-radius: 10px;
+  padding: 2rem;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.04);
+}
+
+/* 标题层级 */
+h1, h2, h3, h4 {
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--dark);
+}
+
+/* 链接 */
+a {
+  color: var(--secondary);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+}
+a:hover {
+  border-bottom: 1px solid var(--secondary);
+}
+
+/* 引用块 */
+blockquote {
+  border-left: 4px solid var(--secondary);
+  padding: 0.5rem 1rem;
+  background: var(--lightgray);
+  border-radius: 6px;
+}
+
+/* 代码 */
+pre {
+  border-radius: 8px;
+  padding: 1rem;
+}

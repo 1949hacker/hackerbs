@@ -15,3 +15,14 @@ code[data-theme*=" "] span {
 [saved-theme="dark"] code[data-theme*=" "] span {
   color: var(--shiki-dark);
 }
+
+// custom
+.highlight {
+  background: #0f172a;
+  color: #e5e7eb;
+}
+
+.highlight .keyword { color: #7dd3fc; }
+.highlight .string  { color: #a7f3d0; }
+.highlight .number  { color: #fcd34d; }
+.highlight .comment { color: #94a3b8; font-style: italic; }
