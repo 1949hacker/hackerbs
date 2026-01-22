@@ -11,7 +11,8 @@ title: 联系与支持
 ## 📮 联系方式
 
 你可以通过以下方式联系我：
-
+### Google Form
+>https://forms.gle/jge5a8Zn72AxVVBj8
 ### GitHub
 > https://github.com/1949hacker
 
