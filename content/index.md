@@ -1,10 +1,10 @@
 ---
-title: hackerbs Knowledge Base
+title: hackerbs 知识库
 ---
 
-# hackerbs Knowledge Base
+# hackerbs 知识库
 
-欢迎来到 **hackerbs 的工程知识基地**。
+欢迎来到 **hackerbs 的知识库**。
 
 这是一个面向**数据中心 / IT基础设施 / 运维工程 / 云与平台工程**的长期知识体系，  
 目标是构建一个：  
