@@ -1,0 +1,77 @@
+---
+title: 飞腾arm平台使用docker部署ftp教程
+date: '2023-09-12 20:50:38'
+tags:
+  - Docker
+  - v
+  - s
+  - f
+  - t
+  - p
+  - d
+  - legacy-blog
+  - 知识图谱
+  - datacentre-container
+aliases:
+  - 飞腾arm平台使用docker部署ftp教程
+origin:
+  repository: 'https://github.com/1949hacker/blog.git'
+  path: source/_posts/飞腾arm平台使用docker部署ftp教程.md
+---
+> [!info] 知识关系
+> 所属体系: [[datacentre/_index|数据中心与基础设施]] / [[datacentre/container/_index|容器与镜像体系]]
+> 主题节点: 飞腾arm平台使用docker部署ftp教程
+> 推荐前置: [[datacentre/container/docker-hub-workaround-cn|国内docker hub无法使用的解决办法]]
+> 相关主题: [[datacentre/container/armv8-vsftpd-docker-image|记录一次构建armv8平台vsftpd Docker镜像的过程]] / [[datacentre/container/debian-x86-64-arm-docker|Debian x86_64平台搭建arm docker环境]]
+> 原始来源: `source/_posts/飞腾arm平台使用docker部署ftp教程.md`
+> 从旧博客迁移；已按知识图谱结构重新归档。
+
+---
+
+**因飞腾平台为armv8，暂未发现简单易用的vsftpd Docker镜像，特此提供打包完毕的Docker镜像及教程以供各位使用**
+
+
+
+**该docker镜像为armv8版本，已测试适用飞腾2000平台**
+
+第一步，拉取docker vsftpd映像
+
+*因docker hub已被墙，拉去docker images请参考[[datacentre/container/docker-hub-workaround-cn|国内docker hub无法使用的解决办法]]，或者使用下面手动导入的方式*
+
+`docker pull hackerbs/vsftpd`
+
+如果你的环境为离线环境，则采用导入vsftpd映像方案
+
+docker离线镜像位于[网盘](https://disk.ygeit.cn/s/RpAtcoJcbpYtaoa)docker_images文件夹中，名为`hackerbs-vsftpd-arm.tar`
+
+将下载的`hackerbs-vsftpd-arm.tar`导入到你的系统中，使用`docker load -i hackerbs-vsftpd-arm.tar`将该映像导入
+
+第二步，使用该映像启动容器
+
+```shell
+# 首先，创建一个路径用于存放ftp文件
+mkdir -p 路径
+# 示例
+mkdir -p /opt/ftp
+
+# 请用你的参数替代{参数}内容
+docker run -d --name {容器名} -p 20:20 -p 21:21 -p 4559-4564:4559-4564 -e FTP_USER={ftp用户名} -e FTP_PASSWORD={ftp密码} -e PASV_ADDRESS={服务器地址}  -e FTP_REPOSITORY=/opt/ftp -v {主机FTP目录}:/opt/ftp --restart=always oscarenzo/vsftpd
+
+# 若无特别需求，仅更改“容器名、ftp用户名、密码、服务器地址”即可
+# 示例如下
+docker run -d --name vsftpd-server -p 20:20 -p 21:21 -p 4559-4564:4559-4564 -e FTP_USER=ftptest -e FTP_PASSWORD=123456 -e PASV_ADDRESS=192.168.2.254 -e FTP_REPOSITORY=/opt/ftp -v /opt/ftp:/opt/ftp --restart=always f8044caf3727
+
+# 注：离线环境导入images需要将命令中的fauria/vsftpd替换为images ID f8044caf3727，如上方示例
+
+# 上述命令执行后可以使用docker ps查看容器是否运行成功
+# 容器运行成功后修改本机FTP目录权限为777，示例
+
+chmod -R 777 /opt/ftp
+
+# docker开机自动运行命令
+systemctl enable docker
+```
+
+完整过程如下图所示，若有任何问题可以通过文末联系方式咨询
+
+![20230912213003](https://img.hackerbs.com/20230912213003.png)

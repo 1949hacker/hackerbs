@@ -1,0 +1,855 @@
+---
+title: 服务器稳定性及基准测试方法
+date: '2025-09-11 15:40:24'
+tags:
+  - 服务器
+  - 基准测试
+  - 服务器压测
+  - Stress-NG
+  - Sysbench
+  - 内存
+  - CPU
+  - 硬盘
+  - legacy-blog
+  - 知识图谱
+  - datacentre-operations
+aliases:
+  - 服务器稳定性及基准测试方法
+origin:
+  repository: 'https://github.com/1949hacker/blog.git'
+  path: source/_posts/服务器稳定性及基准测试方法.md
+---
+> [!info] 知识关系
+> 所属体系: [[datacentre/_index|数据中心与基础设施]] / [[datacentre/operations/_index|运行稳定性与排障]]
+> 主题节点: 服务器稳定性及基准测试方法
+> 推荐前置: [[datacentre/os/linux-tips|Linux技巧【持续更新】]]
+> 相关主题: [[datacentre/storage/dell-disk-io-alert-troubleshooting|DELL服务器硬盘IO告警排障思路]] / [[datacentre/storage/smartctl-disk-troubleshooting-rma|关于服务器硬盘故障但带外没有错误日志的排障与报修笔记]] / [[engineering/tools/cpp-fio-tool-notes|C++编写fio测试工具 ／ C++写脚本，我在发疯]]
+> 原始来源: `source/_posts/服务器稳定性及基准测试方法.md`
+> 从旧博客迁移；已按知识图谱结构重新归档。
+
+---
+
+> 重要更新: 2025-11-4  硬盘测试开发了全自动测试工具，见下方硬盘测试部分
+
+## 测试项
+
+### 测试前准备
+
+#### CPU调优
+
+##### BIOS关闭超线程
+
+方法：
+BIOS里找CPU或者Socket Configuration，进入其中，找Processor Configuration，
+进入其中关闭超线程即可
+超线程在BIOS的写法通常有：
+
+- SMT
+- Logical Processor(LP)
+- Hyper-Threading
+
+理由：
+超线程的作用是让 CPU 能在一个线程等待（例如等待内存I/O）时，利用空闲执行单元去执行另一个线程。
+所以对于CPU性能测试的浮点运算、以及CPU满载的业务场景，超线程导致的线程切换，反而会：
+
+- 增加上下文切换与调度开销(Scheduler Overhead)
+  - 操作系统调度器看到两个逻辑核心，调度两个重量级任务上去，但实际上底层的物理核根本没法承担
+
+- 导致缓存污染(Cache Pollution)
+  - 不同线程使用的数据不同，缓存反而会互相驱逐对方数据
+  - 这个问题与下文中根据L3缓存设计NB大小尤其相关
+
+##### BIOS关闭C-State
+
+方法：
+BIOS里找CPU或者Socket Configuration，进入其中，找Advanced Power Management Configuration，
+进入其中CPU C State Control，参数如下：
+
+| 参数 | 解释 | 建议设置 |
+| --- | --- | --- |
+| Enable Monitor MWAIT | 是否允许使用 MWAIT 指令进入 C-state | Disabled |
+| CPU C6 report | 是否让操作系统知道 C6 可用 | Disabled |
+| Enhanced Halt State (C1E) | 启用增强型省电停机(降压降频) | Disabled |
+| OS ACPI Cx | 操作系统可用的最深 C 状态（如 ACPI C2） | 设置为能选的最小值 |
+
+补充：
+上面是比较通用的写法，但我看到Lenovo写的是SST-PP......自行判断或者问下厂商吧
+原理就是C-State设置0最好，就像Lenovo的SST-PP，BIOS里也写了，Level 0 TDP 185W，最高性能
+
+![20251113154536](https://img.hackerbs.com/20251113154536.png)
+
+理由：
+C-State是省电休眠状态控制，除非你要省电，否则把它关了。
+让性能最高，减少CPU状态切换导致的延迟，关不了就保持在C0使CPU始终活跃。
+
+#### 存储调优
+
+##### RAID调优
+
+Stripe Size(带宽): 1m
+写入策略: Write Back(回写)
+驱动器缓存: Drive Cache disabled(关闭磁盘缓存)
+初始化方式: Fast Initialize(快速初始化)
+
+##### 文件系统调优
+
+采用parted分区，gpt
+分区从2048s扇区起，保持4k对齐
+文件系统采用xfs即可
+
+### CPU基准测试
+
+|测试项|测试工具|参考业务场景|测试方式|
+|---|---|---|---|
+|双精度浮点运算 float64|HPL|该项测试为HPC行业标准，TOP500超级计算机排行榜均采用该方式评估|测试3次取均值|
+
+### 内存基准测试
+
+
+
+|测试项|测试工具|选择理由|测试方式|
+|---|---|---|---|
+|内存带宽|STREAM Benchmark|HPC内存带宽的行业标准测试，TOP500超级计算机排行榜均采用该方式评估|Copy/Scale/Add/Triad测试3次取均值|
+
+### 硬盘测试
+
+> *重要更新: 2025-11-5 发布了v1.1版本，修复了读测试无IO导致测试结果失真的BUG*
+> 新增了实时显示FIO进度的功能
+----
+> *重要更新: 2025-11-4 发布了fio硬盘测试的全自动工具*
+> 工具涵盖了自动运行fio，通过预置的benchmark.fio文件自动运行60项基础测试
+> 运行前检查其中的`directory=/mnt/test/  ; 测试目录路径，请根据实际情况修改`
+> 补充：注意`directory=`后面一定是带`/`的，因为是目录
+> 可以选择将需要测试的硬盘挂载到这个目录，或者修改为你想要的目录
+> `runtime=30s          ; 每个测试运行 30 秒`，则是每项测试运行多久
+> `ramp_time=5s         ; 5秒预热，使设备进入稳定状态`，这一条无需修改，作用是按照所设定的参数运行5秒确保硬盘跑起来，避免冷启动的性能过低或者波动
+> `size=10G`，这是测试文件的大小，注意根据你的容量并计算`numjobs`的数量，例如8个`numjobs`则是`10G*8=80G`硬盘空间
+> 给`full_auto`设置执行权限，并确保`benchmark.fio`和该程序在一个目录即可
+> 运行完成后会在当前目录生成原始数据的`json`文件和导出可读的`xlsx`Excel表格
+
+[仓库地址:https://github.com/1949hacker/fio_benchmark](https://github.com/1949hacker/fio_benchmark)
+
+[可执行程序下载](https://github.com/1949hacker/fio_benchmark/releases/)
+
+![运行效果图1](https://img.hackerbs.com/20251104164309.png)
+
+![运行效果图2](https://img.hackerbs.com/20251105094144.png)
+
+![v1.1效果图](https://img.hackerbs.com/20251105143202.png)
+
+---
+
+|测试项|测试工具|参考业务场景|测试方式|
+|---|---|---|---|
+|4k单队列|fio bs=4k iodepth=1|MySQL场景|测试3次取均值|
+|4k 32队列|fio bs=4k iodepth=32|MongoDB场景|测试3次取均值|
+|32k 32队列|fio bs=32k iodepth=32|高并发Web服务，Kafka日志刷盘，多线程缓存写入|测试3次取均值|
+|1m 单队列|fio bs=1m iodepth=1|顺序读写，备份、视频流、镜像分发|测试3次取均值|
+|1m 32队列|fio bs=1m iodepth=32|并发大文件读写，大规模备份，分布式存储，对象存储|测试3次取均值|
+|硬盘压测|fio -numjobs=32 -bs=4k -iodepth=64 -directory|具体代码见下方及下文中有关于fio参数的解释|
+
+---
+
+> 补充说明：除系统盘不能直接测试裸盘外，其他盘均应使用裸盘测试，如`fio -filename=/dev/sdb`和`fio -filename=/dev/nvme0n1`，直接指向硬盘块设备，而不是分区或路径
+
+---
+
+```shell
+fio -name=disk_benchmark -size=5G -runtime=5d -time_base -direct=1 -ioengine=libaio -randrepeat=0 -numjobs=32 -group_reporting -bs=4k -rw=randrw -rwmixwrite=30 -directory=/home/test/ -iodepth=64
+```
+
+其中针对业务场景，根据单台服务器部署的业务数量适当设置`numjobs`以模拟操作系统/应用层并发。
+
+例如单台服务器4个数据库，则`fio bs=4k iodepth=32 numjobs=4`。
+
+`iodepth`对应单个线程的队列深度，用于存储设备并发能力测试
+
+`numjobs`对应多个线程并发，用于测试操作系统/应用层并发能力
+
+### 综合基准测试
+
+|测试项|测试工具|参考业务场景|测试方式|
+|---|---|---|---|
+|综合性能指数|GeekBench|横向比较整机性能，仅供参考|普通测试|
+
+> CentOS 7.9.2009跑不了GeekBench 6
+
+[GeekBench历史版本](https://www.geekbench.com/legacy/)
+
+## 测试过程
+
+### AMD 9F14平台测试
+
+补充：
+
+可以先准备好fio程序的目录/root/fio
+编译好hpl文件并确保目录是/root/hpl
+编译好内存测试的stream并放在/root/memtest
+当然，目录自由发挥也可以，改下方代码即可
+
+```shell
+# 一行代码搞定内存基准、CPU基准、存储基准的全自动测试
+# 注意其中的目录和-np 24的参数根据下文内容，改为你自己的
+cd /root/memtest/ && for i in {0..2};do ./stream 2>&1 | tee -a mem_$i.log;done && cd /root/hpl/bin/Linux_Intel64/ && for i in {0..2};do mpirun --allow-run-as-root -np 24 --map-by core --bind-to core ./xhpl 2>&1 | tee -a HPL_$i.out;done && cd /root/fio && ./full_auto.v2.2.0
+```
+
+#### 安装CentOS 7.9.2009
+
+替换源为清华大学CentOS-Vault源
+
+在[清华CentOS-Vault仓库](https://mirrors.tuna.tsinghua.edu.cn/help/centos-vault/)输入小版本，获取命令
+
+例如CentOS 7.9.2009如下
+
+```shell
+sed -e "s|^mirrorlist=|#mirrorlist=|g" \
+    -e "s|^#baseurl=http://mirror.centos.org/centos/\$releasever|baseurl=https://mirrors.tuna.tsinghua.edu.cn/centos-vault/7.9.2009|g" \
+    -e "s|^#baseurl=http://mirror.centos.org/\$contentdir/\$releasever|baseurl=https://mirrors.tuna.tsinghua.edu.cn/centos-vault/7.9.2009|g" \
+    -i.bak \
+    /etc/yum.repos.d/CentOS-*.repo
+```
+
+该命令执行后会将原本的所有源配置文件备份为带`.bak`后缀名的备份
+
+可以通过下方的命令快速还原
+
+```shell
+# 启用bash扩展通配符
+shopt -s extglob
+
+# 使用通配符快速删除不带.bak的文件
+rm !(*.bak) -f
+
+# 使用for循环快速去掉.bak后缀
+for f in *.bak;do mv -- "$f" "${f%.bak}";done
+```
+
+`yum makecache`更新源
+
+`yum install vim`安装vim编辑器
+
+```shell
+# 更新源
+yum makecache
+# 安装vim
+yum install vim
+# 编辑ssh配置文件
+vim /etc/ssh/sshd_config
+# 设置心跳
+# 取消注释，设置为每60秒发送一次心跳重复9999999次
+ClientAliveInterval 60
+ClientAliveCountMax 99999
+# 设置允许root用户登录
+# 取消注释并配置为yes
+PermitRootLogin yes
+# 重启ssh服务
+systemctl restart sshd
+```
+
+#### 准备CPU的Linpack测试
+
+```shell
+# 基础环境
+# 安装OpenBLAS
+# 安装OpenMPI
+yum install -y epel-release && yum install gcc gcc-c++ gcc-gfortran cmake python3 zlib* -y && yum install -y openblas openblas-devel && yum install -y openmpi openmpi-devel
+
+# 找到MPI的位置
+find /usr -name "mpicc" 2>/dev/null
+# 我的输出如下
+/usr/lib64/openmpi/bin/mpicc
+# 添加MPI到环境变量
+echo 'export PATH=/usr/lib64/openmpi/bin:$PATH' >> ~/.bashrc
+echo 'export LD_LIBRARY_PATH=/usr/lib64/openmpi/lib:$LD_LIBRARY_PATH' >> ~/.bashrc
+source ~/.bashrc
+# 临时生效
+export PATH=/usr/lib64/openmpi/bin:$PATH
+export LD_LIBRARY_PATH=/usr/lib64/openmpi/lib:$LD_LIBRARY_PATH
+
+# 复查一下系统中有没有openblas
+ldconfig -p | grep openblas
+# 输出通常如下所示
+libopenblas64_.so.0 (libc6,x86-64) => /lib64/libopenblas64_.so.0
+libopenblas64.so.0 (libc6,x86-64) => /lib64/libopenblas64.so.0
+libopenblasp64_.so.0 (libc6,x86-64) => /lib64/libopenblasp64_.so.0
+libopenblasp64.so.0 (libc6,x86-64) => /lib64/libopenblasp64.so.0
+libopenblasp.so.0 (libc6,x86-64) => /lib64/libopenblasp.so.0
+libopenblaso64_.so.0 (libc6,x86-64) => /lib64/libopenblaso64_.so.0
+libopenblaso64.so.0 (libc6,x86-64) => /lib64/libopenblaso64.so.0
+libopenblaso.so.0 (libc6,x86-64) => /lib64/libopenblaso.so.0
+libopenblas.so.0 (libc6,x86-64) => /lib64/libopenblas.so.0
+
+# 下载High Performance Linpack
+# 去官网检查最新版https://www.netlib.org/benchmark/hpl/
+wget https://www.netlib.org/benchmark/hpl/hpl-2.3.tar.gz
+tar xvf hpl-2.3.tar.gz
+mv hpl-2.3 hpl
+mv hpl ~/
+cd ~/hpl
+
+# 从模板创建副本并改动编译器参数
+# INTEL使用Make.Linux_Intel64
+# AMD使用Make.Linux_ATHLON_FBLAS
+cp setup/Make.Linux_ATHLON_FBLAS ./Make.Linux_ATHLON_FBLAS
+vim Make.Linux_ATHLON_FBLAS
+
+# 64行的ARCH的名称可以自定义，但没必要，需要和文件名后缀一致，如Make.Linux_ATHLON_FBLAS
+# 后续make编译时会用到，如make arch=AMD_OpenBLAS
+ARCH = Linux_ATHLON_FBLAS
+
+# 配置openblas通用开源方案，保持测试结果的中立
+# 避免MKL和AOCL BLIS/LibFLAME对于INTEL AMD的专项优化
+# 修改配置使HPL走CBLAS接口，而不是老的Fortran BLAS
+# 在配置文件中找到
+HPL_DEFS     = $(F2CDEFS) $(HPL_OPTS) $(HPL_INCLUDES)
+
+# 在末尾加上 -DHPL_CALL_CBLAS
+HPL_DEFS     = $(F2CDEFS) $(HPL_OPTS) $(HPL_INCLUDES) -DHPL_CALL_CBLAS
+
+# 找到CCFLAGS，添加-march=native
+CCFLAGS      = $(HPL_DEFS) -fomit-frame-pointer -O3 -funroll-loops -W -Wall -march=native
+
+# 默认的配置如下
+LAdir        = $(HOME)/netlib/ARCHIVES/Linux_ATHLON
+LAinc        =
+LAlib        = $(LAdir)/libf77blas.a $(LAdir)/libatlas.a
+# 修改为
+LAdir   = /usr/lib64/openblas  # 你的 OpenBLAS库路径，find / -name libopenblas*
+LAinc   =
+LAlib   = -lopenblas
+
+# 改为直接使用mpicc编译
+# 修改CC
+CC      = mpicc
+
+# 注释掉84-86行左右的三行MP配置
+# 在前面加#注释了就行
+MPdir        = /usr/local/mpi
+MPinc        = -I$(MPdir)/include
+MPlib        = $(MPdir)/lib/libmpich.a
+
+
+# 这部分是针对Intel的编译参数设置，AMD忽略
+# --------- start ---------
+OMP_DEFS  = -openmp
+# 改为
+OMP_DEFS  = -fopenmp
+
+CCFLAGS = CCFLAGS  = $(HPL_DEFS) -O3 -w -ansi-alias -i-static -z noexecstack -z relro -z now -nocompchk -Wall
+# 修改为
+CCFLAGS  = $(HPL_DEFS) -O3 -w -Wall -fopenmp -fno-strict-aliasing -march=native -z noexecstack -z relro -z now
+
+LINKFLAGS = $(CCFLAGS) $(OMP_DEFS) -mt_mpi
+#修改为
+LINKFLAGS = $(CCFLAGS) $(OMP_DEFS)
+# --------- end ---------
+
+# 编译HPL
+make -f Make.top build_src arch=Linux_ATHLON_FBLAS
+make -f Make.top build_tst arch=Linux_ATHLON_FBLAS
+
+
+# 编辑HPL.dat
+cd bin/Linux_ATHLON_FBLAS
+# Intel是Linux_Intel64
+cd bin/Linux_Intel64
+
+mv HPL.dat HPL.dat.bak
+vim HPL.dat
+
+# HPL.dat范例，参数及其解析详见下方表格
+HPLinpack benchmark input file
+Innovative Computing Laboratory, University of Tennessee
+HPL.out      output file name (if any)
+6            device out (6=stdout,7=stderr,file)
+1            # of problems sizes (N)
+165120         Ns
+1            # of NBs
+384           NBs
+0            PMAP process mapping (0=Row-,1=Column-major)
+1            # of process grids (P x Q)
+8            Ps
+12            Qs
+16.0         threshold
+1            # of panel fact
+2            PFACTs (0=left, 1=Crout, 2=Right)
+1            # of recursive stopping criterium
+4            NBMINs (>= 1)
+1            # of panels in recursion
+2            NDIVs
+1            # of recursive panel fact.
+1            RFACTs (0=left, 1=Crout, 2=Right)
+1            # of broadcast
+1            BCASTs (0=1rg,1=1rM,2=2rg,3=2rM,4=Lng,5=LnM)
+1            # of lookahead depth
+1            DEPTHs (>=0)
+2            SWAP (0=bin-exch,1=long,2=mix)
+64           swapping threshold
+0            L1 in (0=transposed,1=no-transposed) form
+0            U  in (0=transposed,1=no-transposed) form
+1            Equilibration (0=no,1=yes)
+8            memory alignment in double (> 0)
+##### This line (no. 32) is ignored (it serves as a separator). ######
+0                               Number of additional problem sizes for PTRANS
+1200 10000 30000                values of N
+0                               number of additional blocking sizes for PTRANS
+40 9 8 13 13 20 16 32 64        values of NB
+
+# 禁用防火墙
+systemctl stop firewalld
+setenforce 0
+# 开始运行
+mpirun --allow-run-as-root -np 96 --map-by core --bind-to core ./xhpl
+
+# 使用htop查看硬件负载
+yum install -y htop
+htop
+
+# 测试结果范例，其中183行和190行分别是测试结果和误差，附带了注释
+================================================================================
+HPLinpack 2.3  --  High-Performance Linpack benchmark  --   December 2, 2018
+Written by A. Petitet and R. Clint Whaley,  Innovative Computing Laboratory, UTK
+Modified by Piotr Luszczek, Innovative Computing Laboratory, UTK
+Modified by Julien Langou, University of Colorado Denver
+================================================================================
+
+An explanation of the input/output parameters follows:
+T/V    : Wall time / encoded variant.
+N      : The order of the coefficient matrix A.
+NB     : The partitioning blocking factor.
+P      : The number of process rows.
+Q      : The number of process columns.
+Time   : Time in seconds to solve the linear system.
+Gflops : Rate of execution for solving the linear system.
+
+The following parameter values will be used:
+
+N      :  165120
+NB     :     384
+PMAP   : Row-major process mapping
+P      :       8
+Q      :      12
+PFACT  :   Right
+NBMIN  :       4
+NDIV   :       2
+RFACT  :   Crout
+BCAST  :  1ringM
+DEPTH  :       1
+SWAP   : Mix (threshold = 64)
+L1     : transposed form
+U      : transposed form
+EQUIL  : yes
+ALIGN  : 8 double precision words
+
+--------------------------------------------------------------------------------
+
+- The matrix A is randomly generated for each test.
+- The following scaled residual check will be computed:
+      ||Ax-b||_oo / ( eps * ( || x ||_oo * || A ||_oo + || b ||_oo ) * N )
+- The relative machine precision (eps) is taken to be               1.110223e-16
+- Computational tests pass if scaled residuals are less than                16.0
+
+================================================================================
+T/V                N    NB     P     Q               Time                 Gflops
+--------------------------------------------------------------------------------
+WR11C2R4      165120   384     8    12            1755.82             1.7094e+03
+# 这里的1.7094e+03也就是1.7094*10^3 Gflops=1709.4GFlops=1.7094TFlops
+HPL_pdgesv() start time Mon Sep 15 12:53:01 2025
+
+HPL_pdgesv() end time   Mon Sep 15 13:22:17 2025
+
+--------------------------------------------------------------------------------
+||Ax-b||_oo/(eps*(||A||_oo*||x||_oo+||b||_oo)*N)=   4.65407372e-04 ...... PASSED
+# 这里的PASSED说明误差合格，测试有效
+# 误差为4.65407372*10^-4=0.00046540737
+================================================================================
+
+Finished      1 tests with the following results:
+              1 tests completed and passed residual checks,
+              0 tests completed and failed residual checks,
+              0 tests skipped because of illegal input values.
+--------------------------------------------------------------------------------
+
+End of Tests.
+================================================================================
+```
+
+##### HPL.dat的参数及其说明
+
+在线生成HPL.dat文件的网站 [HPL.dat](https://www.advancedclustering.com/act_kb/tune-hpl-dat-file/)
+
+|参数|说明|
+|---|---|
+|Nodes|对应CPU数量|
+|Cores per Node|每个CPU多少核|
+|Memory per Node(MB)|每个CPU有多少MB内存|
+|Block Size(NB)|HPL运算的块大小|
+
+NB 块大小计算方式：
+
+**设置适当的块大小，使数据块能够很好的放入CPU的高速缓存（L2/L3 Cache），如果数据块不能放入高速缓存，则不得不从慢得多的主内存RAM中进行读取，从而导致性能瓶颈。**
+
+NB最好是PQ的整数倍，以我的AMD 9A14为例，L3为384MB，96核心
+
+HPL将矩阵N分块成NB*NB的小块，然后分布在一个二维进程网格P行Q列上
+
+所以如果任何一方过长，就会造成通信路径变长，从而导致性能开销大
+
+为了使性能达到最优，需要使这个二维网格接近正方形，也就是PQ值相近，且同时P*Q需要等于核心数，以确保每个核心都有数据块在计算
+
+###### PQ计算公式
+
+**使用在线生成则直接跳过此处即可，仅用作学习**
+
+```shell
+# 根据内核数量取近似的能开方的整数
+# 例如96核取100开方
+# 然后用核数除平方根递归直到整除
+96/10=9.6
+96/9=10.66
+96/8=12
+# PQ则为8*12
+# 该网格便由8行12列组成，接近正方形，避免了过长的通信路径
+# 每个进程需要将分解结果广播给其他进程，所以过长的通信路径就意味着过长的通信开销
+# 如图
+- - - - - - -
+- - - · - - -
+- - - - - - -
+# 对比过长的通信路径
+- - - - - - - - ·- - - - - - -
+```
+
+###### NB块大小计算公式
+
+```shell
+# 首先查询CPU的L3缓存
+# 然后用L3缓存除以核心数，算出每个核心能使用的缓存均值
+# 根据float类型占4字节，double类型占8字节计算
+# 该性能测试为双精度浮点运算，取8字节
+# 先计算每个核心能使用多少字节的缓存
+# AMD 9A14 L3 384MB/96核心
+384/96=4MB/core
+4*1024*1024=4,194,304Byte/core
+# 然后除以双精度的8字节，计算出每个核心处理多少个双精度浮点数，也就是NB²
+4194304/8=524288NB²
+# 然后开方得出NB
+524288开方约为724NB
+# 为了避免撑爆L3缓存，只取一半值
+724/2=362/core
+# 现代x86 CPU的Cache Line是固定的64字节
+# 为了保证AVX/AVX-512指令能每次搬运时都尽量填满
+# 所以寻找64的倍数，且尽量接近L3 Cache的极限
+# 这样计算出每个核心计算大概362个NB，每次指令搬运64字节，总共搬运约6次
+362/64=5.65625 取整 6
+# 计算每次64字节总共6次的整数
+64*6=384
+# 最终得出NB最优值为384
+```
+
+最终计算出NB为`384`
+
+注意其中`Nodes`填的是有多少个CPU
+`Cores per Node`则是每个CPU有多少物理内核
+`Memory per Node(MB)`是每个CPU有多少内存可用，所以内存条也需要均匀安装
+`Block Size(NB)`则是填入上方计算的值
+
+![20250915145114](https://img.hackerbs.com/20250915145114.png)
+
+在线生成后的HPL.dat如下，HPL只会读取第一列，数字后方的是注释，带#的也是注释
+
+```shell
+HPLinpack benchmark input file
+Innovative Computing Laboratory, University of Tennessee
+HPL.out      output file name (if any)
+6            device out (6=stdout,7=stderr,file)
+1            # of problems sizes (N)
+165120         Ns
+1            # of NBs
+384           NBs
+0            PMAP process mapping (0=Row-,1=Column-major)
+1            # of process grids (P x Q)
+8            Ps
+12            Qs
+16.0         threshold
+1            # of panel fact
+2            PFACTs (0=left, 1=Crout, 2=Right)
+1            # of recursive stopping criterium
+4            NBMINs (>= 1)
+1            # of panels in recursion
+2            NDIVs
+1            # of recursive panel fact.
+1            RFACTs (0=left, 1=Crout, 2=Right)
+1            # of broadcast
+1            BCASTs (0=1rg,1=1rM,2=2rg,3=2rM,4=Lng,5=LnM)
+1            # of lookahead depth
+1            DEPTHs (>=0)
+2            SWAP (0=bin-exch,1=long,2=mix)
+64           swapping threshold
+0            L1 in (0=transposed,1=no-transposed) form
+0            U  in (0=transposed,1=no-transposed) form
+1            Equilibration (0=no,1=yes)
+8            memory alignment in double (> 0)
+##### This line (no. 32) is ignored (it serves as a separator). ######
+0                               Number of additional problem sizes for PTRANS
+1200 10000 30000                values of N
+0                               number of additional blocking sizes for PTRANS
+40 9 8 13 13 20 16 32 64        values of NB
+```
+
+根据这份文件，运行命令如下：
+
+```shell
+mpirun --allow-run-as-root -np 96 --map-by core --bind-to core ./xhpl
+# --allow-run-as-root 允许root用户运行
+# -np 96 启动96个MPI进程，与物理内核总数相同，不是线程数
+# 如果你是4路每路20核那你就要填80，是所有CPU物理内核总数
+# --map-by core MPI进程核CPU逻辑核心进行绑定
+# --bind-to core 将每个进程锁定到core上运行，避免cache miss
+
+# 显示的同时输出到文件，方便做为测试记录
+mpirun --allow-run-as-root -np 96 --map-by core --bind-to core ./xhpl 2>&1 | tee -a HPL_0.out
+# 一条命令实现运行完CPU基准后自动开始执行存储基准测试
+# 在xhpl目录运行的
+for i in {0..2};do mpirun --allow-run-as-root -np 96 --map-by core --bind-to core ./xhpl 2>&1 | tee -a HPL_$i.out;done && cd /root/fio/ && /root/fio/full_auto.v2.2.0
+```
+
+关于参数的解释在官网有详细说明[HPL Tuning](https://www.netlib.org/benchmark/hpl/tuning.html)
+
+#### 进行内存的基准测试
+
+使用[STREAM Benchmark](https://www.cs.virginia.edu/stream/)进行测试
+
+[源代码](https://www.cs.virginia.edu/stream/FTP/Code/stream.c)
+
+```shell
+# 安装编译工具
+yum install gcc -y
+
+# 下载源码，或者复制，都行
+wget https://www.cs.virginia.edu/stream/FTP/Code/stream.c
+
+# 编译stream
+# 其中-DSTREAM_ARRAY_SIZE是设置每个数组的元素数量
+# 测试的内存大小 = 物理内存上限 ÷ (数组个数 × 元素字节数)
+# 物理内存上限取一半值，避免打到swap，256GB × 1/2 = 128GB = 137438953472 Bytes
+# 数组个数 = 4 默认测试 Triad 核心项，需 a/b/c/d 4 个数组
+# 元素字节数 = 8 推荐用 double 类型，兼顾精度和硬件带宽适配
+# -DSTREAM_ARRAY_SIZE = 137438953472 ÷ (4 × 8) = 137438953472 ÷ 32 = 4294967296
+gcc -O3 -fopenmp -DSTREAM_ARRAY_SIZE=4294967296 stream.c -o stream
+# 实际编译中这个值太大了，超过程序的限制了，取一半就行了
+# -O3编译器优化 -m64强制生成64位可执行文件
+# -mcmodel=medium采用64位系统的内存模型，以支持超大全局数组 -fopenmp启用多线程并行框架
+# -DTYPE=double定义元素类型为double高精度 -DSTREAM_TYPE=double同步内部的流类型与DTYPE一致
+# -DN=2147483648冗余安全参数，用于兼容以N作为数组大小别名的源码
+gcc -O3 -fopenmp -m64 -mcmodel=medium -DSTREAM_ARRAY_SIZE=2147483648 -DTYPE=double -DSTREAM_TYPE=double -DN=2147483648 stream.c -o stream
+
+
+# 运行
+./stream
+
+# 直接输出到文件
+./stream >> mem_test_0.log
+```
+
+输出结果如下，只需要第30行中Triad的带宽212674.9MB/s和延迟的平均值Avg time
+
+```shell
+-------------------------------------------------------------
+STREAM version $Revision: 5.10 $
+-------------------------------------------------------------
+This system uses 8 bytes per array element.
+-------------------------------------------------------------
+Array size = 100000000 (elements), Offset = 0 (elements)
+Memory per array = 762.9 MiB (= 0.7 GiB).
+Total memory required = 2288.8 MiB (= 2.2 GiB).
+Each kernel will be executed 10 times.
+ The *best* time for each kernel (excluding the first iteration)
+ will be used to compute the reported bandwidth.
+-------------------------------------------------------------
+Number of Threads requested = 192
+Number of Threads counted = 192
+-------------------------------------------------------------
+Your clock granularity/precision appears to be 1 microseconds.
+Each test below will take on the order of 16443 microseconds.
+   (= 16443 clock ticks)
+Increase the size of the arrays if this shows that
+you are not getting at least 20 clock ticks per test.
+-------------------------------------------------------------
+WARNING -- The above is only a rough guideline.
+For best results, please be sure you know the
+precision of your system timer.
+-------------------------------------------------------------
+Function    Best Rate MB/s  Avg time     Min time     Max time
+Copy:          254046.3     0.006921     0.006298     0.011713
+Scale:         189664.1     0.008491     0.008436     0.008531
+Add:           204691.7     0.011839     0.011725     0.011884
+Triad:         212674.9     0.011320     0.011285     0.011350
+-------------------------------------------------------------
+Solution Validates: avg error less than 1.000000e-13 on all three arrays
+-------------------------------------------------------------
+```
+
+只取其中的典型值Triad即可，代表典型科学计算/数值模拟中的内存访问性能
+
+#### 硬盘性能fio测试
+
+使用fio进行硬盘的性能测试，测试结果包含IOPS、带宽、延迟
+
+```shell
+# 安装fio
+yum install fio
+
+# 准备好测试路径或硬盘
+# 这里采用指向目录的方式测试
+# 如需直接测试硬盘，则指向硬盘即可
+# -name=本次测试的名称，自定义即可
+# -size=本次测试的文件大小，建议大于内存的2倍，避免某些文件系统使用内存缓存
+# 鉴于CentOS 7.9.2009的xfs和参数设置了direct=1，所以size不用大于内存
+# -runtime=运行时间，单位支持秒s、分m、时h、天d
+# -time_base 即使写入了指定大小的文件，依旧继续重复写入，直到runtime时间结束
+# -direct=1设置不使用系统缓存，直写
+# -ioengine=libaio直接使用Linux的异步IO引擎
+# -randrepeat=0设置每次IO的随机性都不同，模拟真实业务场景
+# -numjobs=8设置8个进程，模拟真实业务场景
+# -group_reporting多进程的运行结果汇总汇报
+# -bs=4k 块大小4k
+# -rw=randrw随机读写
+# -rwmixwrite=30设置30%写70%读，模拟真实业务场景
+# -filename=/root/fio 在/root目录下创建一个名为fio的文件进行测试
+# -directory=/dir/上方的filename也可替换为该命令指向目录，会在目录下根据numjobs的数量生成多个文件测试
+# 注意下你的目录容量，别装不下size*numjobs的文件
+# -iodepth= IO队列深度
+
+# 运行5分钟，采用路径模式8进程写入，模拟最真实的业务场景
+fio -name=disk_benchmark -size=10G -runtime=5m -time_base -direct=1 -ioengine=libaio -randrepeat=0 -numjobs=8 -group_reporting -bs=4k -rw=randrw -rwmixwrite=30 -filename=/home/fio -iodepth=1
+
+# 1m顺序混合30%写70%读范例
+fio -name=disk_benchmark -size=5G -runtime=15s -time_base -direct=1 -ioengine=libaio -numjobs=8 -group_reporting -bs=1m -rw=rw -rwmixwrite=30 -filename=/home/fio/a -iodepth=1
+
+# 运行结果如下
+# 其中第38行则是读取性能的测试结果，55行是写入的性能测试结果，附带了注释说明
+disk_benchmark: (g=0): rw=randrw, bs=(R) 4096B-4096B, (W) 4096B-4096B, (T) 4096B-4096B, ioengine=libaio, iodepth=32
+...
+fio-3.7
+Starting 8 processes
+disk_benchmark: Laying out IO file (1 file / 5120MiB)
+Jobs: 8 (f=8): [m(8)][100.0%][r=339MiB/s,w=144MiB/s][r=86.8k,w=36.0k IOPS][eta 00m:00s]
+disk_benchmark: (groupid=0, jobs=8): err= 0: pid=64509: Tue Sep 16 15:11:50 2025
+  # 读取性能的测试结果在此，记录IOPS，和MB单位的353MB/s即可
+   read: IOPS=86.2k, BW=337MiB/s (353MB/s)(5053MiB/15002msec)
+    slat (nsec): min=1110, max=34081k, avg=51710.15, stdev=245614.51
+    clat (usec): min=229, max=36569, avg=2081.87, stdev=914.48
+    # 读取延迟取lat(total latency)总延迟的值即可，统一用微秒单位
+    # Windows按住Alt然后直接按小数字键盘0181即可输出µ
+    # Linux则是Ctrl+Shift+U输入00b5
+    # MACOS则是Option+m输出µ
+     lat (usec): min=237, max=37825, avg=2133.63, stdev=947.08
+    clat percentiles (usec):
+     |  1.00th=[  545],  5.00th=[  816], 10.00th=[ 1106], 20.00th=[ 1401],
+     | 30.00th=[ 1614], 40.00th=[ 1795], 50.00th=[ 1958], 60.00th=[ 2147],
+     | 70.00th=[ 2376], 80.00th=[ 2737], 90.00th=[ 3261], 95.00th=[ 3621],
+     | 99.00th=[ 4490], 99.50th=[ 4817], 99.90th=[ 5538], 99.95th=[ 5866],
+     | 99.99th=[21103]
+   bw (  KiB/s): min=39944, max=45384, per=12.50%, avg=43106.80, stdev=948.51, samples=240
+   iops        : min= 9986, max=11346, avg=10776.67, stdev=237.13, samples=240
+   # 写入性能的测试结果在此，记录IOPS，和MB单位的353MB/s即可
+  write: IOPS=37.0k, BW=145MiB/s (152MB/s)(2171MiB/15002msec)
+    slat (nsec): min=1470, max=17704k, avg=54444.01, stdev=241994.82
+    clat (usec): min=150, max=37077, avg=1887.95, stdev=964.94
+    # 写入延迟取lat(total latency)总延迟的值即可，统一用微秒单位
+    # Windows按住Alt然后直接按小数字键盘0181即可输出µ
+    # Linux则是Ctrl+Shift+U输入00b5
+    # MACOS则是Option+m输出µ
+     lat (usec): min=153, max=37080, avg=1942.46, stdev=994.98
+    clat percentiles (usec):
+     |  1.00th=[  400],  5.00th=[  537], 10.00th=[  676], 20.00th=[ 1156],
+     | 30.00th=[ 1418], 40.00th=[ 1614], 50.00th=[ 1795], 60.00th=[ 1991],
+     | 70.00th=[ 2212], 80.00th=[ 2540], 90.00th=[ 3130], 95.00th=[ 3556],
+     | 99.00th=[ 4490], 99.50th=[ 4817], 99.90th=[ 5604], 99.95th=[ 5997],
+     | 99.99th=[18744]
+   bw (  KiB/s): min=16736, max=19920, per=12.50%, avg=18519.40, stdev=504.91, samples=240
+   iops        : min= 4184, max= 4980, avg=4629.82, stdev=126.23, samples=240
+  lat (usec)   : 250=0.01%, 500=1.54%, 750=4.81%, 1000=4.07%
+  lat (msec)   : 2=44.46%, 4=42.71%, 10=2.39%, 20=0.01%, 50=0.01%
+  cpu          : usr=1.15%, sys=8.65%, ctx=508859, majf=0, minf=268
+  IO depths    : 1=0.1%, 2=0.1%, 4=0.1%, 8=0.1%, 16=0.1%, 32=100.0%, >=64=0.0%
+     submit    : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, >=64=0.0%
+     complete  : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.1%, 64=0.0%, >=64=0.0%
+     issued rwts: total=1293511,555725,0,0 short=0,0,0,0 dropped=0,0,0,0
+     latency   : target=0, window=0, percentile=100.00%, depth=32
+
+Run status group 0 (all jobs):
+   READ: bw=337MiB/s (353MB/s), 337MiB/s-337MiB/s (353MB/s-353MB/s), io=5053MiB (5298MB), run=15002-15002msec
+  WRITE: bw=145MiB/s (152MB/s), 145MiB/s-145MiB/s (152MB/s-152MB/s), io=2171MiB (2276MB), run=15002-15002msec
+
+Disk stats (read/write):
+    dm-2: ios=1288781/553752, merge=0/0, ticks=1713741/644122, in_queue=2391609, util=100.00%, aggrios=1293378/555710, aggrmerge=132/23, aggrticks=1658421/619009, aggrin_queue=2289296, aggrutil=99.74%
+  sda: ios=1293378/555710, merge=132/23, ticks=1658421/619009, in_queue=2289296, util=99.74% # 这里的util是硬盘负载，100%负载才说明榨干了硬盘性能
+```
+
+#### 综合性能测试
+
+使用CentOS 7.9.2009和GeekBench进行综合性能评估
+
+下载地址 [geekbench](https://www.geekbench.com/download/)
+
+```shell
+# 解压下载的压缩包
+tar -zxvf Geekbench-6.5.0-Linux.tar.gz
+
+# 直接运行即可
+./geekbench6
+
+# 如果提示
+/root/Geekbench-6.5.0-Linux/geekbench_avx2: /lib64/libm.so.6: version `GLIBC_2.27' not found (required by /root/Geekbench-6.5.0-Linux/geekbench_avx2)
+
+# 系统glibc版本过低，使用旧版本GeekBench
+https://cdn.geekbench.com/Geekbench-5.5.1-Linux.tar.gz
+```
+
+### 稳定性测试
+
+鉴于HPL测试本身就会使服务器CPU内存满载，所以直接在上文CPU测试的基础上直接变成重复执行即可做到稳定性测试，配合带外观察CPU温度内存等是否故障即可
+
+```shell
+# 循环运行100次
+for i in {1..100};do "hpl代码";done
+# 以我的AMD 9A14为例
+for i in {1..100};do mpirun --allow-run-as-root -np 96 --map-by core --bind-to core ./xhpl && echo -e "\033[36;1m第 $i 次运行完成！";done
+```
+
+使用该脚本运行并将运行结果也进行统计，方便同时观察性能是否有波动
+
+```shell
+for i in {1..1000}; do
+    echo -e "\033[34;1m=== 第 $i 次运行开始 ===\033[0m"
+
+    # 运行测试并保存输出到临时文件
+    # 记得将其替换为你自己的对应命令
+    mpirun --allow-run-as-root -np 96 --map-by core --bind-to core ./xhpl > hpl_run_$i.log 2>&1
+
+    # 提取关键指标
+    gflops=$(grep -A1 "T/V.*N.*NB.*P.*Q" hpl_run_$i.log | grep -v "T/V\|--" | awk '{print $NF}')
+    error=$(grep "||Ax-b||_oo" hpl_run_$i.log | awk -F'= ' '{print $2}' | awk '{print $1}')
+    status=$(grep "PASSED\|FAILED" hpl_run_$i.log | awk '{print $NF}')
+
+    # 输出结果
+    echo -e "Gflops: \033[32;1m$gflops\033[0m"
+    echo -e "Error:  \033[33;1m$error\033[0m"
+    echo -e "Status: \033[36;1m$status\033[0m"
+    echo -e "\033[36;1m第 $i 次运行完成！\033[0m"
+    echo ""
+
+    # 可选：保存汇总结果到文件
+    echo "运行$i, $gflops, $error, $status" >> hpl_summary.csv
+
+    # 可选：删除临时日志文件以节省空间
+    # rm hpl_run_$i.log
+done
+
+# 最终汇总统计
+echo -e "\033[35;1m=== 所有运行完成 ===\033[0m"
+echo "总运行次数: 1000"
+echo "PASSED 次数: $(grep -c "PASSED" hpl_summary.csv)"
+echo "FAILED 次数: $(grep -c "FAILED" hpl_summary.csv)"
+```

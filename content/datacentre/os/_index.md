@@ -1,12 +1,22 @@
 ---
 title: 操作系统与平台体系
+tags:
+  - 知识图谱
 ---
 
-本部分围绕服务器与基础设施所使用的操作系统平台展开，包括：
+# 操作系统与平台体系
 
-- Windows Server 各版本与适用场景  
-- Linux 发行版差异与选型  
-- 系统稳定性与生命周期管理  
-- 平台与硬件的协同设计  
+从 Linux 发行版安装、软件源、系统技巧和平台维护建立长期运行能力。
 
-目标是帮助工程师从**平台选型 → 系统部署 → 长期运维**建立完整视角。
+## 从这里开始
+
+- [[fundamentals/_index|基础知识与术语]]
+- [[datacentre/security/_index|安全与访问控制]]
+
+## 本体系节点
+
+- [[datacentre/os/apt-mirror-sources|apt等各种源列表（持续更新）]]
+- [[datacentre/os/debian-installation|Debian安装教程]]
+- [[datacentre/os/debian-basics|Debian基础知识【持续更新】]]
+- [[datacentre/os/linux-tips|Linux技巧【持续更新】]]
+- [[datacentre/os/ubuntu-installation|Ubuntu安装教程]]
