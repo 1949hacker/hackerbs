@@ -5,9 +5,6 @@ tags:
   - 基础
   - IT知识
   - 百科
-  - legacy-blog
-  - 知识图谱
-  - fundamentals-it-basics-encyclopedia
 aliases:
   - IT基础知识百科
 origin:

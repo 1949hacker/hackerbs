@@ -6,9 +6,6 @@ tags:
   - ssh
   - 网络安全
   - ssh爆破
-  - legacy-blog
-  - 知识图谱
-  - datacentre-security
 aliases:
   - Linux查询ssh日志判断是否被入侵及加强ssh安全的办法
 origin:

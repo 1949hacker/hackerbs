@@ -10,10 +10,17 @@
     border-radius: 5px;
     border: 1px solid var(--lightgray);
     box-sizing: border-box;
-    height: 250px;
+    height: 280px;
     margin: 0.5em 0;
     position: relative;
     overflow: hidden;
+    background:
+      radial-gradient(
+        circle at 32% 24%,
+        color-mix(in srgb, var(--secondary) 12%, transparent),
+        transparent 18rem
+      ),
+      color-mix(in srgb, var(--light) 92%, transparent);
 
     & > .global-graph-icon {
       cursor: pointer;
@@ -62,11 +69,13 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      height: 80vh;
-      width: 80vw;
+      height: min(86vh, 920px);
+      width: min(92vw, 1480px);
+      box-shadow: 0 24px 80px rgb(0 0 0 / 0.42);
 
       @media all and not ($desktop) {
-        width: 90%;
+        width: 94vw;
+        height: 84vh;
       }
     }
   }

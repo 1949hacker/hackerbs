@@ -3,18 +3,7 @@ title: 记录初学Python开发fio测试工具
 date: '2023-03-20 18:19:44'
 tags:
   - python
-  - p
-  - 'y'
-  - t
-  - h
-  - o
-  - 'n'
-  - ','
-  - f
-  - i
-  - legacy-blog
-  - 知识图谱
-  - engineering-tools
+  - fio
 aliases:
   - 记录初学Python开发fio测试工具
 origin:

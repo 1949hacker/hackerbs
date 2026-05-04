@@ -8,9 +8,6 @@ tags:
   - apt源
   - yumdownloader
   - apt包下载工具
-  - legacy-blog
-  - 知识图谱
-  - engineering-release
 aliases:
   - 本站上线私有apt源仓库及自制实用deb包
 origin:

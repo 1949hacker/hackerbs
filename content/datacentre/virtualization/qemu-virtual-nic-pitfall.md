@@ -6,9 +6,6 @@ tags:
   - 虚拟机
   - 虚拟网卡
   - qemu
-  - legacy-blog
-  - 知识图谱
-  - datacentre-virtualization
 aliases:
   - 记录Proxmox-VE虚拟机网卡的一次坑
   - 记录qemu虚拟机网卡的一次坑

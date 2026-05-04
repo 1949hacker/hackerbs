@@ -8,9 +8,6 @@ tags:
   - 百科
   - 内存
   - iDRAC
-  - legacy-blog
-  - 知识图谱
-  - datacentre-hardware
 aliases:
   - 关于DELL-PowerEdge报错Correctable-memory-error-logging-disabled-for-a-memory-device的说明
   - 关于DELL PowerEdge报错Correctable memory error logging disabled for a memory device的说明

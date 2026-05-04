@@ -8,9 +8,6 @@ tags:
   - 排障
   - 阵列
   - RAID
-  - legacy-blog
-  - 知识图谱
-  - datacentre-storage
 aliases:
   - DELL服务器硬盘IO告警排障思路
 origin:

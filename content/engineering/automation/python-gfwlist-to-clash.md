@@ -8,9 +8,6 @@ tags:
   - GFWList
   - GEO
   - 分流
-  - legacy-blog
-  - 知识图谱
-  - engineering-automation
 aliases:
   - Python实现自动将GFWList规则转换为Clash规则
 origin:

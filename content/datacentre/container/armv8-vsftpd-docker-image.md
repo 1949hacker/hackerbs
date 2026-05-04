@@ -5,14 +5,6 @@ tags:
   - Docker
   - armv8
   - vsftpd
-  - a
-  - r
-  - m
-  - v
-  - '8'
-  - legacy-blog
-  - 知识图谱
-  - datacentre-container
 aliases:
   - 记录一次构建armv8平台vsftpd-Docker镜像的过程
   - 记录一次构建armv8平台vsftpd Docker镜像的过程

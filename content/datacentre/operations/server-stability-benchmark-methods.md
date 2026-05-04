@@ -10,9 +10,6 @@ tags:
   - 内存
   - CPU
   - 硬盘
-  - legacy-blog
-  - 知识图谱
-  - datacentre-operations
 aliases:
   - 服务器稳定性及基准测试方法
 origin:

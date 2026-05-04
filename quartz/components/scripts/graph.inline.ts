@@ -83,6 +83,7 @@ async function renderGraph(graph: HTMLElement, fullSlug: FullSlug) {
     linkDistance,
     fontSize,
     opacityScale,
+    maxLabelLength,
     removeTags,
     showTags,
     focusOnHover,
@@ -143,8 +144,18 @@ async function renderGraph(graph: HTMLElement, fullSlug: FullSlug) {
     if (showTags) tags.forEach((tag) => neighbourhood.add(tag))
   }
 
+  function truncateLabel(text: string) {
+    const chars = [...text]
+    if (chars.length <= maxLabelLength) {
+      return text
+    }
+
+    return chars.slice(0, maxLabelLength).join("") + "..."
+  }
+
   const nodes = [...neighbourhood].map((url) => {
-    const text = url.startsWith("tags/") ? "#" + url.substring(5) : (data.get(url)?.title ?? url)
+    const rawText = url.startsWith("tags/") ? "#" + url.substring(5) : (data.get(url)?.title ?? url)
+    const text = truncateLabel(rawText)
     return {
       id: url,
       text,
@@ -165,11 +176,12 @@ async function renderGraph(graph: HTMLElement, fullSlug: FullSlug) {
   const height = Math.max(graph.offsetHeight, 250)
 
   // we virtualize the simulation and use pixi to actually render it
+  const isDenseGraph = graphData.nodes.length > 42
   const simulation: Simulation<NodeData, LinkData> = forceSimulation<NodeData>(graphData.nodes)
     .force("charge", forceManyBody().strength(-100 * repelForce))
     .force("center", forceCenter().strength(centerForce))
     .force("link", forceLink(graphData.links).distance(linkDistance))
-    .force("collide", forceCollide<NodeData>((n) => nodeRadius(n)).iterations(3))
+    .force("collide", forceCollide<NodeData>((n) => collisionRadius(n)).iterations(4))
 
   const radius = (Math.min(width, height) / 2) * 0.8
   if (enableRadial) simulation.force("radial", forceRadial(radius).strength(0.2))
@@ -209,7 +221,14 @@ async function renderGraph(graph: HTMLElement, fullSlug: FullSlug) {
     const numLinks = graphData.links.filter(
       (l) => l.source.id === d.id || l.target.id === d.id,
     ).length
-    return 2 + Math.sqrt(numLinks)
+    const baseRadius = d.id.endsWith("/index") || d.id === "knowledge-universe-map" ? 4 : 2
+    return baseRadius + Math.sqrt(numLinks)
+  }
+
+  function collisionRadius(d: NodeData) {
+    const labelWidth = Math.min([...d.text].length, maxLabelLength) * fontSize * 3.1
+    const maxCollisionRadius = isDenseGraph ? 38 : 54
+    return Math.min(Math.max(nodeRadius(d) + 8, labelWidth), maxCollisionRadius)
   }
 
   let hoveredNodeId: string | null = null
@@ -254,12 +273,12 @@ async function renderGraph(graph: HTMLElement, fullSlug: FullSlug) {
     const tweenGroup = new TweenGroup()
 
     for (const l of linkRenderData) {
-      let alpha = 1
+      let alpha = isDenseGraph ? 0.34 : 0.58
 
       // if we are hovering over a node, we want to highlight the immediate neighbours
       // with full alpha and the rest with default alpha
       if (hoveredNodeId) {
-        alpha = l.active ? 1 : 0.2
+        alpha = l.active ? 0.95 : 0.08
       }
 
       l.color = l.active ? computedStyleMap["--gray"] : computedStyleMap["--lightgray"]

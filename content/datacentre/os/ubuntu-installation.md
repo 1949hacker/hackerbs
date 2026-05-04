@@ -7,9 +7,6 @@ tags:
   - Linux安装
   - Ubuntu服务器
   - Linux
-  - legacy-blog
-  - 知识图谱
-  - datacentre-os
 aliases:
   - Ubuntu安装教程
 origin:

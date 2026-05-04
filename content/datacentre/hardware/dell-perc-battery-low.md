@@ -8,9 +8,6 @@ tags:
   - 百科
   - BBU
   - 阵列卡
-  - legacy-blog
-  - 知识图谱
-  - datacentre-hardware
 aliases:
   - DELL报错The-PERC1-battery-is-low
   - DELL报错The PERC1 battery is low

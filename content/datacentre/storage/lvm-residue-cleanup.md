@@ -7,9 +7,6 @@ tags:
   - 磁盘
   - 解决办法
   - dmsetup
-  - legacy-blog
-  - 知识图谱
-  - datacentre-storage
 aliases:
   - 关于磁盘残留lvm的解决办法
 origin:

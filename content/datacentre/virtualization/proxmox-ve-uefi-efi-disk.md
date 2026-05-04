@@ -4,24 +4,8 @@ date: '2023-01-03 12:00:25'
 tags:
   - Proxmox-VE
   - 虚拟机
-  - P
-  - r
-  - o
-  - m
-  - x
-  - '-'
-  - V
-  - E
-  - ','
-  - U
-  - F
-  - I
-  - 虚
-  - 拟
-  - 机
-  - legacy-blog
-  - 知识图谱
-  - datacentre-virtualization
+  - Promox-VE
+  - UEFI
 aliases:
   - 关于Proxmox-VE系统创建UEFI虚拟机需要单独添加EFI磁盘的问题
 origin:

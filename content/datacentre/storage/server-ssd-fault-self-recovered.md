@@ -9,9 +9,6 @@ tags:
   - 硬盘
   - 带外
   - BMC
-  - legacy-blog
-  - 知识图谱
-  - datacentre-storage
 aliases:
   - 记录一次分析-服务器SSD报故障随后自行恢复正常现象
   - '记录一次分析[服务器SSD报故障随后自行恢复正常现象]'

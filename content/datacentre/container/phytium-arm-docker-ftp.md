@@ -3,15 +3,7 @@ title: 飞腾arm平台使用docker部署ftp教程
 date: '2023-09-12 20:50:38'
 tags:
   - Docker
-  - v
-  - s
-  - f
-  - t
-  - p
-  - d
-  - legacy-blog
-  - 知识图谱
-  - datacentre-container
+  - vsftpd
 aliases:
   - 飞腾arm平台使用docker部署ftp教程
 origin:

@@ -5,15 +5,7 @@ tags:
   - Debian
   - Linux
   - deb
-  - 构
-  - 建
-  - d
-  - e
-  - b
-  - 包
-  - legacy-blog
-  - 知识图谱
-  - engineering-release
+  - 构建deb包
 aliases:
   - 将二进制可执行程序构建为deb包
 origin:

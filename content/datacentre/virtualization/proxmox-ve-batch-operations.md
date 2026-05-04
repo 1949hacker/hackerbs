@@ -4,9 +4,6 @@ date: '2024-02-06 05:32:15'
 tags:
   - Proxmox-VE
   - 批量
-  - legacy-blog
-  - 知识图谱
-  - datacentre-virtualization
 aliases:
   - Proxmox-VE批量加集群、批量克隆、批量设置并同步时间、批量清除集群残留、批量创建网卡等一站式解决方案！（本教程采用YgeCloud实测）
   - Proxmox-VE批量加集群、批量克隆、批量设置并同步时间、批量清除集群残留、批量创建网卡等一站式解决方案！

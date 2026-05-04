@@ -9,9 +9,6 @@ tags:
   - 异地组网
   - Nginx
   - 反向代理
-  - legacy-blog
-  - 知识图谱
-  - datacentre-network
 aliases:
   - 异地组网加Nginx反代实现计算资源本地化
 origin:

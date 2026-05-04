@@ -3,9 +3,6 @@ title: C++编写fio测试工具 | C++写脚本，我在发疯
 date: '2024-11-15 14:05:38'
 tags:
   - C++ - C - fio - 脚本
-  - legacy-blog
-  - 知识图谱
-  - engineering-tools
 aliases:
   - cpp编写fio测试工具，我在发疯
 origin:

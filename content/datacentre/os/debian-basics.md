@@ -4,9 +4,6 @@ date: '2023-03-01 15:45:44'
 tags:
   - Linux
   - Debian
-  - legacy-blog
-  - 知识图谱
-  - datacentre-os
 aliases:
   - Debian基础知识【持续更新】
 origin:

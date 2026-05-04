@@ -6,9 +6,6 @@ tags:
   - v2ray
   - v2ray客户端
   - config.json
-  - legacy-blog
-  - 知识图谱
-  - datacentre-security
 aliases:
   - 记录一下我的Debian配置v2ray-config-json
   - 记录一下我的Debian配置v2ray config.json

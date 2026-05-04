@@ -8,9 +8,6 @@ tags:
   - 哲学
   - 思想
   - 人生价值
-  - legacy-blog
-  - 知识图谱
-  - essays-existence-ripples
 aliases:
   - 随笔-《存在的痕迹：不在于石碑，而于涟漪》
   - 随笔 - 《存在的痕迹：不在于石碑，而于涟漪》

@@ -3,22 +3,7 @@ title: vscode编写markdown的插件推荐
 date: '2022-10-26 11:09:08'
 tags:
   - markdown
-  - v
-  - s
-  - c
-  - o
-  - d
-  - e
-  - ','
-  - m
-  - a
-  - r
-  - k
-  - w
-  - 'n'
-  - legacy-blog
-  - 知识图谱
-  - engineering-tools
+  - vscode
 aliases:
   - vscode编写markdown的插件推荐
 origin:

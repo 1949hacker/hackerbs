@@ -14,9 +14,6 @@ tags:
   - 硬盘
   - 故障
   - 日志
-  - legacy-blog
-  - 知识图谱
-  - datacentre-storage
 aliases:
   - 关于硬盘smartctl日志排障并报修的笔记
   - 关于服务器硬盘故障但带外没有错误日志的排障与报修笔记

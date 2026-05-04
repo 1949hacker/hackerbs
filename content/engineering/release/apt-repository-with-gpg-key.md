@@ -6,9 +6,6 @@ tags:
   - GPG key
   - 可信任apt源
   - apt源
-  - legacy-blog
-  - 知识图谱
-  - engineering-release
 aliases:
   - 如何搭建具有GPGkey验证的可信任apt源
 origin:

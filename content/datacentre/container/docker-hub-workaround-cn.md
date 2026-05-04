@@ -6,9 +6,6 @@ tags:
   - docker hub
   - docker pull
   - docker 代理
-  - legacy-blog
-  - 知识图谱
-  - datacentre-container
 aliases:
   - 国内docker-hub无法使用的解决办法
   - 国内docker hub无法使用的解决办法

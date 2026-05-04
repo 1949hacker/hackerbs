@@ -7,9 +7,6 @@ tags:
   - docker compose
   - mariadb
   - redis
-  - legacy-blog
-  - 知识图谱
-  - datacentre-container
 aliases:
   - 记录用docker部署nextcloud及配套mariadb、redis和持久化存储
 origin:

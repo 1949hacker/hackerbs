@@ -8,9 +8,6 @@ tags:
   - zfs
   - RAID
   - 磁盘阵列
-  - legacy-blog
-  - 知识图谱
-  - datacentre-virtualization
 aliases:
   - 直接编写crontab使用一行命令完成Proxmox-VE所有虚拟机的安全关机
   - 直接编写crontab使用一行命令完成Proxmox-VE所有虚拟机的安全关机和依次开机

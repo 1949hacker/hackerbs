@@ -4,15 +4,6 @@ date: '2023-09-12 21:51:36'
 tags:
   - Docker
   - ARM
-  - D
-  - o
-  - c
-  - k
-  - e
-  - r
-  - legacy-blog
-  - 知识图谱
-  - datacentre-container
 aliases:
   - Debian-x86-64平台搭建arm-docker环境
   - Debian x86_64平台搭建arm docker环境

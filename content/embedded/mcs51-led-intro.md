@@ -3,14 +3,7 @@ title: 51单片机入门-点亮LED
 date: '2023-09-25 10:14:36'
 tags:
   - 嵌入式开发
-  - '5'
-  - '1'
-  - 单
-  - 片
-  - 机
-  - legacy-blog
-  - 知识图谱
-  - embedded-mcs51-led-intro
+  - 51单片机
 aliases:
   - 51单片机入门-点亮LED
 origin:

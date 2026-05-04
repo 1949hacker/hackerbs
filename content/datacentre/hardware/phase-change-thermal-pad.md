@@ -4,9 +4,6 @@ date: '2024-04-03 15:23:15'
 tags:
   - 相变
   - 相变硅脂
-  - legacy-blog
-  - 知识图谱
-  - datacentre-hardware
 aliases:
   - 相片硅脂片知识
 origin:

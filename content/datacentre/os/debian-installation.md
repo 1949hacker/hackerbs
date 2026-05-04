@@ -7,9 +7,6 @@ tags:
   - Linux安装
   - Debian服务器
   - Linux
-  - legacy-blog
-  - 知识图谱
-  - datacentre-os
 aliases:
   - Debian安装教程
 origin:

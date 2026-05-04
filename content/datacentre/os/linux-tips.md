@@ -3,9 +3,6 @@ title: Linux技巧【持续更新】
 date: '2022-11-17 16:15:48'
 tags:
   - Linux
-  - legacy-blog
-  - 知识图谱
-  - datacentre-os
 aliases:
   - Linux技巧【随时更新】
   - Linux技巧【持续更新】

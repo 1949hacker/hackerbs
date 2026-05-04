@@ -4,13 +4,6 @@ date: '2024-01-28 19:12:01'
 tags:
   - apt源
   - docker源
-  - a
-  - p
-  - t
-  - 源
-  - legacy-blog
-  - 知识图谱
-  - datacentre-os
 aliases:
   - apt等各种源列表（持续更新）
 origin:

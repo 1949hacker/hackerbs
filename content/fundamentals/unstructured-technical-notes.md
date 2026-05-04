@@ -11,12 +11,6 @@ tags:
   - 网络
   - 虚拟化
   - Shell
-  - 知
-  - 识
-  - 库
-  - legacy-blog
-  - 知识图谱
-  - fundamentals-unstructured-technical-notes
 aliases:
   - 未整理的随手技术笔记（实时更新，各种乱七八糟的技术都会记录在这儿）
 origin:

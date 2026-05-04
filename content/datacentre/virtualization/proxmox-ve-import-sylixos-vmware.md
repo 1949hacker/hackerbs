@@ -4,27 +4,7 @@ date: '2023-02-28 16:31:43'
 tags:
   - Proxmox-VE
   - SylixOS
-  - P
-  - r
-  - o
-  - x
-  - m
-  - '-'
-  - V
-  - E
-  - ','
-  - S
-  - 'y'
-  - l
-  - i
-  - O
-  - M
-  - w
-  - a
-  - e
-  - legacy-blog
-  - 知识图谱
-  - datacentre-virtualization
+  - VMware
 aliases:
   - Proxmox-VE-导入SylixOS-VMware版
   - Proxmox-VE 导入SylixOS VMware版

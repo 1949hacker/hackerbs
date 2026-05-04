@@ -3,14 +3,7 @@ title: 51单片机的学习笔记
 date: '2022-11-21 02:39:29'
 tags:
   - 嵌入式开发
-  - '5'
-  - '1'
-  - 单
-  - 片
-  - 机
-  - legacy-blog
-  - 知识图谱
-  - embedded-mcs51-study-notes
+  - 51单片机
 aliases:
   - 51单片机的学习笔记
 origin:

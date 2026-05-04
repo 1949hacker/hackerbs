@@ -7,9 +7,6 @@ tags:
   - 排障
   - Linux
   - BMC
-  - legacy-blog
-  - 知识图谱
-  - datacentre-operations
 aliases:
   - 异常宕机BMC日志无参考价值时的排障思路
 origin:

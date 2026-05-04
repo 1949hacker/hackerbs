@@ -6,9 +6,6 @@ tags:
   - 英语
   - 英文缩写
   - 中英对照
-  - legacy-blog
-  - 知识图谱
-  - fundamentals-it-terms-glossary
 aliases:
   - IT场景专业术语表
 origin:
