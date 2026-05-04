@@ -1,144 +1,71 @@
 ---
-title: hackerbs 知识库
+title: HackerBS Knowledge Universe
+description: 面向数据中心、服务器硬件、网络、存储、Linux 与基础设施自动化的工程知识宇宙。
 ---
 
-# hackerbs 知识库
-
-欢迎来到 **hackerbs 的知识库**。
-
-这是一个面向**数据中心 / IT基础设施 / 运维工程 / 云与平台工程**的长期知识体系，  
-目标是构建一个：  
-> 🧠 可积累 · 可复用 · 可演进的工程认知系统  
-而不仅是零散文章集合。
-
----
-
-## 我是谁？
-
-我是一名从事 **IT 运维 / 数据中心基础设施 / 系统工程方向** 的工程师，  
-关注：
-
-- 服务器与硬件体系  
-- 数据中心与网络  
-- 存储与系统可靠性  
-- 云与平台工程  
-- 以及：工程思维如何改变个人成长路径  
-
-这个站点用于沉淀：  
-> 技术能力 × 认知体系 × 工程经验
-
----
-
-## 如何使用本站？
-
-你可以按三种方式阅读：
-
-### 🧭 知识体系导航
-
-从“体系”出发，系统性构建工程认知：
-
-- [[数据中心知识体系总览]]
-- [[服务器硬件体系]]
-- [[数据中心网络体系]]
-- [[存储与数据可靠性体系]]
-- [[操作系统与平台体系]]
-
----
-
-### 🔎 问题导向阅读
-
-当你遇到具体问题时，从搜索或专题文章入手，例如：
-
-- RAID vs HBA 如何选型？
-- 光模块 OM3 / OM4 / OM5 有什么区别？
-- NVMe 与 U.2 在工程中如何权衡？
-- ext4 / xfs / zfs 如何选择？
-
----
-
-### 🧩 工程实践与认知提升
-
-除了硬技术，也会涉及：
-
-- 架构设计思维
-- 运维自动化与工程效率
-- 职业路径与技术成长
-- 以及：如何构建“可持续进化”的工程能力
-
----
-
-## 核心知识领域
-
-### 🏗 数据中心 / 基础设施
-
-从服务器到机房，从硬件到平台的工程认知体系：
-
-👉 [[数据中心知识体系总览]]
-
----
-
-### 💻 服务器硬件体系
-
-连接、内存、存储、主板、GPU：
-
-👉 [[服务器硬件体系]]
-
----
-
-### 🌐 网络与通信体系
-
-光纤、交换、路由、IP规划：
-
-👉 [[数据中心网络体系]]
-
----
-
-### 💾 存储与可靠性体系
-
-RAID、HBA、文件系统、数据安全：
-
-👉 [[存储与数据可靠性体系]]
-
----
-
-### 🧩 操作系统与平台体系
-
-Windows / Linux / 平台选型与生命周期：
-
-👉 [[操作系统与平台体系]]
-
----
-
-## 本站的长期目标
-
-这个站点不是为了“更新频率”，而是为了：
-
-- 构建一个**工程认知复利系统**
-- 为长期技术发展服务
-- 作为未来求职、合作、输出的“能力载体”
-- 也是我个人“第二大脑”的工程化实现
-
----
-
-## 联系与延展
-
-如果你对：
-
-- 数据中心工程  
-- 系统架构  
-- 工程思维  
-- 或技术成长路径  
-
-感兴趣，欢迎持续关注与交流。
-
----
-
-> “写博客不是为了记录过去，而是为了塑造未来。”
-
----
-
-## 联系与支持
-
-如果你希望就数据中心工程、系统架构或技术成长与我交流，  
-欢迎前往：  
-👉 [[联系与支持]]
+<!-- prettier-ignore-start -->
+<div class="hbs-home">
+<section class="knowledge-hero">
+<div class="hero-copy">
+<p class="eyebrow">HackerBS Knowledge Universe</p>
+<h1><span>把零散经验连接成</span><span>一整个工程知识宇宙。</span></h1>
+<p class="hero-lede">这里不是传统文章博客，而是围绕数据中心、服务器硬件、网络、存储、操作系统、平台工程和职业成长建立的长期知识网络。每一篇笔记都应该成为地图上的一个节点，帮助新手沿着关系一步步掌握完整体系。</p>
+<div class="hero-actions">
+<a href="./datacentre/datacenter-knowledge-map" class="primary-action internal">进入知识地图</a>
+<a href="./datacentre/" class="secondary-action internal">浏览数据中心体系</a>
+</div>
+</div>
+<div class="universe-visual" aria-label="Knowledge universe visual">
+<div class="orbit orbit-one"></div>
+<div class="orbit orbit-two"></div>
+<div class="orbit orbit-three"></div>
+<div class="universe-node core"><span>CORE</span><strong>工程认知</strong></div>
+<div class="universe-node node-a"><span>01</span><strong>服务器</strong></div>
+<div class="universe-node node-b"><span>02</span><strong>网络</strong></div>
+<div class="universe-node node-c"><span>03</span><strong>存储</strong></div>
+<div class="universe-node node-d"><span>04</span><strong>Linux</strong></div>
+<div class="universe-node node-e"><span>05</span><strong>自动化</strong></div>
+<div class="signal-line line-a"></div>
+<div class="signal-line line-b"></div>
+<div class="signal-line line-c"></div>
+</div>
+</section>
+<section class="hbs-metric-grid">
+<article><span>Knowledge Graph</span><strong>关系优先</strong><p>用链接、反链和图谱表达知识之间的依赖，而不是只按发布时间堆文章。</p></article>
+<article><span>Learning Path</span><strong>新手可走</strong><p>从硬件基础、网络链路、存储可靠性到系统平台，逐步建立完整工程语感。</p></article>
+<article><span>Field Notes</span><strong>经验可复用</strong><p>把真实运维和数据中心经验沉淀为判断框架、排障路径和选型原则。</p></article>
+</section>
+<section class="section-heading">
+<p class="eyebrow">Domain Map</p>
+<h2>核心知识域</h2>
+</section>
+<section class="hbs-domain-grid">
+<a href="./datacentre/hardware/" class="domain-card internal"><span>01</span><strong>服务器硬件体系</strong><p>CPU、内存、主板、GPU、接口、线缆和整机架构。</p></a>
+<a href="./datacentre/network/" class="domain-card internal"><span>02</span><strong>数据中心网络</strong><p>光模块、交换、路由、链路规划和工程拓扑。</p></a>
+<a href="./datacentre/storage/" class="domain-card internal"><span>03</span><strong>存储与可靠性</strong><p>RAID、HBA、NVMe、文件系统和数据安全。</p></a>
+<a href="./datacentre/os/" class="domain-card internal"><span>04</span><strong>操作系统与平台</strong><p>Linux、Windows、虚拟化、平台生命周期和自动化。</p></a>
+</section>
+<section class="section-heading">
+<p class="eyebrow">Learning Route</p>
+<h2>建议学习路径</h2>
+</section>
+<section class="path-grid">
+<article><span>Step 1</span><strong>先建立硬件直觉</strong><p>理解服务器内部的计算、内存、PCIe、存储接口和扩展边界。</p></article>
+<article><span>Step 2</span><strong>再理解连接关系</strong><p>从机柜、网络、交换、光纤和链路冗余看整个数据中心如何流动。</p></article>
+<article><span>Step 3</span><strong>最后形成工程判断</strong><p>把可靠性、成本、性能、可维护性和自动化纳入同一个决策框架。</p></article>
+</section>
+<section class="signal-grid">
+<article>
+<p class="eyebrow">Operating Principle</p>
+<h2>本站长期目标</h2>
+<p>它应该像第二大脑，也像工程训练场。内容不是写完就结束，而是会不断被重新连接、修正和升级，最终形成一个可以被新手继承、被自己复用、被未来扩展的知识系统。</p>
+</article>
+<article>
+<p class="eyebrow">Start Here</p>
+<h2>从地图开始</h2>
+<p>如果你第一次来，先打开数据中心知识体系总览，再沿着图谱进入硬件、网络、存储和系统页面。</p>
+<a href="./datacentre/datacenter-knowledge-map" class="secondary-action internal">打开总览</a>
+</article>
+</section>
+</div>
+<!-- prettier-ignore-end -->
