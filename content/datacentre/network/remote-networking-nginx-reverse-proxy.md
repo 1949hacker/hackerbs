@@ -15,13 +15,14 @@ origin:
   repository: 'https://github.com/1949hacker/blog.git'
   path: source/_posts/异地组网加Nginx反代实现计算资源本地化.md
 ---
-> [!info] 知识关系
-> 所属体系: [[datacentre/_index|数据中心与基础设施]] / [[datacentre/network/_index|数据中心网络体系]]
-> 主题节点: 异地组网+Nginx反代 | 计算资源本地化
-> 推荐前置: [[fundamentals/it-basics-encyclopedia|IT基础知识百科]]
-> 相关主题: [[datacentre/security/linux-ssh-log-intrusion-hardening|Linux查询ssh日志判断是否被入侵及加强ssh安全的办法]]
+
+> [!info] 知识位置
+> 体系: 数据中心网络体系
+> 层级: 实践
+> 前置知识: [[datacentre/os/linux-tips|Linux技巧【持续更新】]]
+> 强关联: [[datacentre/security/linux-ssh-log-intrusion-hardening|Linux查询ssh日志判断是否被入侵及加强ssh安全的办法]]
 > 原始来源: `source/_posts/异地组网加Nginx反代实现计算资源本地化.md`
-> 从旧博客迁移；已按知识图谱结构重新归档。
+> 关系规则: 只保留学习或排障上有直接依赖的边，避免为了双链而双链。
 
 ---
 

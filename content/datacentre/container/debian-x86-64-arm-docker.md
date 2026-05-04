@@ -11,13 +11,13 @@ origin:
   repository: 'https://github.com/1949hacker/blog.git'
   path: source/_posts/Debian-x86-64平台搭建arm-docker环境.md
 ---
-> [!info] 知识关系
-> 所属体系: [[datacentre/_index|数据中心与基础设施]] / [[datacentre/container/_index|容器与镜像体系]]
-> 主题节点: Debian x86_64平台搭建arm docker环境
-> 推荐前置: [[datacentre/os/debian-basics|Debian基础知识【持续更新】]] / [[datacentre/container/docker-hub-workaround-cn|国内docker hub无法使用的解决办法]]
-> 相关主题: [[datacentre/container/armv8-vsftpd-docker-image|记录一次构建armv8平台vsftpd Docker镜像的过程]] / [[datacentre/container/phytium-arm-docker-ftp|飞腾arm平台使用docker部署ftp教程]]
+
+> [!info] 知识位置
+> 体系: 容器与镜像体系
+> 层级: 实践
+> 前置知识: [[datacentre/os/debian-basics|Debian基础知识【持续更新】]] / [[datacentre/container/docker-hub-workaround-cn|国内docker hub无法使用的解决办法]]
 > 原始来源: `source/_posts/Debian-x86-64平台搭建arm-docker环境.md`
-> 从旧博客迁移；已按知识图谱结构重新归档。
+> 关系规则: 只保留学习或排障上有直接依赖的边，避免为了双链而双链。
 
 ---
 

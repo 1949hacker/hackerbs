@@ -15,13 +15,13 @@ origin:
   repository: 'https://github.com/1949hacker/blog.git'
   path: source/_posts/直接编写crontab使用一行命令完成Proxmox-VE所有虚拟机的安全关机.md
 ---
-> [!info] 知识关系
-> 所属体系: [[datacentre/_index|数据中心与基础设施]] / [[datacentre/virtualization/_index|虚拟化与 Proxmox 体系]]
-> 主题节点: 直接编写crontab使用一行命令完成Proxmox-VE所有虚拟机的安全关机和依次开机
-> 推荐前置: [[datacentre/virtualization/proxmox-ve-batch-operations|Proxmox-VE批量加集群、批量克隆、批量设置并同步时间、批量清除集群残留、批量创建网卡等一站式解决方案！]]
-> 相关主题: [[datacentre/virtualization/proxmox-ve-uefi-efi-disk|关于Proxmox-VE系统创建UEFI虚拟机需要单独添加EFI磁盘的问题]]
+
+> [!info] 知识位置
+> 体系: 虚拟化与 Proxmox 体系
+> 层级: 工具
+> 前置知识: [[datacentre/virtualization/proxmox-ve-batch-operations|Proxmox-VE批量加集群、批量克隆、批量设置并同步时间、批量清除集群残留、批量创建网卡等一站式解决方案！]]
 > 原始来源: `source/_posts/直接编写crontab使用一行命令完成Proxmox-VE所有虚拟机的安全关机.md`
-> 从旧博客迁移；已按知识图谱结构重新归档。
+> 关系规则: 只保留学习或排障上有直接依赖的边，避免为了双链而双链。
 
 ---
 

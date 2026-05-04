@@ -10,13 +10,14 @@ origin:
   repository: 'https://github.com/1949hacker/blog.git'
   path: source/_posts/相片硅脂片知识.md
 ---
-> [!info] 知识关系
-> 所属体系: [[datacentre/_index|数据中心与基础设施]] / [[datacentre/hardware/_index|服务器硬件体系]]
-> 主题节点: 相片硅脂片知识
-> 推荐前置: [[fundamentals/it-basics-encyclopedia|IT基础知识百科]]
-> 相关主题: [[datacentre/operations/server-stability-benchmark-methods|服务器稳定性及基准测试方法]]
+
+> [!info] 知识位置
+> 体系: 服务器硬件体系
+> 层级: 实践
+> 前置知识: [[fundamentals/it-basics-encyclopedia|IT基础知识百科]]
+> 强关联: [[datacentre/operations/server-stability-benchmark-methods|服务器稳定性及基准测试方法]]
 > 原始来源: `source/_posts/相片硅脂片知识.md`
-> 从旧博客迁移；已按知识图谱结构重新归档。
+> 关系规则: 只保留学习或排障上有直接依赖的边，避免为了双链而双链。
 
 ---
 

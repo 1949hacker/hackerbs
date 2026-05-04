@@ -12,13 +12,13 @@ origin:
   repository: 'https://github.com/1949hacker/blog.git'
   path: source/_posts/将二进制可执行程序构建为deb包.md
 ---
-> [!info] 知识关系
-> 所属体系: [[engineering/_index|工程工具与自动化]] / [[engineering/release/_index|软件分发与包管理]]
-> 主题节点: 将二进制可执行程序构建为deb包
-> 推荐前置: [[datacentre/os/debian-basics|Debian基础知识【持续更新】]]
-> 相关主题: [[engineering/release/private-apt-repo-and-debs|本站上线私有apt源仓库及自制实用deb包]] / [[engineering/release/apt-repository-with-gpg-key|如何搭建具有GPGkey验证的可信任apt源]]
+
+> [!info] 知识位置
+> 体系: 软件分发与包管理
+> 层级: 发布
+> 前置知识: [[datacentre/os/debian-basics|Debian基础知识【持续更新】]]
 > 原始来源: `source/_posts/将二进制可执行程序构建为deb包.md`
-> 从旧博客迁移；已按知识图谱结构重新归档。
+> 关系规则: 只保留学习或排障上有直接依赖的边，避免为了双链而双链。
 
 ---
 

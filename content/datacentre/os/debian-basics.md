@@ -10,13 +10,13 @@ origin:
   repository: 'https://github.com/1949hacker/blog.git'
   path: source/_posts/Debian基础知识【持续更新】.md
 ---
-> [!info] 知识关系
-> 所属体系: [[datacentre/_index|数据中心与基础设施]] / [[datacentre/os/_index|操作系统与平台体系]]
-> 主题节点: Debian基础知识【持续更新】
-> 推荐前置: [[fundamentals/it-basics-encyclopedia|IT基础知识百科]]
-> 相关主题: [[datacentre/os/apt-mirror-sources|apt等各种源列表（持续更新）]] / [[datacentre/os/debian-installation|Debian安装教程]] / [[datacentre/os/linux-tips|Linux技巧【持续更新】]]
+
+> [!info] 知识位置
+> 体系: 操作系统与平台体系
+> 层级: 基础
+> 前置知识: [[fundamentals/it-basics-encyclopedia|IT基础知识百科]]
 > 原始来源: `source/_posts/Debian基础知识【持续更新】.md`
-> 从旧博客迁移；已按知识图谱结构重新归档。
+> 关系规则: 只保留学习或排障上有直接依赖的边，避免为了双链而双链。
 
 ---
 

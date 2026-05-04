@@ -16,13 +16,14 @@ origin:
   repository: 'https://github.com/1949hacker/blog.git'
   path: source/_posts/服务器稳定性及基准测试方法.md
 ---
-> [!info] 知识关系
-> 所属体系: [[datacentre/_index|数据中心与基础设施]] / [[datacentre/operations/_index|运行稳定性与排障]]
-> 主题节点: 服务器稳定性及基准测试方法
-> 推荐前置: [[datacentre/os/linux-tips|Linux技巧【持续更新】]]
-> 相关主题: [[datacentre/storage/dell-disk-io-alert-troubleshooting|DELL服务器硬盘IO告警排障思路]] / [[datacentre/storage/smartctl-disk-troubleshooting-rma|关于服务器硬盘故障但带外没有错误日志的排障与报修笔记]] / [[engineering/tools/cpp-fio-tool-notes|C++编写fio测试工具 ／ C++写脚本，我在发疯]]
+
+> [!info] 知识位置
+> 体系: 运行稳定性与排障
+> 层级: 实践
+> 前置知识: [[datacentre/os/linux-tips|Linux技巧【持续更新】]]
+> 强关联: [[datacentre/storage/dell-disk-io-alert-troubleshooting|DELL服务器硬盘IO告警排障思路]]
 > 原始来源: `source/_posts/服务器稳定性及基准测试方法.md`
-> 从旧博客迁移；已按知识图谱结构重新归档。
+> 关系规则: 只保留学习或排障上有直接依赖的边，避免为了双链而双链。
 
 ---
 

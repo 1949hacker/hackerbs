@@ -16,13 +16,14 @@ origin:
   repository: 'https://github.com/1949hacker/blog.git'
   path: source/_posts/记录一次分析-服务器SSD报故障随后自行恢复正常现象.md
 ---
-> [!info] 知识关系
-> 所属体系: [[datacentre/_index|数据中心与基础设施]] / [[datacentre/storage/_index|存储与数据可靠性体系]]
-> 主题节点: 记录一次分析[服务器SSD报故障随后自行恢复正常现象]
-> 推荐前置: [[datacentre/storage/smartctl-disk-troubleshooting-rma|关于服务器硬盘故障但带外没有错误日志的排障与报修笔记]]
-> 相关主题: [[datacentre/storage/dell-disk-io-alert-troubleshooting|DELL服务器硬盘IO告警排障思路]] / [[datacentre/operations/server-stability-benchmark-methods|服务器稳定性及基准测试方法]]
+
+> [!info] 知识位置
+> 体系: 存储与数据可靠性体系
+> 层级: 案例
+> 前置知识: [[datacentre/storage/smartctl-disk-troubleshooting-rma|关于服务器硬盘故障但带外没有错误日志的排障与报修笔记]]
+> 强关联: [[datacentre/operations/server-stability-benchmark-methods|服务器稳定性及基准测试方法]]
 > 原始来源: `source/_posts/记录一次分析-服务器SSD报故障随后自行恢复正常现象.md`
-> 从旧博客迁移；已按知识图谱结构重新归档。
+> 关系规则: 只保留学习或排障上有直接依赖的边，避免为了双链而双链。
 
 ---
 

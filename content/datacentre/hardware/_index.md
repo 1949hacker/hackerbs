@@ -1,25 +1,24 @@
 ---
 title: 服务器硬件体系
 tags:
+  - hardware
   - 知识图谱
 ---
 
 # 服务器硬件体系
 
-从服务器器件、接口、内存、阵列卡和散热材料理解硬件选型与故障判断。
+硬件体系用来建立对服务器内部连接、扩展边界和故障现象的直觉。
 
-## 从这里开始
+## 学习顺序
 
-- [[datacentre/datacenter-knowledge-map|数据中心知识体系总览]]
-- [[fundamentals/it-basics-encyclopedia|IT基础知识百科]]
+1. [[datacentre/hardware/motherboard-io|主板与IO接口]]
+2. [[datacentre/hardware/memory-types|服务器内存类型与代际]]
+3. [[datacentre/hardware/storage-interfaces|存储接口与硬盘形态]]
+4. [[datacentre/hardware/sas-cables|SAS线缆与服务器连接接口]]
+5. [[datacentre/hardware/gpu-basics|GPU基础与性能指标]]
 
-## 本体系节点
+## 排障路径
 
-- [[datacentre/hardware/storage-interfaces|存储接口与硬盘形态]]
-- [[datacentre/hardware/memory-types|服务器内存体系]]
+- [[datacentre/hardware/dell-perc-battery-low|DELL报错The PERC1 battery is low]]
 - [[datacentre/hardware/dell-poweredge-correctable-memory-error-logging|关于DELL PowerEdge报错Correctable memory error logging disabled for a memory device的说明]]
 - [[datacentre/hardware/phase-change-thermal-pad|相片硅脂片知识]]
-- [[datacentre/hardware/motherboard-io|主板 I/O 与扩展架构]]
-- [[datacentre/hardware/dell-perc-battery-low|DELL报错The PERC1 battery is low]]
-- [[datacentre/hardware/gpu-basics|GPU 与加速卡基础]]
-- [[datacentre/hardware/sas-cables|SAS 线缆与接口]]

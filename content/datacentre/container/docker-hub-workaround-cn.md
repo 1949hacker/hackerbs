@@ -13,13 +13,13 @@ origin:
   repository: 'https://github.com/1949hacker/blog.git'
   path: source/_posts/国内docker-hub无法使用的解决办法.md
 ---
-> [!info] 知识关系
-> 所属体系: [[datacentre/_index|数据中心与基础设施]] / [[datacentre/container/_index|容器与镜像体系]]
-> 主题节点: 国内docker hub无法使用的解决办法
-> 推荐前置: [[datacentre/os/apt-mirror-sources|apt等各种源列表（持续更新）]]
-> 相关主题: [[datacentre/container/nextcloud-docker-compose|记录用docker部署nextcloud及配套mariadb、redis和持久化存储]] / [[datacentre/container/debian-x86-64-arm-docker|Debian x86_64平台搭建arm docker环境]]
+
+> [!info] 知识位置
+> 体系: 容器与镜像体系
+> 层级: 基础
+> 前置知识: [[datacentre/os/apt-mirror-sources|apt等各种源列表（持续更新）]]
 > 原始来源: `source/_posts/国内docker-hub无法使用的解决办法.md`
-> 从旧博客迁移；已按知识图谱结构重新归档。
+> 关系规则: 只保留学习或排障上有直接依赖的边，避免为了双链而双链。
 
 ---
 

@@ -13,13 +13,14 @@ origin:
   repository: 'https://github.com/1949hacker/blog.git'
   path: source/_posts/异常宕机BMC日志无参考价值时的排障思路.md
 ---
-> [!info] 知识关系
-> 所属体系: [[datacentre/_index|数据中心与基础设施]] / [[datacentre/operations/_index|运行稳定性与排障]]
-> 主题节点: 异常宕机BMC日志无参考价值时的排障思路
-> 推荐前置: [[datacentre/os/linux-tips|Linux技巧【持续更新】]]
-> 相关主题: [[datacentre/operations/server-stability-benchmark-methods|服务器稳定性及基准测试方法]] / [[datacentre/hardware/dell-poweredge-correctable-memory-error-logging|关于DELL PowerEdge报错Correctable memory error logging disabled for a memory device的说明]]
+
+> [!info] 知识位置
+> 体系: 运行稳定性与排障
+> 层级: 排障
+> 前置知识: [[datacentre/os/linux-tips|Linux技巧【持续更新】]]
+> 强关联: [[datacentre/hardware/dell-poweredge-correctable-memory-error-logging|关于DELL PowerEdge报错Correctable memory error logging disabled for a memory device的说明]]
 > 原始来源: `source/_posts/异常宕机BMC日志无参考价值时的排障思路.md`
-> 从旧博客迁移；已按知识图谱结构重新归档。
+> 关系规则: 只保留学习或排障上有直接依赖的边，避免为了双链而双链。
 
 ---
 

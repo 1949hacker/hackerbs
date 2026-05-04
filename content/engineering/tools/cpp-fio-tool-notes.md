@@ -9,13 +9,14 @@ origin:
   repository: 'https://github.com/1949hacker/blog.git'
   path: source/_posts/cpp编写fio测试工具，我在发疯.md
 ---
-> [!info] 知识关系
-> 所属体系: [[engineering/_index|工程工具与自动化]] / [[engineering/tools/_index|工程工具链]]
-> 主题节点: C++编写fio测试工具 | C++写脚本，我在发疯
-> 推荐前置: [[datacentre/operations/server-stability-benchmark-methods|服务器稳定性及基准测试方法]]
-> 相关主题: [[engineering/tools/python-fio-tool-notes|记录初学Python开发fio测试工具]]
+
+> [!info] 知识位置
+> 体系: 工程工具链
+> 层级: 工具
+> 前置知识: [[datacentre/operations/server-stability-benchmark-methods|服务器稳定性及基准测试方法]]
+> 强关联: [[engineering/tools/python-fio-tool-notes|记录初学Python开发fio测试工具]]
 > 原始来源: `source/_posts/cpp编写fio测试工具，我在发疯.md`
-> 从旧博客迁移；已按知识图谱结构重新归档。
+> 关系规则: 只保留学习或排障上有直接依赖的边，避免为了双链而双链。
 
 ---
 

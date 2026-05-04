@@ -1,17 +1,14 @@
 ---
 title: 数据中心网络体系
 tags:
+  - network
   - 知识图谱
 ---
 
 # 数据中心网络体系
 
-聚焦物理链路、异地组网、反向代理和计算资源连接关系。
+网络体系目前以异地组网和反向代理实践为核心，后续可扩展交换、路由和光纤链路。
 
-## 从这里开始
+## 实践路径
 
-- [[datacentre/os/linux-tips|Linux技巧【持续更新】]]
-
-## 本体系节点
-
-- [[datacentre/network/remote-networking-nginx-reverse-proxy|异地组网+Nginx反代 ／ 计算资源本地化]]
+1. [[datacentre/network/remote-networking-nginx-reverse-proxy|异地组网+Nginx反代 / 计算资源本地化]]

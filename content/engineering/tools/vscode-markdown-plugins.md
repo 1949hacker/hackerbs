@@ -10,12 +10,12 @@ origin:
   repository: 'https://github.com/1949hacker/blog.git'
   path: source/_posts/vscode编写markdown的插件推荐.md
 ---
-> [!info] 知识关系
-> 所属体系: [[engineering/_index|工程工具与自动化]] / [[engineering/tools/_index|工程工具链]]
-> 主题节点: vscode编写markdown的插件推荐
-> 相关主题: [[fundamentals/unstructured-technical-notes|未整理的随手技术笔记（实时更新，各种乱七八糟的技术都会记录在这儿）]]
+
+> [!info] 知识位置
+> 体系: 工程工具链
+> 层级: 写作
 > 原始来源: `source/_posts/vscode编写markdown的插件推荐.md`
-> 从旧博客迁移；已按知识图谱结构重新归档。
+> 关系规则: 只保留学习或排障上有直接依赖的边，避免为了双链而双链。
 
 ---
 

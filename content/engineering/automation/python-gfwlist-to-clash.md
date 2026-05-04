@@ -14,13 +14,14 @@ origin:
   repository: 'https://github.com/1949hacker/blog.git'
   path: source/_posts/Python实现自动将GFWList规则转换为Clash规则.md
 ---
-> [!info] 知识关系
-> 所属体系: [[engineering/_index|工程工具与自动化]] / [[engineering/automation/_index|自动化脚本]]
-> 主题节点: Python实现自动将GFWList规则转换为Clash规则
-> 推荐前置: [[datacentre/os/linux-tips|Linux技巧【持续更新】]]
-> 相关主题: [[datacentre/security/linux-ssh-log-intrusion-hardening|Linux查询ssh日志判断是否被入侵及加强ssh安全的办法]]
+
+> [!info] 知识位置
+> 体系: 自动化脚本
+> 层级: 工具
+> 前置知识: [[datacentre/os/linux-tips|Linux技巧【持续更新】]]
+> 强关联: [[datacentre/security/debian-v2ray-config-json|记录一下我的Debian配置v2ray config.json]]
 > 原始来源: `source/_posts/Python实现自动将GFWList规则转换为Clash规则.md`
-> 从旧博客迁移；已按知识图谱结构重新归档。
+> 关系规则: 只保留学习或排障上有直接依赖的边，避免为了双链而双链。
 
 ---
 

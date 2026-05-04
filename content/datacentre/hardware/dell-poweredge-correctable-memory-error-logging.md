@@ -15,13 +15,13 @@ origin:
   repository: 'https://github.com/1949hacker/blog.git'
   path: source/_posts/关于DELL-PowerEdge报错Correctable-memory-error-logging-disabled-for-a-memory-device的说明.md
 ---
-> [!info] 知识关系
-> 所属体系: [[datacentre/_index|数据中心与基础设施]] / [[datacentre/hardware/_index|服务器硬件体系]]
-> 主题节点: 关于DELL PowerEdge报错Correctable memory error logging disabled for a memory device的说明
-> 推荐前置: [[fundamentals/it-basics-encyclopedia|IT基础知识百科]]
-> 相关主题: [[datacentre/hardware/dell-perc-battery-low|DELL报错The PERC1 battery is low]] / [[datacentre/operations/server-stability-benchmark-methods|服务器稳定性及基准测试方法]]
+
+> [!info] 知识位置
+> 体系: 服务器硬件体系
+> 层级: 排障
+> 前置知识: [[datacentre/hardware/memory-types|服务器内存类型与代际]]
 > 原始来源: `source/_posts/关于DELL-PowerEdge报错Correctable-memory-error-logging-disabled-for-a-memory-device的说明.md`
-> 从旧博客迁移；已按知识图谱结构重新归档。
+> 关系规则: 只保留学习或排障上有直接依赖的边，避免为了双链而双链。
 
 ---
 

@@ -11,12 +11,13 @@ origin:
   repository: 'https://github.com/1949hacker/blog.git'
   path: source/_posts/IT基础知识百科.md
 ---
-> [!info] 知识关系
-> 所属体系: [[fundamentals/_index|基础知识与术语]]
-> 主题节点: IT基础知识百科
-> 推荐前置: [[fundamentals/it-terms-glossary|IT场景专业术语表]]
+
+> [!info] 知识位置
+> 体系: 基础知识与术语
+> 层级: 基础
+> 前置知识: [[fundamentals/it-terms-glossary|IT场景专业术语表]]
 > 原始来源: `source/_posts/IT基础知识百科.md`
-> 从旧博客迁移；已按知识图谱结构重新归档。
+> 关系规则: 只保留学习或排障上有直接依赖的边，避免为了双链而双链。
 
 ---
 

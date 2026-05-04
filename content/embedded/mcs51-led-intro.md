@@ -10,12 +10,13 @@ origin:
   repository: 'https://github.com/1949hacker/blog.git'
   path: source/_posts/51单片机入门-点亮LED.md
 ---
-> [!info] 知识关系
-> 所属体系: [[embedded/_index|嵌入式与单片机]]
-> 主题节点: 51单片机入门-点亮LED
-> 推荐前置: [[embedded/mcs51-study-notes|51单片机的学习笔记]]
+
+> [!info] 知识位置
+> 体系: 嵌入式与单片机
+> 层级: 实践
+> 前置知识: [[embedded/mcs51-study-notes|51单片机的学习笔记]]
 > 原始来源: `source/_posts/51单片机入门-点亮LED.md`
-> 从旧博客迁移；已按知识图谱结构重新归档。
+> 关系规则: 只保留学习或排障上有直接依赖的边，避免为了双链而双链。
 
 ---
 

@@ -10,13 +10,13 @@ origin:
   repository: 'https://github.com/1949hacker/blog.git'
   path: source/_posts/apt等各种源列表（持续更新）.md
 ---
-> [!info] 知识关系
-> 所属体系: [[datacentre/_index|数据中心与基础设施]] / [[datacentre/os/_index|操作系统与平台体系]]
-> 主题节点: apt等各种源列表（持续更新）
-> 推荐前置: [[datacentre/os/debian-basics|Debian基础知识【持续更新】]]
-> 相关主题: [[datacentre/container/docker-hub-workaround-cn|国内docker hub无法使用的解决办法]] / [[engineering/release/apt-repository-with-gpg-key|如何搭建具有GPGkey验证的可信任apt源]] / [[engineering/release/private-apt-repo-and-debs|本站上线私有apt源仓库及自制实用deb包]]
+
+> [!info] 知识位置
+> 体系: 操作系统与平台体系
+> 层级: 基础
+> 前置知识: [[datacentre/os/debian-basics|Debian基础知识【持续更新】]]
 > 原始来源: `source/_posts/apt等各种源列表（持续更新）.md`
-> 从旧博客迁移；已按知识图谱结构重新归档。
+> 关系规则: 只保留学习或排障上有直接依赖的边，避免为了双链而双链。
 
 ---
 
@@ -98,7 +98,7 @@ apt install -f docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker
 
 ## 中科大docker hub源
 
-**国内所有docker hub都GG了，官方hub也GG了，参照本站[[datacentre/container/docker-hub-workaround-cn|国内docker hub无法使用的解决办法]]文章处理**
+**国内所有docker hub都GG了，官方hub也GG了，参照本站《国内docker hub无法使用的解决办法》文章处理**
 
 ```shell
 vim /etc/docker/daemon.json

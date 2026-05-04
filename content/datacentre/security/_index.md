@@ -1,18 +1,15 @@
 ---
 title: 安全与访问控制
 tags:
+  - security
   - 知识图谱
 ---
 
 # 安全与访问控制
 
-把 SSH 日志、入侵判断、代理客户端和访问控制放到基础设施安全语境中。
+安全体系先从 Linux 访问控制开始，再进入具体网络配置。
 
-## 从这里开始
+## 学习顺序
 
-- [[datacentre/os/linux-tips|Linux技巧【持续更新】]]
-
-## 本体系节点
-
-- [[datacentre/security/debian-v2ray-config-json|记录一下我的Debian配置v2ray config.json]]
-- [[datacentre/security/linux-ssh-log-intrusion-hardening|Linux查询ssh日志判断是否被入侵及加强ssh安全的办法]]
+1. [[datacentre/security/linux-ssh-log-intrusion-hardening|Linux查询ssh日志判断是否被入侵及加强ssh安全的办法]]
+2. [[datacentre/security/debian-v2ray-config-json|记录一下我的Debian配置v2ray config.json]]

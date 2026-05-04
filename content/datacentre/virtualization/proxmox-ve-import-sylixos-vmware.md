@@ -12,13 +12,13 @@ origin:
   repository: 'https://github.com/1949hacker/blog.git'
   path: source/_posts/Proxmox-VE-导入SylixOS-VMware版.md
 ---
-> [!info] 知识关系
-> 所属体系: [[datacentre/_index|数据中心与基础设施]] / [[datacentre/virtualization/_index|虚拟化与 Proxmox 体系]]
-> 主题节点: Proxmox-VE 导入SylixOS VMware版
-> 推荐前置: [[datacentre/os/debian-basics|Debian基础知识【持续更新】]]
-> 相关主题: [[datacentre/virtualization/proxmox-ve-uefi-efi-disk|关于Proxmox-VE系统创建UEFI虚拟机需要单独添加EFI磁盘的问题]] / [[datacentre/virtualization/qemu-virtual-nic-pitfall|记录qemu虚拟机网卡的一次坑]]
+
+> [!info] 知识位置
+> 体系: 虚拟化与 Proxmox 体系
+> 层级: 实践
+> 前置知识: [[datacentre/virtualization/proxmox-ve-uefi-efi-disk|关于Proxmox-VE系统创建UEFI虚拟机需要单独添加EFI磁盘的问题]]
 > 原始来源: `source/_posts/Proxmox-VE-导入SylixOS-VMware版.md`
-> 从旧博客迁移；已按知识图谱结构重新归档。
+> 关系规则: 只保留学习或排障上有直接依赖的边，避免为了双链而双链。
 
 ---
 

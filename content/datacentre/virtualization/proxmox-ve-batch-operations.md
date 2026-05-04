@@ -11,13 +11,14 @@ origin:
   repository: 'https://github.com/1949hacker/blog.git'
   path: source/_posts/Proxmox-VE批量加集群、批量克隆、批量设置并同步时间、批量清除集群残留、批量创建网卡等一站式解决方案！（本教程采用YgeCloud实测）.md
 ---
-> [!info] 知识关系
-> 所属体系: [[datacentre/_index|数据中心与基础设施]] / [[datacentre/virtualization/_index|虚拟化与 Proxmox 体系]]
-> 主题节点: Proxmox-VE批量加集群、批量克隆、批量设置并同步时间、批量清除集群残留、批量创建网卡等一站式解决方案！
-> 推荐前置: [[datacentre/os/debian-basics|Debian基础知识【持续更新】]]
-> 相关主题: [[datacentre/virtualization/proxmox-ve-crontab-vm-shutdown-startup|直接编写crontab使用一行命令完成Proxmox-VE所有虚拟机的安全关机和依次开机]] / [[datacentre/virtualization/proxmox-ve-uefi-efi-disk|关于Proxmox-VE系统创建UEFI虚拟机需要单独添加EFI磁盘的问题]] / [[datacentre/virtualization/qemu-virtual-nic-pitfall|记录qemu虚拟机网卡的一次坑]]
+
+> [!info] 知识位置
+> 体系: 虚拟化与 Proxmox 体系
+> 层级: 工具
+> 前置知识: [[datacentre/os/linux-tips|Linux技巧【持续更新】]]
+> 强关联: [[datacentre/virtualization/proxmox-ve-uefi-efi-disk|关于Proxmox-VE系统创建UEFI虚拟机需要单独添加EFI磁盘的问题]] / [[datacentre/virtualization/qemu-virtual-nic-pitfall|记录qemu虚拟机网卡的一次坑]]
 > 原始来源: `source/_posts/Proxmox-VE批量加集群、批量克隆、批量设置并同步时间、批量清除集群残留、批量创建网卡等一站式解决方案！（本教程采用YgeCloud实测）.md`
-> 从旧博客迁移；已按知识图谱结构重新归档。
+> 关系规则: 只保留学习或排障上有直接依赖的边，避免为了双链而双链。
 
 ---
 
