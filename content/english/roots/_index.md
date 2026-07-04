@@ -49,6 +49,10 @@ tags:
 
 - [[english/roots/tract|tract]] — 拉、拖（trahere）
 
+### U
+
+- [[english/roots/und|und]] — 水、波动（unda）
+
 ### V
 
 - [[english/roots/ven|ven/vent]] — 来、到来（venire）
