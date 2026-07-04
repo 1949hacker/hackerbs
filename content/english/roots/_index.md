@@ -51,6 +51,7 @@ tags:
 ### S
 
 - [[english/roots/scrib|scrib/script]] — 写（scribere）
+- [[english/roots/sect|sect/sec]] — 切、切割（secare）
 - [[english/roots/spec|spec/spect/spic]] — 看（specere）
 - [[english/roots/sting|sting/stinct]] — 刺、分离、熄灭（stinguere）
 - [[english/roots/struct|struct]] — 建造、堆叠（struere）
