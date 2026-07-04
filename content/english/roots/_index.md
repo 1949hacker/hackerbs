@@ -16,6 +16,7 @@ tags:
 ### C
 
 - [[english/roots/cap|cap/cept/ceive]] — 拿、取（capere）
+- [[english/roots/cur|cur/curs/cours]] — 跑、流动（currere）
 
 ### D
 
