@@ -69,9 +69,3 @@ tags:
 
 - [[english/roots/ven|ven/vent]] — 来、到来（venire）
 - [[english/roots/voc|voc/vok]] — 叫喊、声音（vocare/vox）
-
----
-
-## 添加新词根
-
-新建文件 `content/english/roots/<词根>.md`，按 english/_index 中的笔记规范填写结构即可。完成后回到本页添加链接。
