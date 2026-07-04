@@ -34,6 +34,7 @@ tags:
 
 ### P
 
+- [[english/roots/ple|ple/pli/plen]] — 充满、装满（plere）
 - [[english/roots/port|port]] — 携带、运送（portare）
 - [[english/roots/preci|preci]] — 价值、价格（pretium）
 - [[english/roots/proper|proper/propri]] — 自己的、合适的（proprius）
