@@ -45,6 +45,7 @@ tags:
 
 ### V
 
+- [[english/roots/ven|ven/vent]] — 来、到来（venire）
 - [[english/roots/voc|voc/vok]] — 叫喊、声音（vocare/vox）
 
 ---
