@@ -24,6 +24,10 @@ tags:
 - [[english/roots/dict|dict/dic]] — 说（dicere）
 - [[english/roots/duc|duc/duct]] — 引导、带领（ducere）
 
+### F
+
+- [[english/roots/form|form]] — 形状、形式（forma）
+
 ### H
 
 - [[english/roots/her|her/hered]] — 继承（heres）
