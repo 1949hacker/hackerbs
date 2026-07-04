@@ -24,6 +24,10 @@ tags:
 - [[english/roots/dict|dict/dic]] — 说（dicere）
 - [[english/roots/duc|duc/duct]] — 引导、带领（ducere）
 
+### H
+
+- [[english/roots/her|her/hered]] — 继承（heres）
+
 ### M
 
 - [[english/roots/mit|mit/miss]] — 发送、投掷（mittere）
