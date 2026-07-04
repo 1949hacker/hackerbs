@@ -28,6 +28,10 @@ tags:
 
 - [[english/roots/her|her/hered]] — 继承（heres）
 
+### I
+
+- [[english/roots/ident|ident]] — 相同（idem）
+
 ### M
 
 - [[english/roots/mit|mit/miss]] — 发送、投掷（mittere）
