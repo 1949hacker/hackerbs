@@ -4,6 +4,7 @@ tags:
   - english
   - roots
   - 知识图谱
+  - IELTS
 ---
 
 # 词根库
@@ -12,12 +13,40 @@ tags:
 
 ## 词根列表
 
+### C
+
+- [[english/roots/cap|cap/cept/ceive]] — 拿、取（capere）
+
+### D
+
+- [[english/roots/dict|dict/dic]] — 说（dicere）
+- [[english/roots/duc|duc/duct]] — 引导、带领（ducere）
+
+### M
+
+- [[english/roots/mit|mit/miss]] — 发送、投掷（mittere）
+
 ### P
 
+- [[english/roots/port|port]] — 携带、运送（portare）
 - [[english/roots/preci|preci]] — 价值、价格（pretium）
 
-### 更多词根待补充 ...
+### S
+
+- [[english/roots/scrib|scrib/script]] — 写（scribere）
+- [[english/roots/spec|spec/spect/spic]] — 看（specere）
+- [[english/roots/struct|struct]] — 建造、堆叠（struere）
+
+### T
+
+- [[english/roots/tract|tract]] — 拉、拖（trahere）
+
+### V
+
+- [[english/roots/voc|voc/vok]] — 叫喊、声音（vocare/vox）
+
+---
 
 ## 添加新词根
 
-新建文件 `content/english/roots/<词根>.md`，按 [[english/_index#笔记规范|笔记规范]] 填写结构即可。完成后回到本页添加链接。
+新建文件 `content/english/roots/<词根>.md`，按 english/_index 中的笔记规范填写结构即可。完成后回到本页添加链接。

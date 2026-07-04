@@ -71,8 +71,16 @@ aliases:
 
 _待扩充：可链接到 valu-/vali-（价值）、dign-（值得）等语义相近的词根。_
 
-## 图谱链接
+## 常见搭配
 
-- 所属体系：[[english/roots/_index|词根库]]
-- 学习入口：[[english/_index|英语词根词缀学习体系]]
-- 前缀配合：preci 常与 [[english/prefixes/ad-|ad-（向）]]、[[english/prefixes/de-|de-（向下）]] 组合
+| 前缀 | 含义 | 示例 |
+|------|------|------|
+| **ad-** (ap-) | 向、朝向 | appreciate, appraise |
+| **de-** | 向下、降低 | depreciate |
+
+---
+
+## 相关词根
+
+- **dict**（说）→ dictate, predict — "估价"和"说出判断"在语义上有交叉
+- **valu-/vali-**（价值）→ value, evaluate — 语义相近，待建立关联
