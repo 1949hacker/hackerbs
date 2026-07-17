@@ -68,6 +68,7 @@ tags:
 
 ### T
 
+- [[english/roots/tend|tend/tens/tent]] — 伸展、朝向（tendere）
 - [[english/roots/tract|tract]] — 拉、拖（trahere）
 
 ### U
