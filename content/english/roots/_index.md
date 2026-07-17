@@ -31,6 +31,10 @@ tags:
 
 - [[english/roots/form|form]] — 形状、形式（forma）
 
+### G
+
+- [[english/roots/gen|gen]] — 出生、种类、起源（gignere/genus）
+
 ### H
 
 - [[english/roots/her|her/hered]] — 继承（heres）
