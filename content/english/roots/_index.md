@@ -13,7 +13,9 @@ tags:
 
 ## 词根列表
 
-### C
+### B
+
+- [[english/roots/bene|bene]] — 好、善（bene）
 
 - [[english/roots/cap|cap/cept/ceive]] — 拿、取（capere）
 - [[english/roots/clin|clin/cline]] — 倾斜、弯曲（clinare）
@@ -39,6 +41,7 @@ tags:
 
 ### M
 
+- [[english/roots/male|male]] — 坏、恶（male）
 - [[english/roots/mit|mit/miss]] — 发送、投掷（mittere）
 
 ### P
