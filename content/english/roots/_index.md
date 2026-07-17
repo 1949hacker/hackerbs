@@ -59,6 +59,7 @@ tags:
 ### S
 
 - [[english/roots/sci|sci]] — 知道、知识（scire）
+- [[english/roots/sum|sum/sumpt]] — 拿取、花费（sumere）
 - [[english/roots/scrib|scrib/script]] — 写（scribere）
 - [[english/roots/sect|sect/sec]] — 切、切割（secare）
 - [[english/roots/spec|spec/spect/spic]] — 看（specere）
