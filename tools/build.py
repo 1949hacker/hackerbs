@@ -219,14 +219,18 @@ def render_callout(kind, title, body_md):
     )
 
 
-def md_to_html(text):
+def md_to_html(text, nl2br=False):
     text = convert_obsidian_assets(text)
     text, blocks = extract_blocks(text)
 
-    body = markdown.markdown(
-        text,
-        extensions=["extra", "sane_lists", "tables", "attr_list", "footnotes"],
-    )
+    exts = ["extra", "sane_lists", "tables", "attr_list", "footnotes"]
+    if nl2br:
+        exts.append("nl2br")
+
+    body = markdown.markdown(text, extensions=exts)
+
+    # 正文里不应出现 h1（页面标题由模板渲染），降级为 h2
+    body = re.sub(r"<h1>(.*?)</h1>", r"<h2>\1</h2>", body, flags=re.S)
 
     for idx, (kind, payload) in enumerate(blocks):
         if kind == "code":
@@ -259,6 +263,16 @@ def add_heading_ids(body):
 
     body = re.sub(r"<h([234])>(.*?)</h\1>", repl, body, flags=re.S)
     return body, toc
+
+
+def strip_duplicate_title(body, title):
+    """正文开头若重复了页面标题（随笔常见 `# 《标题》`），去掉它。"""
+    m = re.match(r"\s*<h([234])>(.*?)</h\1>", body, re.S)
+    if m:
+        text = html.unescape(re.sub(r"<[^>]+>", "", m.group(2))).strip()
+        if title and (title in text or text in title):
+            return body[m.end():].lstrip()
+    return body
 
 
 def plain_text(body):
@@ -413,7 +427,12 @@ def main():
             print("!! 缺少源文件：%s" % src_path)
             continue
         raw = strip_front_matter(read(src_path))
-        body, toc = add_heading_ids(md_to_html(raw))
+        # 随笔保留作者的单行换行（诗歌、断句），其余按标准 Markdown 处理
+        is_essay = p["category"] == "essays"
+        body = md_to_html(raw, nl2br=is_essay)
+        if is_essay:
+            body = strip_duplicate_title(body, p["title"])
+        body, toc = add_heading_ids(body)
         text = plain_text(body)
         p = dict(p)
         p["body"] = body
@@ -859,6 +878,23 @@ def main():
     write(
         os.path.join(DATA, "search-index.json"),
         json.dumps(index, ensure_ascii=False, indent=1),
+    )
+
+    # 12. sitemap / robots
+    urls = ["index.html", "topics.html", "archive.html", "tags.html", "search.html", "about.html"]
+    urls += [p["url"] for p in by_date]
+    sitemap = ['<?xml version="1.0" encoding="UTF-8"?>', '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
+    for u in urls:
+        sitemap.append(
+            "  <url>\n    <loc>%s/%s</loc>\n    <changefreq>monthly</changefreq>\n  </url>"
+            % (site["url"].rstrip("/"), u)
+        )
+    sitemap.append("</urlset>")
+    write(os.path.join(ROOT, "sitemap.xml"), "\n".join(sitemap) + "\n")
+
+    write(
+        os.path.join(ROOT, "robots.txt"),
+        "User-agent: *\nAllow: /\n\nSitemap: %s/sitemap.xml\n" % site["url"].rstrip("/"),
     )
 
     print("生成完成：%d 篇文章" % len(by_date))
