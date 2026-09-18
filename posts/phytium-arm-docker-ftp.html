@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>飞腾 ARM 平台使用 Docker 部署 FTP · hackerbs.com</title>
+  <meta name="description" content="在飞腾 ARM 服务器上用容器方式部署 FTP 服务的操作步骤与需要注意的平台差异。">
+  <meta name="author" content="hackerbs">
+  <meta property="og:title" content="飞腾 ARM 平台使用 Docker 部署 FTP · hackerbs.com">
+  <meta property="og:description" content="在飞腾 ARM 服务器上用容器方式部署 FTP 服务的操作步骤与需要注意的平台差异。">
+  <meta property="og:type" content="website">
+  <link rel="stylesheet" href="../assets/css/main.css">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%2322d3ee'%3E%3C/rect%3E%3Ctext x='16' y='22' font-size='16' font-family='monospace' font-weight='bold' text-anchor='middle' fill='%23061318'%3Ehb%3C/text%3E%3C/svg%3E">
+  
+</head>
+<body>
+<header class="site-header">
+  <div class="header-inner">
+    <a class="brand" href="../index.html">
+      <span class="brand-mark">hb</span>
+      <span>hackerbs<span class="brand-domain">.com</span></span>
+    </a>
+
+    <nav class="nav" id="site-nav">
+      <a href="../index.html">首页</a>
+      <a href="../topics.html">专题</a>
+      <a href="../archive.html">归档</a>
+      <a href="../tags.html">标签</a>
+      <a href="../search.html">搜索</a>
+      <a href="../about.html">关于</a>
+    </nav>
+
+    <div class="header-tools">
+      <button class="icon-btn" id="theme-toggle" type="button" aria-label="切换主题">
+        <svg class="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        <svg class="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+      </button>
+      <button class="icon-btn menu-btn" id="menu-btn" type="button" aria-label="菜单">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+<div class="reading-progress" id="reading-progress"></div>
+
+<main>
+  <div class="wrap-narrow">
+  <nav class="crumbs">
+    <a href="../index.html">首页</a><span class="sep">/</span><a href="../topics.html#container">容器与镜像</a>
+  </nav>
+
+  <article>
+    <header class="article-head">
+      <h1>飞腾 ARM 平台使用 Docker 部署 FTP</h1>
+      <div class="meta-line">
+        <span>2023-09-12</span><span class="dot"></span>
+        <span>约 3 分钟</span><span class="dot"></span>
+        <span>1271 字</span>
+      </div>
+      <div class="summary-card">
+        <strong>摘要</strong>在飞腾 ARM 服务器上用容器方式部署 FTP 服务的操作步骤与需要注意的平台差异。
+      </div>
+    </header>
+
+    <div class="prose">
+<p>因飞腾平台为 armv8，暂未发现简单易用的 vsftpd Docker 镜像，特此提供打包完毕的 Docker 镜像及教程以供各位使用。</p>
+<p>该 docker 镜像为 armv8 版本，已测试适用飞腾 2000 平台。</p>
+<h2 id="第一步拉取-vsftpd-映像-1">第一步：拉取 vsftpd 映像</h2>
+<div class="callout callout-note">
+  <div class="co-title">关于 Docker Hub</div>
+  <p>因 docker hub 已被墙，拉取 docker images 请参考 <a href="https://hackerbs.com/%E5%9B%BD%E5%86%85docker-hub%E6%97%A0%E6%B3%95%E4%BD%BF%E7%94%A8%E7%9A%84%E8%A7%A3%E5%86%B3%E5%8A%9E%E6%B3%95.html">国内 docker hub 无法使用的解决办法</a>，或者使用下面手动导入的方式。</p>
+</div>
+<p><code>docker pull hackerbs/vsftpd</code></p>
+<p>如果你的环境为离线环境，则采用导入 vsftpd 映像方案。</p>
+<p>docker 离线镜像位于<a href="https://disk.ygeit.cn/s/RpAtcoJcbpYtaoa">网盘</a>docker_images 文件夹中，名为 <code>hackerbs-vsftpd-arm.tar</code>。</p>
+<p>将下载的 <code>hackerbs-vsftpd-arm.tar</code> 导入到你的系统中，使用 <code>docker load -i hackerbs-vsftpd-arm.tar</code> 将该映像导入。</p>
+<h2 id="第二步使用该映像启动容器-2">第二步：使用该映像启动容器</h2>
+<div class="code-block">
+  <div class="code-head">
+    <span class="lang">Bash</span>
+    <button class="copy" type="button">复制</button>
+  </div>
+  <pre><code><span class="c1"># 首先，创建一个路径用于存放ftp文件</span>
+mkdir<span class="w"> </span>-p<span class="w"> </span>路径
+<span class="c1"># 示例</span>
+mkdir<span class="w"> </span>-p<span class="w"> </span>/opt/ftp
+
+<span class="c1"># 请用你的参数替代{参数}内容</span>
+docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>--name<span class="w"> </span><span class="o">{</span>容器名<span class="o">}</span><span class="w"> </span>-p<span class="w"> </span><span class="m">20</span>:20<span class="w"> </span>-p<span class="w"> </span><span class="m">21</span>:21<span class="w"> </span>-p<span class="w"> </span><span class="m">4559</span>-4564:4559-4564<span class="w"> </span>-e<span class="w"> </span><span class="nv">FTP_USER</span><span class="o">={</span>ftp用户名<span class="o">}</span><span class="w"> </span>-e<span class="w"> </span><span class="nv">FTP_PASSWORD</span><span class="o">={</span>ftp密码<span class="o">}</span><span class="w"> </span>-e<span class="w"> </span><span class="nv">PASV_ADDRESS</span><span class="o">={</span>服务器地址<span class="o">}</span><span class="w">  </span>-e<span class="w"> </span><span class="nv">FTP_REPOSITORY</span><span class="o">=</span>/opt/ftp<span class="w"> </span>-v<span class="w"> </span><span class="o">{</span>主机FTP目录<span class="o">}</span>:/opt/ftp<span class="w"> </span>--restart<span class="o">=</span>always<span class="w"> </span>oscarenzo/vsftpd
+
+<span class="c1"># 若无特别需求，仅更改“容器名、ftp用户名、密码、服务器地址”即可</span>
+<span class="c1"># 示例如下</span>
+docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>--name<span class="w"> </span>vsftpd-server<span class="w"> </span>-p<span class="w"> </span><span class="m">20</span>:20<span class="w"> </span>-p<span class="w"> </span><span class="m">21</span>:21<span class="w"> </span>-p<span class="w"> </span><span class="m">4559</span>-4564:4559-4564<span class="w"> </span>-e<span class="w"> </span><span class="nv">FTP_USER</span><span class="o">=</span>ftptest<span class="w"> </span>-e<span class="w"> </span><span class="nv">FTP_PASSWORD</span><span class="o">=</span><span class="m">123456</span><span class="w"> </span>-e<span class="w"> </span><span class="nv">PASV_ADDRESS</span><span class="o">=</span><span class="m">192</span>.168.2.254<span class="w"> </span>-e<span class="w"> </span><span class="nv">FTP_REPOSITORY</span><span class="o">=</span>/opt/ftp<span class="w"> </span>-v<span class="w"> </span>/opt/ftp:/opt/ftp<span class="w"> </span>--restart<span class="o">=</span>always<span class="w"> </span>f8044caf3727
+
+<span class="c1"># 注：离线环境导入images需要将命令中的fauria/vsftpd替换为images ID f8044caf3727，如上方示例</span>
+
+<span class="c1"># 上述命令执行后可以使用docker ps查看容器是否运行成功</span>
+<span class="c1"># 容器运行成功后修改本机FTP目录权限为777，示例</span>
+
+chmod<span class="w"> </span>-R<span class="w"> </span><span class="m">777</span><span class="w"> </span>/opt/ftp
+
+<span class="c1"># docker开机自动运行命令</span>
+systemctl<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>docker
+</code></pre>
+</div>
+<p>完整过程如下图所示，若有任何问题可以通过文末联系方式咨询。</p>
+<p><img alt="20230912213003" src="https://img.hackerbs.com//20230912213003.png" /></p>
+    </div>
+
+    <div class="tag-row">
+  <a class="tag" href="../tags.html#飞腾">#飞腾</a>
+  <a class="tag" href="../tags.html#ARM">#ARM</a>
+  <a class="tag" href="../tags.html#Docker">#Docker</a>
+  <a class="tag" href="../tags.html#vsftpd">#vsftpd</a>
+    </div>
+
+<nav class="post-nav">  <a class="prev" href="armv8-vsftpd-docker-image.html"><span class="dir">上一篇</span><span class="t">构建 armv8 平台 vsftpd Docker 镜像</span></a></nav>
+  </article>
+  </div>
+</main>
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div class="footer-about">
+        <h4>About</h4>
+        <p>hackerbs = hacker brainstorm。记录数据中心、Linux、虚拟化与工程实践，把零散经验连成一张可复用的知识网络。</p>
+      </div>
+      <div>
+        <h4>导航</h4>
+        <ul>
+          <li><a href="../index.html">首页</a></li>
+          <li><a href="../topics.html">专题</a></li>
+          <li><a href="../archive.html">归档</a></li>
+          <li><a href="../tags.html">标签</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>分类</h4>
+        <ul>
+          <li><a href="../topics.html#os">操作系统</a></li>
+          <li><a href="../topics.html#hardware">服务器硬件</a></li>
+          <li><a href="../topics.html#storage">存储与可靠性</a></li>
+          <li><a href="../topics.html#virtualization">虚拟化</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>链接</h4>
+        <ul>
+          <li><a href="https://github.com/1949hacker">GitHub</a></li>
+          <li><a href="https://blog.hackerbs.com">旧博客</a></li>
+          <li><a href="../about.html">联系我</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2022–2026 hackerbs.com · 探索知识的宇宙</span>
+      <span>本站为纯静态站点，无追踪、无广告</span>
+    </div>
+  </div>
+</footer>
+<button class="to-top" id="to-top" type="button" aria-label="回到顶部">
+  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+</button>
+
+<script src="../assets/js/main.js"></script>
+</body>
+</html>

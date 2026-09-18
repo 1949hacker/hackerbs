@@ -1,0 +1,413 @@
+{
+  "site": {
+    "title": "hackerbs.com",
+    "tagline": "探索知识的宇宙",
+    "author": "hackerbs",
+    "url": "https://hackerbs.com",
+    "repo": "https://github.com/1949hacker/hackerbs",
+    "oldBlog": "https://blog.hackerbs.com"
+  },
+  "categories": [
+    { "id": "os", "name": "操作系统", "desc": "Debian、Ubuntu 安装配置与 Linux 日常使用技巧。" },
+    { "id": "hardware", "name": "服务器硬件", "desc": "阵列卡、内存、散热与整机架构相关的硬件知识。" },
+    { "id": "storage", "name": "存储与可靠性", "desc": "硬盘故障判定、IO 告警、LVM 残留与数据可靠性。" },
+    { "id": "operations", "name": "运维与排障", "desc": "宕机分析、基准测试、稳定性验证与现场排障方法。" },
+    { "id": "network", "name": "网络与组网", "desc": "异地组网、反向代理与计算资源本地化实践。" },
+    { "id": "virtualization", "name": "虚拟化", "desc": "Proxmox VE 集群、虚拟机生命周期与踩坑记录。" },
+    { "id": "container", "name": "容器与镜像", "desc": "Docker、跨架构镜像构建与容器化应用部署。" },
+    { "id": "security", "name": "安全与代理", "desc": "SSH 入侵排查、安全加固与代理客户端配置。" },
+    { "id": "engineering", "name": "工程与工具", "desc": "脚本开发、软件打包、私有仓库与编辑器工作流。" },
+    { "id": "embedded", "name": "嵌入式", "desc": "51 单片机入门与嵌入式开发笔记。" },
+    { "id": "fundamentals", "name": "基础与术语", "desc": "IT 基础概念、专业术语对照与随手技术笔记。" },
+    { "id": "essays", "name": "随笔与思想", "desc": "关于人生价值、自我认知与成长路径的文字。" }
+  ],
+  "posts": [
+    {
+      "slug": "mcs51-led-intro",
+      "title": "51 单片机入门：点亮 LED",
+      "category": "embedded",
+      "date": "2023-09-25",
+      "tags": ["51单片机", "嵌入式", "C51"],
+      "summary": "初学 51 单片机的第一份记录：从跑马灯程序开始，理解端口、延时与最小系统的工作方式。",
+      "src": "51单片机入门-点亮LED.md"
+    },
+    {
+      "slug": "mcs51-study-notes",
+      "title": "51 单片机学习笔记",
+      "category": "embedded",
+      "date": "2022-11-21",
+      "tags": ["51单片机", "嵌入式", "学习笔记"],
+      "summary": "学习 51 单片机过程中整理的关联知识，覆盖寄存器、定时器、中断与外设驱动的入门脉络。",
+      "src": "51单片机的学习笔记.md"
+    },
+    {
+      "slug": "dell-perc-battery-low",
+      "title": "DELL 报错 The PERC1 battery is low",
+      "category": "hardware",
+      "date": "2025-09-04",
+      "tags": ["DELL", "PERC", "阵列卡", "BBU"],
+      "summary": "阵列卡电池电量低的告警意味着什么、对 RAID 写缓存与数据安全有什么影响，以及如何处理。",
+      "src": "DELL报错The-PERC1-battery-is-low.md"
+    },
+    {
+      "slug": "dell-disk-io-alert",
+      "title": "DELL 服务器硬盘 IO 告警排障思路",
+      "category": "storage",
+      "date": "2025-09-17",
+      "tags": ["DELL", "IO告警", "硬盘", "RAID", "排障"],
+      "summary": "面对硬盘 IO 告警时如何分层定位：从阵列卡、背板、线缆到磁盘本身，一步步缩小故障范围。",
+      "src": "DELL服务器硬盘IO告警排障思路.md"
+    },
+    {
+      "slug": "debian-arm-docker",
+      "title": "在 Debian x86_64 上搭建 ARM Docker 环境",
+      "category": "container",
+      "date": "2023-09-12",
+      "tags": ["Docker", "ARM", "QEMU", "跨架构"],
+      "summary": "用 binfmt_misc 与 QEMU 让 x86 机器直接构建和运行 ARM 架构容器镜像的完整步骤。",
+      "src": "Debian-x86-64平台搭建arm-docker环境.md"
+    },
+    {
+      "slug": "debian-basics",
+      "title": "Debian 基础知识（持续更新）",
+      "category": "os",
+      "date": "2023-03-01",
+      "tags": ["Debian", "Linux", "基础"],
+      "summary": "长期维护的 Debian 知识清单：包管理、网络配置、服务管理、源与常用命令的日常速查。",
+      "src": "Debian基础知识【持续更新】.md"
+    },
+    {
+      "slug": "debian-install",
+      "title": "Debian 安装教程",
+      "category": "os",
+      "date": "2024-06-03",
+      "tags": ["Debian", "Linux安装", "服务器"],
+      "summary": "从镜像选择、分区方案到基础环境配置，一份面向服务器场景的 Debian 安装全流程记录。",
+      "src": "Debian安装教程.md"
+    },
+    {
+      "slug": "it-terms-glossary",
+      "title": "IT 场景专业术语表",
+      "category": "fundamentals",
+      "date": "2025-10-17",
+      "tags": ["IT术语", "英文缩写", "中英对照"],
+      "summary": "运维和工程现场高频出现的英文缩写与术语中英对照表，用于快速补齐行业语感。",
+      "src": "IT场景专业术语表.md"
+    },
+    {
+      "slug": "it-basics-encyclopedia",
+      "title": "IT 基础知识百科",
+      "category": "fundamentals",
+      "date": "2024-04-05",
+      "tags": ["IT知识", "百科", "基础"],
+      "summary": "把服务器、存储、网络、操作系统里最基础也最容易被忽略的概念整理成一份可查阅的百科。",
+      "src": "IT基础知识百科.md"
+    },
+    {
+      "slug": "linux-tips",
+      "title": "Linux 技巧（随时更新）",
+      "category": "os",
+      "date": "2022-11-17",
+      "tags": ["Linux", "Shell", "效率"],
+      "summary": "日积月累的 Linux 命令行技巧与 Shell 用法，都是实际踩过坑之后留下来的可复用片段。",
+      "src": "Linux技巧【随时更新】.md"
+    },
+    {
+      "slug": "ssh-log-intrusion-check",
+      "title": "查询 SSH 日志判断是否被入侵并加固",
+      "category": "security",
+      "date": "2024-03-05",
+      "tags": ["Linux", "SSH", "网络安全", "爆破"],
+      "summary": "通过 auth.log 与 last/lastb 判断服务器是否遭遇 SSH 爆破或已失陷，并给出一套加固清单。",
+      "src": "Linux查询ssh日志判断是否被入侵及加强ssh安全的办法.md"
+    },
+    {
+      "slug": "pve-import-sylixos",
+      "title": "Proxmox VE 导入 SylixOS VMware 版",
+      "category": "virtualization",
+      "date": "2023-02-28",
+      "tags": ["Proxmox VE", "SylixOS", "VMware", "迁移"],
+      "summary": "把 SylixOS 的 VMware 虚拟机导入 Proxmox VE 的过程记录，包含磁盘格式转换与启动适配。",
+      "src": "Proxmox-VE-导入SylixOS-VMware版.md"
+    },
+    {
+      "slug": "pve-batch-operations",
+      "title": "Proxmox VE 批量运维一站式方案",
+      "category": "virtualization",
+      "date": "2024-02-06",
+      "tags": ["Proxmox VE", "批量", "集群", "自动化"],
+      "summary": "批量加集群、批量克隆、批量同步时间、清除集群残留与批量创建网卡的实战命令集合。",
+      "src": "Proxmox-VE批量加集群、批量克隆、批量设置并同步时间、批量清除集群残留、批量创建网卡等一站式解决方案！（本教程采用YgeCloud实测）.md"
+    },
+    {
+      "slug": "gfwlist-to-clash",
+      "title": "Python 实现 GFWList 规则自动转换为 Clash 规则",
+      "category": "engineering",
+      "date": "2025-03-05",
+      "tags": ["Python", "Clash", "GFWList", "分流"],
+      "summary": "用 Python 抓取 GFWList 并自动生成 Clash 分流规则的完整实现，含规则解析与配置合并逻辑。",
+      "src": "Python实现自动将GFWList规则转换为Clash规则.md"
+    },
+    {
+      "slug": "ubuntu-install",
+      "title": "Ubuntu 安装教程",
+      "category": "os",
+      "date": "2024-05-30",
+      "tags": ["Ubuntu", "Linux安装", "服务器"],
+      "summary": "Ubuntu Server 从启动盘制作到网络、分区、SSH 与基础工具配置的完整安装记录。",
+      "src": "Ubuntu安装教程.md"
+    },
+    {
+      "slug": "apt-mirror-sources",
+      "title": "apt 等各种软件源列表（持续更新）",
+      "category": "os",
+      "date": "2024-01-28",
+      "tags": ["apt源", "镜像站", "Docker源"],
+      "summary": "常用的 Debian/Ubuntu apt 源、Docker 源与其他镜像地址汇总，方便换源时直接取用。",
+      "src": "apt等各种源列表（持续更新）.md"
+    },
+    {
+      "slug": "cpp-fio-tool",
+      "title": "用 C++ 编写 fio 测试工具",
+      "category": "engineering",
+      "date": "2024-11-15",
+      "tags": ["C++", "fio", "性能测试", "脚本"],
+      "summary": "把重复的手工压测流程封装成 C++ 工具的实践记录：参数组织、结果解析与批量执行。",
+      "src": "cpp编写fio测试工具，我在发疯.md"
+    },
+    {
+      "slug": "vscode-markdown-plugins",
+      "title": "VS Code 编写 Markdown 的插件推荐",
+      "category": "engineering",
+      "date": "2022-10-26",
+      "tags": ["VS Code", "Markdown", "效率工具"],
+      "summary": "写技术文档常用的 VS Code 插件与配套技巧，覆盖预览、目录、表格、粘贴图片等场景。",
+      "src": "vscode编写markdown的插件推荐.md"
+    },
+    {
+      "slug": "dell-correctable-memory-error",
+      "title": "DELL PowerEdge 报 Correctable memory error logging disabled 说明",
+      "category": "hardware",
+      "date": "2025-09-04",
+      "tags": ["DELL", "ECC", "内存", "iDRAC"],
+      "summary": "解释这条 iDRAC 告警的真实含义：ECC 可纠正错误被关闭记录，以及它对可靠性的影响。",
+      "src": "关于DELL-PowerEdge报错Correctable-memory-error-logging-disabled-for-a-memory-device的说明.md"
+    },
+    {
+      "slug": "pve-uefi-efi-disk",
+      "title": "Proxmox VE 创建 UEFI 虚拟机需要单独添加 EFI 磁盘",
+      "category": "virtualization",
+      "date": "2023-01-03",
+      "tags": ["Proxmox VE", "UEFI", "虚拟机"],
+      "summary": "为什么物理机只要 EFI 分区、PVE 虚拟机却必须额外添加 EFI 磁盘，以及相关的引导原理探讨。",
+      "src": "关于Proxmox-VE系统创建UEFI虚拟机需要单独添加EFI磁盘的问题.md"
+    },
+    {
+      "slug": "smartctl-troubleshooting-rma",
+      "title": "服务器硬盘故障但带外无日志的排障与报修",
+      "category": "storage",
+      "date": "2025-09-18",
+      "tags": ["smartctl", "硬盘", "排障", "带外", "报修"],
+      "summary": "带外看不到错误日志时，如何用 smartctl 自行取证、判定硬盘故障并走厂商报修流程。",
+      "src": "关于硬盘smartctl日志排障并报修的笔记.md"
+    },
+    {
+      "slug": "lvm-residue-cleanup",
+      "title": "磁盘残留 LVM 的解决办法",
+      "category": "storage",
+      "date": "2024-11-28",
+      "tags": ["Linux", "LVM", "磁盘", "dmsetup"],
+      "summary": "换盘或重装后残留的 LVM 元数据导致磁盘无法直接使用，用 dmsetup 等手段彻底清除。",
+      "src": "关于磁盘残留lvm的解决办法.md"
+    },
+    {
+      "slug": "docker-hub-workaround-cn",
+      "title": "国内 Docker Hub 无法使用的解决办法",
+      "category": "container",
+      "date": "2024-06-12",
+      "tags": ["Docker", "docker hub", "镜像加速", "代理"],
+      "summary": "整理几种可用的应对方式：镜像加速器、registry mirror 配置为代理与自建中转。",
+      "src": "国内docker-hub无法使用的解决办法.md"
+    },
+    {
+      "slug": "apt-repo-gpg-key",
+      "title": "搭建带 GPG key 验证的可信任 apt 源",
+      "category": "engineering",
+      "date": "2024-06-21",
+      "tags": ["apt", "GPG", "软件源", "签名"],
+      "summary": "从生成密钥、签名 Release 到客户端导入公钥，搭建一个不会被 apt 报 NO_PUBKEY 的私有源。",
+      "src": "如何搭建具有GPGkey验证的可信任apt源.md"
+    },
+    {
+      "slug": "package-binary-as-deb",
+      "title": "将二进制可执行程序构建为 deb 包",
+      "category": "engineering",
+      "date": "2023-10-17",
+      "tags": ["Debian", "deb", "打包", "dpkg"],
+      "summary": "不走源码编译，直接把一个现成的二进制程序连同配置打包成可安装的 deb 包。",
+      "src": "将二进制可执行程序构建为deb包.md"
+    },
+    {
+      "slug": "wireguard-nginx-reverse-proxy",
+      "title": "异地组网 + Nginx 反代实现计算资源本地化",
+      "category": "network",
+      "date": "2025-02-17",
+      "tags": ["WireGuard", "Nginx", "反向代理", "异地组网"],
+      "summary": "用 WireGuard 把异地机器拉进同一个内网，再用 Nginx 反代把算力服务暴露到本地入口。",
+      "src": "异地组网加Nginx反代实现计算资源本地化.md"
+    },
+    {
+      "slug": "abnormal-crash-bmc",
+      "title": "异常宕机且 BMC 日志无参考价值时的排障思路",
+      "category": "operations",
+      "date": "2025-09-10",
+      "tags": ["BMC", "宕机", "排障", "带外"],
+      "summary": "带外日志为空或失真时，如何借助系统日志、硬件状态与压力复现定位宕机根因。",
+      "src": "异常宕机BMC日志无参考价值时的排障思路.md"
+    },
+    {
+      "slug": "server-stability-benchmark",
+      "title": "服务器稳定性及基准测试方法",
+      "category": "operations",
+      "date": "2025-09-11",
+      "tags": ["基准测试", "Stress-NG", "Sysbench", "压测"],
+      "summary": "一套可复用的服务器验收流程：CPU、内存、磁盘与整机稳定性压测的工具选择与判读标准。",
+      "src": "服务器稳定性及基准测试方法.md"
+    },
+    {
+      "slug": "unstructured-tech-notes",
+      "title": "未整理的随手技术笔记",
+      "category": "fundamentals",
+      "date": "2024-04-02",
+      "tags": ["随手记", "Linux", "NAS", "Shell"],
+      "summary": "各类临时记下的零散经验，涵盖存储、网络、虚拟化与 Shell，等待后续归类整理。",
+      "src": "未整理的随手技术笔记（实时更新，各种乱七八糟的技术都会记录在这儿）.md"
+    },
+    {
+      "slug": "private-apt-repo",
+      "title": "私有 apt 源仓库与自制实用 deb 包",
+      "category": "engineering",
+      "date": "2023-10-18",
+      "tags": ["apt", "deb", "aptdownloader", "私有仓库"],
+      "summary": "本站私有 apt 源的上线说明：离线下载依赖、自建仓库与几个自制 deb 包的用途。",
+      "src": "本站上线私有apt源仓库及自制实用deb包.md"
+    },
+    {
+      "slug": "pve-crontab-shutdown",
+      "title": "用一条 crontab 命令完成 PVE 虚拟机安全关机与依次开机",
+      "category": "virtualization",
+      "date": "2024-09-12",
+      "tags": ["Proxmox VE", "crontab", "自动化", "关机"],
+      "summary": "结合 crontab 与 qm 命令，让宿主机在计划时间点批量、有序地关闭与拉起虚拟机。",
+      "src": "直接编写crontab使用一行命令完成Proxmox-VE所有虚拟机的安全关机.md"
+    },
+    {
+      "slug": "phase-change-thermal-pad",
+      "title": "相变硅脂片知识",
+      "category": "hardware",
+      "date": "2024-04-03",
+      "tags": ["相变硅脂", "散热", "服务器硬件"],
+      "summary": "相变硅脂片与传统硅脂的差异、适用场景，以及服务器散热维护时的选型与施工要点。",
+      "src": "相片硅脂片知识.md"
+    },
+    {
+      "slug": "pve-vnic-pitfall",
+      "title": "记录 QEMU 虚拟机网卡的一次坑",
+      "category": "virtualization",
+      "date": "2024-06-26",
+      "tags": ["Proxmox VE", "QEMU", "虚拟网卡"],
+      "summary": "一次虚拟网卡异常导致网络不通的排查记录，涉及网卡模型、驱动与桥接配置的相互影响。",
+      "src": "记录Proxmox-VE虚拟机网卡的一次坑.md"
+    },
+    {
+      "slug": "debian-v2ray-config",
+      "title": "记录 Debian 配置 v2ray config.json",
+      "category": "security",
+      "date": "2024-06-13",
+      "tags": ["Debian", "v2ray", "config.json"],
+      "summary": "一份可直接使用的 v2ray 客户端 config.json 配置，以及在 Debian 上的部署与自启动方式。",
+      "src": "记录一下我的Debian配置v2ray-config-json.md"
+    },
+    {
+      "slug": "ssd-fault-self-recovered",
+      "title": "服务器 SSD 报故障后自行恢复正常的现象分析",
+      "category": "storage",
+      "date": "2025-09-09",
+      "tags": ["SSD", "浪潮", "BMC", "带外", "硬盘"],
+      "summary": "SSD 被报故障后又自行恢复，分析可能成因、是否需要立即更换，以及后续观察指标。",
+      "src": "记录一次分析-服务器SSD报故障随后自行恢复正常现象.md"
+    },
+    {
+      "slug": "armv8-vsftpd-docker-image",
+      "title": "构建 armv8 平台 vsftpd Docker 镜像",
+      "category": "container",
+      "date": "2023-09-12",
+      "tags": ["Docker", "armv8", "vsftpd", "Dockerfile"],
+      "summary": "为国产 ARM 平台构建可用的 vsftpd 容器镜像，记录 Dockerfile、entrypoint 与健康检查设计。",
+      "src": "记录一次构建armv8平台vsftpd-Docker镜像的过程.md"
+    },
+    {
+      "slug": "python-fio-tool",
+      "title": "记录初学 Python 开发 fio 测试工具",
+      "category": "engineering",
+      "date": "2023-03-20",
+      "tags": ["Python", "fio", "性能测试"],
+      "summary": "初学 Python 时把 fio 压测流程脚本化的过程，包含参数拼接、输出解析与结果整理。",
+      "src": "记录初学Python开发fio测试工具.md"
+    },
+    {
+      "slug": "nextcloud-docker-compose",
+      "title": "用 Docker 部署 Nextcloud 及 MariaDB、Redis",
+      "category": "container",
+      "date": "2024-06-13",
+      "tags": ["Nextcloud", "Docker Compose", "MariaDB", "Redis"],
+      "summary": "一套带持久化存储的 Nextcloud 部署方案，配套 MariaDB 数据库、Redis 缓存与数据目录规划。",
+      "src": "记录用docker部署nextcloud及配套mariadb、redis和持久化存储.md"
+    },
+    {
+      "slug": "phytium-arm-docker-ftp",
+      "title": "飞腾 ARM 平台使用 Docker 部署 FTP",
+      "category": "container",
+      "date": "2023-09-12",
+      "tags": ["飞腾", "ARM", "Docker", "vsftpd"],
+      "summary": "在飞腾 ARM 服务器上用容器方式部署 FTP 服务的操作步骤与需要注意的平台差异。",
+      "src": "飞腾arm平台使用docker部署ftp教程.md"
+    },
+    {
+      "slug": "existence-ripples",
+      "title": "存在的痕迹：不在于石碑，而于涟漪",
+      "category": "essays",
+      "date": "2025-10-17",
+      "tags": ["随笔", "哲学", "人生价值"],
+      "summary": "关于人生价值的一次追问：钱权终将消散，真正留下的是你向世界传递出去的涟漪。",
+      "src": "essays/existence-ripples.md"
+    },
+    {
+      "slug": "floating-dust",
+      "title": "浮尘落尽繁华梦",
+      "category": "essays",
+      "date": "2020-10-01",
+      "tags": ["随笔", "文学", "人生价值"],
+      "summary": "写于下班途中的一场桂花雨，遥看盛世繁华，近观浮尘落尽。",
+      "src": "essays/floating-dust.md"
+    },
+    {
+      "slug": "the-person-i-am",
+      "title": "我始终是我",
+      "category": "essays",
+      "date": "2026-07-18",
+      "tags": ["随笔", "自我认知", "理性与感性"],
+      "summary": "在拆解世界的习惯之外，讲讲那个仍然会被一朵桂花、一段新闻触动的人。",
+      "src": "essays/the-person-i-am.md"
+    },
+    {
+      "slug": "weight-leverage",
+      "title": "破局的物理学：重量、杠杆与涟漪",
+      "category": "essays",
+      "date": "2026-07-05",
+      "tags": ["随笔", "自我认知", "人脉", "人生价值"],
+      "summary": "用重量、杠杆与涟漪三个物理量，重新理解成年人的关系、资源与破圈路径。",
+      "src": "essays/weight-leverage.md"
+    }
+  ]
+}

@@ -1,0 +1,1214 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Python 实现 GFWList 规则自动转换为 Clash 规则 · hackerbs.com</title>
+  <meta name="description" content="用 Python 抓取 GFWList 并自动生成 Clash 分流规则的完整实现，含规则解析与配置合并逻辑。">
+  <meta name="author" content="hackerbs">
+  <meta property="og:title" content="Python 实现 GFWList 规则自动转换为 Clash 规则 · hackerbs.com">
+  <meta property="og:description" content="用 Python 抓取 GFWList 并自动生成 Clash 分流规则的完整实现，含规则解析与配置合并逻辑。">
+  <meta property="og:type" content="website">
+  <link rel="stylesheet" href="../assets/css/main.css">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%2322d3ee'%3E%3C/rect%3E%3Ctext x='16' y='22' font-size='16' font-family='monospace' font-weight='bold' text-anchor='middle' fill='%23061318'%3Ehb%3C/text%3E%3C/svg%3E">
+  
+</head>
+<body>
+<header class="site-header">
+  <div class="header-inner">
+    <a class="brand" href="../index.html">
+      <span class="brand-mark">hb</span>
+      <span>hackerbs<span class="brand-domain">.com</span></span>
+    </a>
+
+    <nav class="nav" id="site-nav">
+      <a href="../index.html">首页</a>
+      <a href="../topics.html">专题</a>
+      <a href="../archive.html">归档</a>
+      <a href="../tags.html">标签</a>
+      <a href="../search.html">搜索</a>
+      <a href="../about.html">关于</a>
+    </nav>
+
+    <div class="header-tools">
+      <button class="icon-btn" id="theme-toggle" type="button" aria-label="切换主题">
+        <svg class="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        <svg class="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+      </button>
+      <button class="icon-btn menu-btn" id="menu-btn" type="button" aria-label="菜单">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+<div class="reading-progress" id="reading-progress"></div>
+
+<main>
+  <div class="wrap-narrow">
+<div class="article-layout">
+<div>
+  <nav class="crumbs">
+    <a href="../index.html">首页</a><span class="sep">/</span><a href="../topics.html#engineering">工程与工具</a>
+  </nav>
+
+  <article>
+    <header class="article-head">
+      <h1>Python 实现 GFWList 规则自动转换为 Clash 规则</h1>
+      <div class="meta-line">
+        <span>2025-03-05</span><span class="dot"></span>
+        <span>约 74 分钟</span><span class="dot"></span>
+        <span>33594 字</span>
+      </div>
+      <div class="summary-card">
+        <strong>摘要</strong>用 Python 抓取 GFWList 并自动生成 Clash 分流规则的完整实现，含规则解析与配置合并逻辑。
+      </div>
+    </header>
+
+    <div class="prose">
+<p>GFWList 是一份持续维护的域名列表，但它的语法和 Clash 的 <code>rules:</code> 并不通用。这篇文章用一个 Python 脚本把 GFWList 下载、解码并转换成 Clash 规则，去重后生成一份可以直接粘贴进 Clash Verge Rev 覆写配置的 <code>rules.yaml</code>。</p>
+<h2 id="环境介绍-1">环境介绍</h2>
+<h3 id="代理客户端为-clash-verge-rev-2">代理客户端为 Clash Verge Rev</h3>
+<p><a href="https://github.com/clash-verge-rev/clash-verge-rev">直达官方 GitHub 仓库</a></p>
+<h3 id="机场为狗狗加速-3">机场为狗狗加速</h3>
+<p><a href="https://down.dginv.click/#/register?code=pGwFvdKk">直达官网</a></p>
+<p>使用邀请码享注册优惠 <code>pGwFvdKk</code></p>
+<ul>
+<li>
+<p>高性能海外机场，免费试用，优惠套餐，解锁流媒体，全球首家支持 Hysteria 协议。</p>
+</li>
+<li>
+<p>海外团队，无跑路风险，高达 50% 返佣</p>
+</li>
+<li>
+<p>集群负载均衡设计，高速专线（兼容老客户端），极低延迟，无视晚高峰，4K 秒开</p>
+</li>
+<li>
+<p>全球首家 Hysteria 协议机场，现已上线更快的 Hysteria2 协议（Clash Verge 客户端最佳搭配）</p>
+</li>
+<li>
+<p>解锁流媒体及 ChatGPT</p>
+</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>套餐</th>
+<th>流量</th>
+<th>详情</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>标准套餐</td>
+<td>160G</td>
+<td>限速150M，无审计，年付9折</td>
+</tr>
+<tr>
+<td>高级套餐</td>
+<td>200G</td>
+<td>不限速，无审计，年付8折，最新Hysteria协议</td>
+</tr>
+<tr>
+<td>豪华套餐</td>
+<td>500G</td>
+<td>不限速，无审计，2年付6折，最新Hysteria2协议，东南亚节点，微信客服技术支持</td>
+</tr>
+</tbody>
+</table>
+<h3 id="开发环境-4">开发环境</h3>
+<p>Python 3.13.2</p>
+<h2 id="clash-配置文件的介绍-5">Clash 配置文件的介绍</h2>
+<h3 id="其余部分不做介绍采用机场的配置即可-6">其余部分不做介绍，采用机场的配置即可</h3>
+<p>本文只涉及 <code>rules:</code> 部分，其余部分直接复制下方从狗狗加速官方提取的配置即可。</p>
+<p><code>proxies</code> 和 <code>proxy-groups</code> 部分不需要填写，让机场的配置文件覆盖即可，当然下面部分的配置也可以留空，让机场覆盖，只填写 <code>rules:</code> 部分就可以实现分流。</p>
+<p>在编辑配置文件之前，先订阅，然后查看当前配置就可以看到机场的 <code>rules:</code>，可以先将其备份，添加到 GFWList 的规则之前，也就是程序中的最高优先级规则部分。</p>
+<p><img alt="20250305152944" src="https://img.hackerbs.com//20250305152944.png" /></p>
+<div class="code-block">
+  <div class="code-head">
+    <span class="lang">YAML</span>
+    <button class="copy" type="button">复制</button>
+  </div>
+  <pre><code><span class="nt">mode</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">rule</span>
+<span class="nt">mixed-port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">7897</span>
+<span class="nt">allow-lan</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="nt">log-level</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">info</span>
+<span class="nt">external-controller</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">127.0.0.1:9097</span>
+<span class="nt">secret</span><span class="p">:</span><span class="w"> </span><span class="s">''</span>
+<span class="nt">unified-delay</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="nt">tun</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">mtu</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1500</span>
+<span class="w">  </span><span class="nt">auto-detect-interface</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">  </span><span class="nt">auto-route</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">  </span><span class="nt">device</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Mihomo</span>
+<span class="w">  </span><span class="nt">dns-hijack</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">any:53</span>
+<span class="w">  </span><span class="nt">stack</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mixed</span>
+<span class="w">  </span><span class="nt">strict-route</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">  </span><span class="nt">enable</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="nt">dns</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">enable</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">  </span><span class="nt">use-system-hosts</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">  </span><span class="nt">listen</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">127.0.0.1:5335</span>
+<span class="w">  </span><span class="nt">default-nameserver</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">180.76.76.76</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">182.254.118.118</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8.8.8.8</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">180.184.2.2</span>
+<span class="w">  </span><span class="nt">enhanced-mode</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">fake-ip</span>
+<span class="w">  </span><span class="nt">fake-ip-range</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">198.18.0.1/16</span>
+<span class="w">  </span><span class="nt">fake-ip-filter</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">'*.lan'</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">stun.*.*.*</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">stun.*.*</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">time.windows.com</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">time.nist.gov</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">time.apple.com</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">time.asia.apple.com</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">'*.ntp.org.cn'</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">'*.openwrt.pool.ntp.org'</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">time1.cloud.tencent.com</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">time.ustc.edu.cn</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pool.ntp.org</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ntp.ubuntu.com</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ntp.aliyun.com</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ntp1.aliyun.com</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ntp2.aliyun.com</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ntp3.aliyun.com</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ntp4.aliyun.com</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ntp5.aliyun.com</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ntp6.aliyun.com</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ntp7.aliyun.com</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">time1.aliyun.com</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">time2.aliyun.com</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">time3.aliyun.com</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">time4.aliyun.com</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">time5.aliyun.com</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">time6.aliyun.com</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">time7.aliyun.com</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">'*.time.edu.cn'</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">time1.apple.com</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">time2.apple.com</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">time3.apple.com</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">time4.apple.com</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">time5.apple.com</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">time6.apple.com</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">time7.apple.com</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">time1.google.com</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">time2.google.com</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">time3.google.com</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">time4.google.com</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">music.163.com</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">'*.music.163.com'</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">'*.126.net'</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">musicapi.taihe.com</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">music.taihe.com</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">songsearch.kugou.com</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">trackercdn.kugou.com</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">'*.kuwo.cn'</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">api-jooxtt.sanook.com</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">api.joox.com</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">joox.com</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">y.qq.com</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">'*.y.qq.com'</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">streamoc.music.tc.qq.com</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mobileoc.music.tc.qq.com</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">isure.stream.qqmusic.qq.com</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dl.stream.qqmusic.qq.com</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">aqqmusic.tc.qq.com</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">amobile.music.tc.qq.com</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">'*.xiami.com'</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">'*.music.migu.cn'</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">music.migu.cn</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">'*.msftconnecttest.com'</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">'*.msftncsi.com'</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">localhost.ptlogin2.qq.com</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">'*.*.*.srv.nintendo.net'</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">'*.*.stun.playstation.net'</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">xbox.*.*.microsoft.com</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">'*.ipv6.microsoft.com'</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">'*.*.xboxlive.com'</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">speedtest.cros.wr.pvp.net</span>
+<span class="w">  </span><span class="nt">nameserver</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">180.76.76.76</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">119.29.29.29</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">180.184.1.1</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">223.5.5.5</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8.8.8.8</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://223.6.6.6/dns-query#h3=true</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://223.5.5.5/dns-query</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://cloudflare-dns.com/dns-query</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://doh.pub/dns-query</span>
+<span class="w">  </span><span class="nt">fallback</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://000000.dns.nextdns.io/dns-query#h3=true</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://101.101.101.101/dns-query</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://208.67.220.220/dns-query</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tls://8.8.4.4</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tls://1.0.0.1:853</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://cloudflare-dns.com/dns-query</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://dns.google/dns-query</span>
+<span class="w">  </span><span class="nt">fallback-filter</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">geoip</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">    </span><span class="nt">ipcidr</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">240.0.0.0/4</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.0.0.0/32</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">127.0.0.1/32</span>
+<span class="w">    </span><span class="nt">domain</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">+.google.com</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">+.facebook.com</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">+.twitter.com</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">+.youtube.com</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">+.xn--ngstr-lra8j.com</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">+.google.cn</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">+.googleapis.cn</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">+.googleapis.com</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">+.gvt1.com</span>
+<span class="w">  </span><span class="nt">ipv6</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="nt">external-controller-cors</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">allow-private-network</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">  </span><span class="nt">allow-origins</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">'*'</span>
+
+<span class="nt">profile</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">store-selected</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</code></pre>
+</div>
+<h3 id="rules-部分-7">rules 部分</h3>
+<p>规则参数：</p>
+<ul>
+<li>
+<p><code>DOMAIN</code> - 匹配完整域名，不包含子域名。例如：<code>- DOMAIN,example.com,DIRECT</code></p>
+</li>
+<li>
+<p><code>DOMAIN-SUFFIX</code> - 匹配域名后缀，可以匹配子域名。例如：<code>- DOMAIN-SUFFIX,example.com,PROXY</code></p>
+</li>
+<li>
+<p><code>DOMAIN-KEYWORD</code> - 匹配域名中包含的关键字，不限定位置。例如：<code>- DOMAIN-KEYWORD,google,PROXY</code></p>
+</li>
+<li>
+<p><code>PROCESS-NAME</code>（仅 Clash for Windows / Clash Meta 支持）- 匹配进程名，仅适用于 TUN 模式。例如：<code>- PROCESS-NAME,chrome.exe,PROXY</code></p>
+</li>
+<li>
+<p><code>IP-CIDR</code> - 匹配 IPv4 地址段，可以带 <code>no-resolve</code> 以防止 Clash 进行 DNS 解析。例如：<code>- IP-CIDR,192.168.1.0/24,DIRECT</code></p>
+</li>
+</ul>
+<p>如果不想 Clash 解析 IP 地址对应的域名，可以加 <code>no-resolve</code>：<code>- IP-CIDR,192.168.1.0/24,DIRECT,no-resolve</code></p>
+<ul>
+<li>
+<p><code>IP-CIDR6</code> - 匹配 IPv6 地址段，用法与 <code>IP-CIDR</code> 类似。例如：<code>- IP-CIDR6,2400:3200::/32,DIRECT</code></p>
+</li>
+<li>
+<p><code>GEOIP</code> - 匹配 IP 地址归属地（基于 GeoIP 数据库）。例如：<code>- GEOIP,CN,DIRECT</code></p>
+</li>
+</ul>
+<p>如果要让 Clash 不解析域名，可以加 <code>no-resolve</code>：<code>- GEOIP,CN,DIRECT,no-resolve</code></p>
+<ul>
+<li><code>MATCH</code> - 匹配所有流量，通常作为最后的兜底规则。例如：<code>- MATCH,PROXY</code></li>
+</ul>
+<p>其中的 <code>DIRECT</code> 为直连，<code>PROXY</code> 为你的 <code>proxy-groups</code> 的 <code>name</code> 部分，例如狗狗加速的 <code>name: 狗狗加速.com</code> 和 <code>name: 🔥ChatGPT</code></p>
+<div class="code-block">
+  <div class="code-head">
+    <span class="lang">YAML</span>
+    <button class="copy" type="button">复制</button>
+  </div>
+  <pre><code><span class="c1"># 以狗狗加速机场的代理组"🔥ChatGPT"为例</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">DOMAIN-KEYWORD,openai,🔥ChatGPT</span>
+</code></pre>
+</div>
+<p>Clash 按规则的先后顺序进行匹配，第一个匹配成功的规则生效，后面的规则不会再被执行。因此，一般规则顺序建议：</p>
+<ul>
+<li>PROCESS-NAME 规则</li>
+<li>DOMAIN 规则</li>
+<li>DOMAIN-SUFFIX 规则</li>
+<li>DOMAIN-KEYWORD 规则</li>
+<li>IP-CIDR / IP-CIDR6 规则</li>
+<li>GEOIP 规则</li>
+<li>MATCH 规则（兜底）</li>
+</ul>
+<h2 id="代码-8">代码</h2>
+<div class="code-block">
+  <div class="code-head">
+    <span class="lang">Python</span>
+    <button class="copy" type="button">复制</button>
+  </div>
+  <pre><code><span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">base64</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">ipaddress</span>
+
+<span class="c1"># GFWList 地址</span>
+<span class="n">GFWLIST_URL</span> <span class="o">=</span> <span class="s2">"https://raw.githubusercontent.com/gfwlist/gfwlist/master/gfwlist.txt"</span>
+
+<span class="c1"># 预置规则 - 来源于上文提到的机场的规则和你自己手动添加的规则</span>
+<span class="c1"># 此处预置了狗狗加速机场的规则</span>
+<span class="n">highest_priority_rules</span> <span class="o">=</span> <span class="s2">"""rules:</span>
+<span class="s2">- DOMAIN,subapi.doggysub.uk,DIRECT</span>
+<span class="s2">- PROCESS-NAME,v2ray,DIRECT</span>
+<span class="s2">- PROCESS-NAME,xray,DIRECT</span>
+<span class="s2">- PROCESS-NAME,naive,DIRECT</span>
+<span class="s2">- PROCESS-NAME,trojan,DIRECT</span>
+<span class="s2">- PROCESS-NAME,trojan-go,DIRECT</span>
+<span class="s2">- PROCESS-NAME,ss-local,DIRECT</span>
+<span class="s2">- PROCESS-NAME,privoxy,DIRECT</span>
+<span class="s2">- PROCESS-NAME,leaf,DIRECT</span>
+<span class="s2">- PROCESS-NAME,v2ray.exe,DIRECT</span>
+<span class="s2">- PROCESS-NAME,xray.exe,DIRECT</span>
+<span class="s2">- PROCESS-NAME,naive.exe,DIRECT</span>
+<span class="s2">- PROCESS-NAME,trojan.exe,DIRECT</span>
+<span class="s2">- PROCESS-NAME,trojan-go.exe,DIRECT</span>
+<span class="s2">- PROCESS-NAME,ss-local.exe,DIRECT</span>
+<span class="s2">- PROCESS-NAME,privoxy.exe,DIRECT</span>
+<span class="s2">- PROCESS-NAME,leaf.exe,DIRECT</span>
+<span class="s2">- PROCESS-NAME,Surge,DIRECT</span>
+<span class="s2">- PROCESS-NAME,Surge 2,DIRECT</span>
+<span class="s2">- PROCESS-NAME,Surge 3,DIRECT</span>
+<span class="s2">- PROCESS-NAME,Surge 4,DIRECT</span>
+<span class="s2">- PROCESS-NAME,Surge%202,DIRECT</span>
+<span class="s2">- PROCESS-NAME,Surge%203,DIRECT</span>
+<span class="s2">- PROCESS-NAME,Surge%204,DIRECT</span>
+<span class="s2">- PROCESS-NAME,Thunder,DIRECT</span>
+<span class="s2">- PROCESS-NAME,DownloadService,DIRECT</span>
+<span class="s2">- PROCESS-NAME,qBittorrent,DIRECT</span>
+<span class="s2">- PROCESS-NAME,Transmission,DIRECT</span>
+<span class="s2">- PROCESS-NAME,fdm,DIRECT</span>
+<span class="s2">- PROCESS-NAME,aria2c,DIRECT</span>
+<span class="s2">- PROCESS-NAME,Folx,DIRECT</span>
+<span class="s2">- PROCESS-NAME,NetTransport,DIRECT</span>
+<span class="s2">- PROCESS-NAME,uTorrent,DIRECT</span>
+<span class="s2">- PROCESS-NAME,WebTorrent,DIRECT</span>
+<span class="s2">- PROCESS-NAME,aria2c.exe,DIRECT</span>
+<span class="s2">- PROCESS-NAME,BitComet.exe,DIRECT</span>
+<span class="s2">- PROCESS-NAME,fdm.exe,DIRECT</span>
+<span class="s2">- PROCESS-NAME,NetTransport.exe,DIRECT</span>
+<span class="s2">- PROCESS-NAME,qbittorrent.exe,DIRECT</span>
+<span class="s2">- PROCESS-NAME,Thunder.exe,DIRECT</span>
+<span class="s2">- PROCESS-NAME,ThunderVIP.exe,DIRECT</span>
+<span class="s2">- PROCESS-NAME,transmission-daemon.exe,DIRECT</span>
+<span class="s2">- PROCESS-NAME,transmission-qt.exe,DIRECT</span>
+<span class="s2">- PROCESS-NAME,uTorrent.exe,DIRECT</span>
+<span class="s2">- PROCESS-NAME,WebTorrent.exe,DIRECT</span>
+<span class="s2">- PROCESS-NAME,aDrive.exe,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,services.googleapis.cn,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,xn--ngstr-lra8j.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN,safebrowsing.urlsec.qq.com,DIRECT</span>
+<span class="s2">- DOMAIN,safebrowsing.googleapis.com,DIRECT</span>
+<span class="s2">- DOMAIN,developer.apple.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,digicert.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN,ocsp.apple.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN,ocsp.comodoca.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN,ocsp.usertrust.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN,ocsp.sectigo.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN,ocsp.verisign.net,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,apple-dns.net,狗狗加速.com</span>
+<span class="s2">- DOMAIN,testflight.apple.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN,sandbox.itunes.apple.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN,itunes.apple.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,apps.apple.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,blobstore.apple.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN,cvws.icloud-content.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,mzstatic.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,itunes.apple.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,icloud.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,icloud-content.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,me.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,aaplimg.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,cdn20.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,cdn-apple.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,akadns.net,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,akamaiedge.net,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,edgekey.net,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,mwcloudcdn.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,mwcname.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,apple.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,apple-cloudkit.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,apple-mapkit.com,DIRECT</span>
+<span class="s2">- DOMAIN,browser-intake-datadoghq.com,🔥ChatGPT</span>
+<span class="s2">- DOMAIN,chat.openai.com.cdn.cloudflare.net,🔥ChatGPT</span>
+<span class="s2">- DOMAIN,gemini.google.com,🔥ChatGPT</span>
+<span class="s2">- DOMAIN,openai-api.arkoselabs.com,🔥ChatGPT</span>
+<span class="s2">- DOMAIN,openaicom-api-bdcpf8c6d2e9atf6.z01.azurefd.net,🔥ChatGPT</span>
+<span class="s2">- DOMAIN,openaicomproductionae4b.blob.core.windows.net,🔥ChatGPT</span>
+<span class="s2">- DOMAIN,production-openaicom-storage.azureedge.net,🔥ChatGPT</span>
+<span class="s2">- DOMAIN,static.cloudflareinsights.com,🔥ChatGPT</span>
+<span class="s2">- DOMAIN-SUFFIX,ai.com,🔥ChatGPT</span>
+<span class="s2">- DOMAIN-SUFFIX,algolia.net,🔥ChatGPT</span>
+<span class="s2">- DOMAIN-SUFFIX,api.statsig.com,🔥ChatGPT</span>
+<span class="s2">- DOMAIN-SUFFIX,auth0.com,🔥ChatGPT</span>
+<span class="s2">- DOMAIN-SUFFIX,chatgpt.com,🔥ChatGPT</span>
+<span class="s2">- DOMAIN-SUFFIX,chatgpt.livekit.cloud,🔥ChatGPT</span>
+<span class="s2">- DOMAIN-SUFFIX,client-api.arkoselabs.com,🔥ChatGPT</span>
+<span class="s2">- DOMAIN-SUFFIX,events.statsigapi.net,🔥ChatGPT</span>
+<span class="s2">- DOMAIN-SUFFIX,featuregates.org,🔥ChatGPT</span>
+<span class="s2">- DOMAIN-SUFFIX,host.livekit.cloud,🔥ChatGPT</span>
+<span class="s2">- DOMAIN-SUFFIX,identrust.com,🔥ChatGPT</span>
+<span class="s2">- DOMAIN-SUFFIX,intercom.io,🔥ChatGPT</span>
+<span class="s2">- DOMAIN-SUFFIX,intercomcdn.com,🔥ChatGPT</span>
+<span class="s2">- DOMAIN-SUFFIX,launchdarkly.com,🔥ChatGPT</span>
+<span class="s2">- DOMAIN-SUFFIX,oaistatic.com,🔥ChatGPT</span>
+<span class="s2">- DOMAIN-SUFFIX,oaiusercontent.com,🔥ChatGPT</span>
+<span class="s2">- DOMAIN-SUFFIX,observeit.net,🔥ChatGPT</span>
+<span class="s2">- DOMAIN-SUFFIX,openai.com,🔥ChatGPT</span>
+<span class="s2">- DOMAIN-SUFFIX,openaiapi-site.azureedge.net,🔥ChatGPT</span>
+<span class="s2">- DOMAIN-SUFFIX,openaicom.imgix.net,🔥ChatGPT</span>
+<span class="s2">- DOMAIN-SUFFIX,segment.io,🔥ChatGPT</span>
+<span class="s2">- DOMAIN-SUFFIX,sentry.io,🔥ChatGPT</span>
+<span class="s2">- DOMAIN-SUFFIX,stripe.com,🔥ChatGPT</span>
+<span class="s2">- DOMAIN-SUFFIX,turn.livekit.cloud,🔥ChatGPT</span>
+<span class="s2">- DOMAIN-SUFFIX,sora.com,🔥ChatGPT</span>
+<span class="s2">- DOMAIN-KEYWORD,openai,🔥ChatGPT</span>
+<span class="s2">- DOMAIN,api.msn.com,🔥ChatGPT</span>
+<span class="s2">- DOMAIN,api.statsig.com,🔥ChatGPT</span>
+<span class="s2">- DOMAIN,assets.msn.com,🔥ChatGPT</span>
+<span class="s2">- DOMAIN,browser-intake-datadoghq.com,🔥ChatGPT</span>
+<span class="s2">- DOMAIN,chat.openai.com.cdn.cloudflare.net,🔥ChatGPT</span>
+<span class="s2">- DOMAIN,copilot.microsoft.com,🔥ChatGPT</span>
+<span class="s2">- DOMAIN,gateway.bingviz.microsoft.net,🔥ChatGPT</span>
+<span class="s2">- DOMAIN,gateway.bingviz.microsoftapp.net,🔥ChatGPT</span>
+<span class="s2">- DOMAIN,in.appcenter.ms,🔥ChatGPT</span>
+<span class="s2">- DOMAIN,location.microsoft.com,🔥ChatGPT</span>
+<span class="s2">- DOMAIN,odc.officeapps.live.com,🔥ChatGPT</span>
+<span class="s2">- DOMAIN,openai-api.arkoselabs.com,🔥ChatGPT</span>
+<span class="s2">- DOMAIN,openaicomproductionae4b.blob.core.windows.net,🔥ChatGPT</span>
+<span class="s2">- DOMAIN,production-openaicom-storage.azureedge.net,🔥ChatGPT</span>
+<span class="s2">- DOMAIN,r.bing.com,🔥ChatGPT</span>
+<span class="s2">- DOMAIN,self.events.data.microsoft.com,🔥ChatGPT</span>
+<span class="s2">- DOMAIN,services.bingapis.com,🔥ChatGPT</span>
+<span class="s2">- DOMAIN,static.cloudflareinsights.com,🔥ChatGPT</span>
+<span class="s2">- DOMAIN,sydney.bing.com,🔥ChatGPT</span>
+<span class="s2">- DOMAIN,www.bing.com,🔥ChatGPT</span>
+<span class="s2">- DOMAIN-SUFFIX,algolia.net,🔥ChatGPT</span>
+<span class="s2">- DOMAIN-SUFFIX,api.microsoftapp.net,🔥ChatGPT</span>
+<span class="s2">- DOMAIN-SUFFIX,auth0.com,🔥ChatGPT</span>
+<span class="s2">- DOMAIN-SUFFIX,bing-shopping.microsoft-falcon.io,🔥ChatGPT</span>
+<span class="s2">- DOMAIN-SUFFIX,challenges.cloudflare.com,🔥ChatGPT</span>
+<span class="s2">- DOMAIN-SUFFIX,chatgpt.com,🔥ChatGPT</span>
+<span class="s2">- DOMAIN-SUFFIX,chatgpt.livekit.cloud,🔥ChatGPT</span>
+<span class="s2">- DOMAIN-SUFFIX,client-api.arkoselabs.com,🔥ChatGPT</span>
+<span class="s2">- DOMAIN-SUFFIX,edgeservices.bing.com,🔥ChatGPT</span>
+<span class="s2">- DOMAIN-SUFFIX,events.statsigapi.net,🔥ChatGPT</span>
+<span class="s2">- DOMAIN-SUFFIX,featuregates.org,🔥ChatGPT</span>
+<span class="s2">- DOMAIN-SUFFIX,host.livekit.cloud,🔥ChatGPT</span>
+<span class="s2">- DOMAIN-SUFFIX,identrust.com,🔥ChatGPT</span>
+<span class="s2">- DOMAIN-SUFFIX,intercom.io,🔥ChatGPT</span>
+<span class="s2">- DOMAIN-SUFFIX,intercomcdn.com,🔥ChatGPT</span>
+<span class="s2">- DOMAIN-SUFFIX,launchdarkly.com,🔥ChatGPT</span>
+<span class="s2">- DOMAIN-SUFFIX,oaistatic.com,🔥ChatGPT</span>
+<span class="s2">- DOMAIN-SUFFIX,oaiusercontent.com,🔥ChatGPT</span>
+<span class="s2">- DOMAIN-SUFFIX,observeit.net,🔥ChatGPT</span>
+<span class="s2">- DOMAIN-SUFFIX,openai.com,🔥ChatGPT</span>
+<span class="s2">- DOMAIN-SUFFIX,openaiapi-site.azureedge.net,🔥ChatGPT</span>
+<span class="s2">- DOMAIN-SUFFIX,openaicom.imgix.net,🔥ChatGPT</span>
+<span class="s2">- DOMAIN-SUFFIX,segment.io,🔥ChatGPT</span>
+<span class="s2">- DOMAIN-SUFFIX,sentry.io,🔥ChatGPT</span>
+<span class="s2">- DOMAIN-SUFFIX,stripe.com,🔥ChatGPT</span>
+<span class="s2">- DOMAIN-SUFFIX,turn.livekit.cloud,🔥ChatGPT</span>
+<span class="s2">- DOMAIN-KEYWORD,openaicom-api,🔥ChatGPT</span>
+<span class="s2">- DOMAIN,ai.google.dev,🔥ChatGPT</span>
+<span class="s2">- DOMAIN,alkalimakersuite-pa.clients6.google.com,🔥ChatGPT</span>
+<span class="s2">- DOMAIN,makersuite.google.com,🔥ChatGPT</span>
+<span class="s2">- DOMAIN-SUFFIX,bard.google.com,🔥ChatGPT</span>
+<span class="s2">- DOMAIN-SUFFIX,deepmind.com,🔥ChatGPT</span>
+<span class="s2">- DOMAIN-SUFFIX,deepmind.google,🔥ChatGPT</span>
+<span class="s2">- DOMAIN-SUFFIX,gemini.google.com,🔥ChatGPT</span>
+<span class="s2">- DOMAIN-SUFFIX,generativeai.google,🔥ChatGPT</span>
+<span class="s2">- DOMAIN-SUFFIX,proactivebackend-pa.googleapis.com,🔥ChatGPT</span>
+<span class="s2">- DOMAIN-SUFFIX,apis.google.com,🔥ChatGPT</span>
+<span class="s2">- DOMAIN-KEYWORD,colab,🔥ChatGPT</span>
+<span class="s2">- DOMAIN-KEYWORD,developerprofiles,🔥ChatGPT</span>
+<span class="s2">- DOMAIN-KEYWORD,generativelanguage,🔥ChatGPT</span>
+<span class="s2">- DOMAIN,cdn.usefathom.com,🔥ChatGPT</span>
+<span class="s2">- DOMAIN-SUFFIX,anthropic.com,🔥ChatGPT</span>
+<span class="s2">- DOMAIN-SUFFIX,claude.ai,🔥ChatGPT</span>
+<span class="s2">- DOMAIN-SUFFIX,razie.ai,🔥ChatGPT</span>
+<span class="s2">- DOMAIN-SUFFIX,razie.aws.intellij.net,🔥ChatGPT</span>
+<span class="s2">- DOMAIN-SUFFIX,etbrains.ai,🔥ChatGPT</span>
+<span class="s2">- DOMAIN-SUFFIX,meta.com,🔥ChatGPT</span>
+<span class="s2">- DOMAIN-SUFFIX,cn,DIRECT</span>
+<span class="s2">- DOMAIN-KEYWORD,-cn,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,126.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,126.net,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,127.net,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,163.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,360buyimg.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,36kr.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,acfun.tv,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,air-matters.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,aixifan.com,DIRECT</span>
+<span class="s2">- DOMAIN-KEYWORD,alicdn,DIRECT</span>
+<span class="s2">- DOMAIN-KEYWORD,alipay,DIRECT</span>
+<span class="s2">- DOMAIN-KEYWORD,taobao,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,amap.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,autonavi.com,DIRECT</span>
+<span class="s2">- DOMAIN-KEYWORD,baidu,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,bdimg.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,bdstatic.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,bilibili.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,bilivideo.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,caiyunapp.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,clouddn.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,cnbeta.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,cnbetacdn.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,cootekservice.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,csdn.net,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,ctrip.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,dgtle.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,dianping.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,douban.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,doubanio.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,duokan.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,easou.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,ele.me,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,feng.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,fir.im,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,frdic.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,g-cores.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,godic.net,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,gtimg.com,DIRECT</span>
+<span class="s2">- DOMAIN,cdn.hockeyapp.net,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,hongxiu.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,hxcdn.net,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,iciba.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,ifeng.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,ifengimg.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,ipip.net,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,iqiyi.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,jd.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,jianshu.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,knewone.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,le.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,lecloud.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,lemicp.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,luoo.net,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,meituan.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,meituan.net,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,mi.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,miaopai.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,microsoft.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,microsoftonline.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,miui.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,miwifi.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,mob.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,netease.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,office.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,office365.com,DIRECT</span>
+<span class="s2">- DOMAIN-KEYWORD,officecdn,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,oschina.net,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,ppsimg.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,pstatp.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,qcloud.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,qdaily.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,qdmm.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,qhimg.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,qhres.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,qidian.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,qihucdn.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,qiniu.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,qiniucdn.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,qiyipic.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,qq.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,qqurl.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,rarbg.to,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,ruguoapp.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,segmentfault.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,sinaapp.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,smzdm.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,snapdrop.net,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,sogou.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,sogoucdn.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,sohu.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,soku.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,speedtest.net,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,sspai.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,suning.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,taobao.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,tencent.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,tenpay.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,tianyancha.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,tmall.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,tudou.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,umetrip.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,upaiyun.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,upyun.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,veryzhun.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,weather.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,weibo.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,xiami.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,xiami.net,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,xiaomicp.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,ximalaya.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,xmcdn.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,xunlei.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,yhd.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,yihaodianimg.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,yinxiang.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,ykimg.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,youdao.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,youku.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,zealer.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,zhihu.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,zhimg.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,zimuzu.tv,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,zoho.com,DIRECT</span>
+<span class="s2">- DOMAIN,fastly-download.epicgames.com,DIRECT</span>
+<span class="s2">- DOMAIN,epicgames-download1.akamaized.net,DIRECT</span>
+<span class="s2">- DOMAIN,steamcdn-a.akamaihd.net,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,steamserver.net,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,cm.steampowered.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,synology.com,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,dyndns.org,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,egdownload.fastly-edge.com,DIRECT</span>
+<span class="s2">- DOMAIN-KEYWORD,amazon,狗狗加速.com</span>
+<span class="s2">- DOMAIN-KEYWORD,google,狗狗加速.com</span>
+<span class="s2">- DOMAIN-KEYWORD,gmail,狗狗加速.com</span>
+<span class="s2">- DOMAIN-KEYWORD,youtube,狗狗加速.com</span>
+<span class="s2">- DOMAIN-KEYWORD,facebook,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,fb.me,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,fbcdn.net,狗狗加速.com</span>
+<span class="s2">- DOMAIN-KEYWORD,twitter,狗狗加速.com</span>
+<span class="s2">- DOMAIN-KEYWORD,instagram,狗狗加速.com</span>
+<span class="s2">- DOMAIN-KEYWORD,dropbox,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,twimg.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-KEYWORD,blogspot,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,youtu.be,狗狗加速.com</span>
+<span class="s2">- DOMAIN-KEYWORD,whatsapp,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,ipleak.net,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,browserscan.net,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,surfsharkdns.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,edns.ip-api.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,dnsleaktest.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,dnsleak.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,expressvpn.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,nordvpn.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,surfshark.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,perfect-privacy.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,browserleaks.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,browserleaks.org,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,browserleaks.net,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,vpnunlimited.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,whoer.net,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,whrq.net,狗狗加速.com</span>
+<span class="s2">- DOMAIN-KEYWORD,admarvel,REJECT</span>
+<span class="s2">- DOMAIN-KEYWORD,admaster,REJECT</span>
+<span class="s2">- DOMAIN-KEYWORD,adsage,REJECT</span>
+<span class="s2">- DOMAIN-KEYWORD,adsmogo,REJECT</span>
+<span class="s2">- DOMAIN-KEYWORD,adsrvmedia,REJECT</span>
+<span class="s2">- DOMAIN-KEYWORD,adwords,REJECT</span>
+<span class="s2">- DOMAIN-KEYWORD,adservice,REJECT</span>
+<span class="s2">- DOMAIN-SUFFIX,appsflyer.com,REJECT</span>
+<span class="s2">- DOMAIN-KEYWORD,domob,REJECT</span>
+<span class="s2">- DOMAIN-SUFFIX,doubleclick.net,REJECT</span>
+<span class="s2">- DOMAIN-KEYWORD,duomeng,REJECT</span>
+<span class="s2">- DOMAIN-KEYWORD,dwtrack,REJECT</span>
+<span class="s2">- DOMAIN-KEYWORD,guanggao,REJECT</span>
+<span class="s2">- DOMAIN-KEYWORD,lianmeng,REJECT</span>
+<span class="s2">- DOMAIN-SUFFIX,mmstat.com,REJECT</span>
+<span class="s2">- DOMAIN-KEYWORD,mopub,REJECT</span>
+<span class="s2">- DOMAIN-KEYWORD,omgmta,REJECT</span>
+<span class="s2">- DOMAIN-KEYWORD,openx,REJECT</span>
+<span class="s2">- DOMAIN-KEYWORD,partnerad,REJECT</span>
+<span class="s2">- DOMAIN-KEYWORD,pingfore,REJECT</span>
+<span class="s2">- DOMAIN-KEYWORD,supersonicads,REJECT</span>
+<span class="s2">- DOMAIN-KEYWORD,uedas,REJECT</span>
+<span class="s2">- DOMAIN-KEYWORD,umeng,REJECT</span>
+<span class="s2">- DOMAIN-KEYWORD,usage,REJECT</span>
+<span class="s2">- DOMAIN-SUFFIX,vungle.com,REJECT</span>
+<span class="s2">- DOMAIN-KEYWORD,wlmonitor,REJECT</span>
+<span class="s2">- DOMAIN-KEYWORD,zjtoolbar,REJECT</span>
+<span class="s2">- DOMAIN-SUFFIX,linkedin.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,licdn.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,9to5mac.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,abpchina.org,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,adblockplus.org,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,adobe.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,akamaized.net,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,alfredapp.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,amplitude.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,ampproject.org,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,android.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,angularjs.org,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,aolcdn.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,apkpure.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,appledaily.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,appshopper.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,appspot.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,arcgis.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,archive.org,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,armorgames.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,aspnetcdn.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,att.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,awsstatic.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,azurewebsites.net,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,bing.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,bintray.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,bit.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,bit.ly,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,bitbucket.org,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,bjango.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,bkrtx.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,blog.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,blogcdn.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,blogger.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,blogsmithmedia.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,blogspot.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,blogspot.hk,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,bloomberg.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,box.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,box.net,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,cachefly.net,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,chromium.org,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,cl.ly,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,cloudflare.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,cloudfront.net,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,cloudmagic.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,cmail19.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,cnet.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,cocoapods.org,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,comodoca.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,crashlytics.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,culturedcode.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,d.pr,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,danilo.to,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,dayone.me,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,db.tt,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,deskconnect.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,disq.us,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,disqus.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,disquscdn.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,dnsimple.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,docker.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,dribbble.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,droplr.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,duckduckgo.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,dueapp.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,dytt8.net,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,edgecastcdn.net,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,edgekey.net,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,edgesuite.net,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,engadget.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,entrust.net,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,eurekavpt.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,evernote.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,fabric.io,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,fast.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,fastly.net,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,fc2.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,feedburner.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,feedly.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,feedsportal.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,fiftythree.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,firebaseio.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,flexibits.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,flickr.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,flipboard.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,g.co,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,gabia.net,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,geni.us,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,gfx.ms,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,ggpht.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,ghostnoteapp.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,git.io,狗狗加速.com</span>
+<span class="s2">- DOMAIN-KEYWORD,github,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,globalsign.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,gmodules.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,godaddy.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,golang.org,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,gongm.in,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,goo.gl,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,goodreaders.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,goodreads.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,gravatar.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,gstatic.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,gvt0.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,hockeyapp.net,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,hotmail.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,icons8.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,ifixit.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,ift.tt,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,ifttt.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,iherb.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,imageshack.us,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,img.ly,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,imgur.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,imore.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,instapaper.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,ipn.li,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,is.gd,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,issuu.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,itgonglun.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,itun.es,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,ixquick.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,j.mp,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,js.revsci.net,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,jshint.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,jtvnw.net,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,justgetflux.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,kat.cr,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,klip.me,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,libsyn.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,line-apps.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,linode.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,lithium.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,littlehj.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,live.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,live.net,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,livefilestore.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,llnwd.net,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,macid.co,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,macromedia.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,macrumors.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,mashable.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,mathjax.org,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,medium.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,mega.co.nz,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,mega.nz,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,megaupload.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,microsofttranslator.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,mindnode.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,mobile01.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,modmyi.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,msedge.net,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,myfontastic.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,name.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,nextmedia.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,nsstatic.net,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,nssurge.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,nyt.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,nytimes.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,omnigroup.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,onedrive.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,onenote.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,ooyala.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,openvpn.net,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,openwrt.org,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,orkut.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,osxdaily.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,outlook.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,ow.ly,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,paddleapi.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,parallels.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,parse.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,pdfexpert.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,periscope.tv,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,pinboard.in,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,pinterest.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,pixelmator.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,pixiv.net,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,playpcesor.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,playstation.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,playstation.com.hk,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,playstation.net,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,playstationnetwork.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,pushwoosh.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,rime.im,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,servebom.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,sfx.ms,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,shadowsocks.org,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,sharethis.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,shazam.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,skype.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,smartdns狗狗加速.com.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,smartmailcloud.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,sndcdn.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,sony.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,soundcloud.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,sourceforge.net,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,spotify.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,squarespace.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,sstatic.net,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,st.luluku.pw,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,stackoverflow.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,startpage.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,staticflickr.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,steamcommunity.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,symauth.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,symcb.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,symcd.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,tapbots.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,tapbots.net,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,tdesktop.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,techcrunch.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,techsmith.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,thepiratebay.org,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,theverge.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,time.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,timeinc.net,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,tiny.cc,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,tinypic.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,tmblr.co,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,todoist.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,trello.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,trustasiassl.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,tumblr.co,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,tumblr.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,tweetdeck.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,tweetmarker.net,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,twitch.tv,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,txmblr.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,typekit.net,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,ubertags.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,ublock.org,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,ubnt.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,ulyssesapp.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,urchin.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,usertrust.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,v.gd,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,v2ex.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,vimeo.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,vimeocdn.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,vine.co,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,vivaldi.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,vox-cdn.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,vsco.co,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,vultr.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,w.org,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,w3schools.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,webtype.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,wikiwand.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,wikileaks.org,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,wikimedia.org,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,wikipedia.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,wikipedia.org,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,windows.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,windows.net,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,wire.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,wordpress.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,workflowy.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,wp.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,wsj.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,wsj.net,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,xda-developers.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,xeeno.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,xiti.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,yahoo.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,yimg.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,ying.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,yoyo.org,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,ytimg.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,signal.org,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,whispersystems.org,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,cangku.moe,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,tradingview.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,x.com,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,asmr.one,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,telegra.ph,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,telegram.org,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,t.me,狗狗加速.com</span>
+<span class="s2">- DOMAIN-SUFFIX,telegram.me,狗狗加速.com</span>
+<span class="s2">- IP-CIDR,91.108.4.0/22,狗狗加速.com,no-resolve</span>
+<span class="s2">- IP-CIDR,91.108.8.0/21,狗狗加速.com,no-resolve</span>
+<span class="s2">- IP-CIDR,91.108.16.0/22,狗狗加速.com,no-resolve</span>
+<span class="s2">- IP-CIDR,91.108.56.0/22,狗狗加速.com,no-resolve</span>
+<span class="s2">- IP-CIDR,149.154.160.0/20,狗狗加速.com,no-resolve</span>
+<span class="s2">- IP-CIDR6,2001:67c:4e8::/48,狗狗加速.com,no-resolve</span>
+<span class="s2">- IP-CIDR6,2001:b28:f23d::/48,狗狗加速.com,no-resolve</span>
+<span class="s2">- IP-CIDR6,2001:b28:f23f::/48,狗狗加速.com,no-resolve</span>
+<span class="s2">- IP-CIDR,120.232.181.162/32,狗狗加速.com,no-resolve</span>
+<span class="s2">- IP-CIDR,120.241.147.226/32,狗狗加速.com,no-resolve</span>
+<span class="s2">- IP-CIDR,120.253.253.226/32,狗狗加速.com,no-resolve</span>
+<span class="s2">- IP-CIDR,120.253.255.162/32,狗狗加速.com,no-resolve</span>
+<span class="s2">- IP-CIDR,120.253.255.34/32,狗狗加速.com,no-resolve</span>
+<span class="s2">- IP-CIDR,120.253.255.98/32,狗狗加速.com,no-resolve</span>
+<span class="s2">- IP-CIDR,180.163.150.162/32,狗狗加速.com,no-resolve</span>
+<span class="s2">- IP-CIDR,180.163.150.34/32,狗狗加速.com,no-resolve</span>
+<span class="s2">- IP-CIDR,180.163.151.162/32,狗狗加速.com,no-resolve</span>
+<span class="s2">- IP-CIDR,180.163.151.34/32,狗狗加速.com,no-resolve</span>
+<span class="s2">- IP-CIDR,203.208.39.0/24,狗狗加速.com,no-resolve</span>
+<span class="s2">- IP-CIDR,203.208.40.0/24,狗狗加速.com,no-resolve</span>
+<span class="s2">- IP-CIDR,203.208.41.0/24,狗狗加速.com,no-resolve</span>
+<span class="s2">- IP-CIDR,203.208.43.0/24,狗狗加速.com,no-resolve</span>
+<span class="s2">- IP-CIDR,203.208.50.0/24,狗狗加速.com,no-resolve</span>
+<span class="s2">- IP-CIDR,220.181.174.162/32,狗狗加速.com,no-resolve</span>
+<span class="s2">- IP-CIDR,220.181.174.226/32,狗狗加速.com,no-resolve</span>
+<span class="s2">- IP-CIDR,220.181.174.34/32,狗狗加速.com,no-resolve</span>
+<span class="s2">- IP-CIDR,24.199.123.28/32,🔥ChatGPT,no-resolve</span>
+<span class="s2">- IP-CIDR,64.23.132.171/32,🔥ChatGPT,no-resolve</span>
+<span class="s2">- IP-CIDR,24.199.123.28/32,🔥ChatGPT,no-resolve</span>
+<span class="s2">- IP-CIDR,64.23.132.171/32,🔥ChatGPT,no-resolve</span>
+<span class="s2">- DOMAIN,injections.adguard.org,DIRECT</span>
+<span class="s2">- DOMAIN,local.adguard.org,DIRECT</span>
+<span class="s2">- DOMAIN-SUFFIX,local,DIRECT</span>
+<span class="s2">- IP-CIDR,127.0.0.0/8,DIRECT</span>
+<span class="s2">- IP-CIDR,172.16.0.0/12,DIRECT</span>
+<span class="s2">- IP-CIDR,192.168.0.0/16,DIRECT</span>
+<span class="s2">- IP-CIDR,10.0.0.0/8,DIRECT</span>
+<span class="s2">- IP-CIDR,17.0.0.0/8,DIRECT</span>
+<span class="s2">- IP-CIDR,100.64.0.0/10,DIRECT</span>
+<span class="s2">- IP-CIDR,224.0.0.0/4,DIRECT</span>
+<span class="s2">- IP-CIDR6,fe80::/10,DIRECT</span>
+<span class="s2">- GEOIP,CN,DIRECT</span>
+<span class="s2">- MATCH,狗狗加速.com</span>
+<span class="s2">"""</span>
+
+<span class="c1"># 下载 GFWList 并 Base64 解码</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">GFWLIST_URL</span><span class="p">)</span>
+<span class="n">decoded_data</span> <span class="o">=</span> <span class="n">base64</span><span class="o">.</span><span class="n">b64decode</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">"utf-8"</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">"ignore"</span><span class="p">)</span>
+
+<span class="c1"># 解析 GFWList 规则并转换为 Clash 规则格式</span>
+<span class="n">rules</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">decoded_data</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">):</span>
+    <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">line</span> <span class="ow">or</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"!"</span><span class="p">)</span> <span class="ow">or</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"["</span><span class="p">)</span> <span class="ow">or</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"@@"</span><span class="p">):</span>  <span class="c1"># 忽略注释、无效行和白名单规则</span>
+        <span class="k">continue</span>
+    <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"||"</span><span class="p">):</span>  <span class="c1"># 处理 DOMAIN-SUFFIX 规则</span>
+        <span class="n">domain</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span>
+        <span class="n">rules</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"DOMAIN-SUFFIX,</span><span class="si">{</span><span class="n">domain</span><span class="si">}</span><span class="s2">,狗狗加速.com"</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"|http"</span><span class="p">)</span> <span class="ow">or</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"|https"</span><span class="p">):</span>  <span class="c1"># 处理 URL 规则</span>
+        <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s2">"\|\w+://([^/]+)"</span><span class="p">,</span> <span class="n">line</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
+            <span class="n">domain</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">rules</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"DOMAIN,</span><span class="si">{</span><span class="n">domain</span><span class="si">}</span><span class="s2">,狗狗加速.com"</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"."</span><span class="p">):</span>  <span class="c1"># 处理以点号开头的域名</span>
+        <span class="n">domain</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+        <span class="n">rules</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"DOMAIN-SUFFIX,</span><span class="si">{</span><span class="n">domain</span><span class="si">}</span><span class="s2">,狗狗加速.com"</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s2">"^\d+\.\d+\.\d+\.\d+(\/\d+)?$"</span><span class="p">,</span> <span class="n">line</span><span class="p">):</span>  <span class="c1"># 处理 IP 或 IP-CIDR 规则</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># 如果缺少子网掩码，则添加默认的 /32</span>
+            <span class="k">if</span> <span class="s1">'/'</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+                <span class="n">line</span> <span class="o">+=</span> <span class="s1">'/32'</span>
+            <span class="n">ipaddress</span><span class="o">.</span><span class="n">ip_network</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="n">rules</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"IP-CIDR,</span><span class="si">{</span><span class="n">line</span><span class="si">}</span><span class="s2">,狗狗加速.com"</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">continue</span>  <span class="c1"># 跳过无效的 IP 或 IP-CIDR</span>
+    <span class="k">else</span><span class="p">:</span>  <span class="c1"># 处理普通域名</span>
+        <span class="n">rules</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"DOMAIN,</span><span class="si">{</span><span class="n">line</span><span class="si">}</span><span class="s2">,狗狗加速.com"</span><span class="p">)</span>
+
+<span class="c1"># 记录规则去重</span>
+<span class="n">rule_dict</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">removed_rules</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">invalid_rules</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="c1"># 处理 GFWList 规则</span>
+<span class="k">for</span> <span class="n">rule</span> <span class="ow">in</span> <span class="n">rules</span><span class="p">:</span>
+    <span class="n">parts</span> <span class="o">=</span> <span class="n">rule</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">","</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="n">rule_type</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">policy</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span> <span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span> <span class="n">parts</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">rule_type</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="n">target</span><span class="si">}</span><span class="s2">"</span>
+
+        <span class="c1"># 处理 IP-CIDR 规则，确保 IP 和子网掩码合法</span>
+        <span class="k">if</span> <span class="n">rule_type</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">"IP-CIDR"</span><span class="p">,</span> <span class="s2">"IP-CIDR6"</span><span class="p">]:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">ipaddress</span><span class="o">.</span><span class="n">ip_network</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>  <span class="c1"># 检测 CIDR 合法性</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="n">invalid_rules</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rule</span><span class="p">)</span>  <span class="c1"># 记录无效的规则</span>
+                <span class="k">continue</span>  <span class="c1"># 跳过此规则</span>
+
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">rule_dict</span><span class="p">:</span>
+            <span class="n">rule_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">rule</span>  <span class="c1"># 第一次出现的规则直接保留</span>
+        <span class="k">elif</span> <span class="n">policy</span> <span class="o">!=</span> <span class="s2">"狗狗加速.com"</span><span class="p">:</span>
+            <span class="n">removed_rules</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rule</span><span class="p">)</span>  <span class="c1"># 记录被删除的规则</span>
+
+<span class="c1"># 重新整理规则</span>
+<span class="n">filtered_rules</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">rule_dict</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+
+<span class="c1"># 将原始规则与过滤后的规则合并</span>
+<span class="n">all_rules</span> <span class="o">=</span> <span class="n">highest_priority_rules</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="sa">f</span><span class="s2">"- </span><span class="si">{</span><span class="n">rule</span><span class="si">}</span><span class="s2">"</span> <span class="k">for</span> <span class="n">rule</span> <span class="ow">in</span> <span class="n">filtered_rules</span><span class="p">])</span>
+
+<span class="c1"># 写入优化后的 YAML 文件</span>
+<span class="n">output_file</span> <span class="o">=</span> <span class="s2">"rules.yaml"</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">all_rules</span><span class="p">)</span>
+
+<span class="c1"># 打印被删除的冲突规则</span>
+<span class="k">if</span> <span class="n">removed_rules</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">=== 以下规则因冲突被删除（仅保留'狗狗加速.com'的规则） ==="</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">rule</span> <span class="ow">in</span> <span class="n">removed_rules</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">rule</span><span class="p">)</span>
+
+<span class="c1"># 打印无效 IP-CIDR 规则</span>
+<span class="k">if</span> <span class="n">invalid_rules</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">=== 以下无效的 IP-CIDR 规则已被移除 ==="</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">rule</span> <span class="ow">in</span> <span class="n">invalid_rules</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">rule</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="s2">去重完成，优化后的 YAML 文件已保存为: </span><span class="si">{</span><span class="n">output_file</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</code></pre>
+</div>
+<p>程序会将处理好的规则输出到当前目录，名为 <code>rules.yaml</code>。</p>
+<div class="callout callout-note">
+  <div class="co-title">执行前先确认网络可达</div>
+  <p>执行前确保你能打得开 <a href="https://raw.githubusercontent.com/gfwlist/gfwlist/master/gfwlist.txt">GFWList</a>，如果打不开，可以自行替换为打得开的链接。</p>
+</div>
+<p>GFWList 内容如下，打开如果不是这样的那就说明你找错链接了</p>
+<p><img alt="20250305153304" src="https://img.hackerbs.com//20250305153304.png" /></p>
+<h2 id="规则的使用方法-9">规则的使用方法</h2>
+<p>程序输出的内容直接全选，然后打开 Clash Verge Rev 的 订阅 -&gt; 全局扩展覆写配置 -&gt; 右键选择打开文件（如果点编辑会导致自动检查失败）</p>
+<p>然后将程序的内容直接粘贴到文末即可</p>
+<p>退出 Clash Verge Rev，重新打开，使用 TUN 模式，刷新订阅，点开你的规则组，例如我的 <code>狗狗加速.com</code>，按延迟排序，节点测速</p>
+<p>因为规则有 7361 条，所以节点测速时重复点击，大概 5 分钟后才会测出正常速度，例如 15-新加坡Hy2节点，87ms 延迟</p>
+<p>如果你和我一样用的狗狗加速，需要访问 ChatGPT 的话就选 <code>🔥ChatGPT</code> 这组</p>
+<p><img alt="20250305153734" src="https://img.hackerbs.com//20250305153734.png" /></p>
+<p><img alt="20250305153746" src="https://img.hackerbs.com//20250305153746.png" /></p>
+<p><img alt="20250305153755" src="https://img.hackerbs.com//20250305153755.png" /></p>
+    </div>
+
+    <div class="tag-row">
+  <a class="tag" href="../tags.html#Python">#Python</a>
+  <a class="tag" href="../tags.html#Clash">#Clash</a>
+  <a class="tag" href="../tags.html#GFWList">#GFWList</a>
+  <a class="tag" href="../tags.html#分流">#分流</a>
+    </div>
+
+<nav class="post-nav">  <span></span>  <a class="next" href="cpp-fio-tool.html"><span class="dir">下一篇</span><span class="t">用 C++ 编写 fio 测试工具</span></a></nav>
+  </article>
+</div>
+  <aside class="toc" id="toc">
+    <div class="toc-title">目录</div>
+    <a class="toc-h2" href="#环境介绍-1">环境介绍</a>
+    <a class="toc-h3" href="#代理客户端为-clash-verge-rev-2">代理客户端为 Clash Verge Rev</a>
+    <a class="toc-h3" href="#机场为狗狗加速-3">机场为狗狗加速</a>
+    <a class="toc-h3" href="#开发环境-4">开发环境</a>
+    <a class="toc-h2" href="#clash-配置文件的介绍-5">Clash 配置文件的介绍</a>
+    <a class="toc-h3" href="#其余部分不做介绍采用机场的配置即可-6">其余部分不做介绍，采用机场的配置即可</a>
+    <a class="toc-h3" href="#rules-部分-7">rules 部分</a>
+    <a class="toc-h2" href="#代码-8">代码</a>
+    <a class="toc-h2" href="#规则的使用方法-9">规则的使用方法</a>
+  </aside>
+</div>
+  </div>
+</main>
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div class="footer-about">
+        <h4>About</h4>
+        <p>hackerbs = hacker brainstorm。记录数据中心、Linux、虚拟化与工程实践，把零散经验连成一张可复用的知识网络。</p>
+      </div>
+      <div>
+        <h4>导航</h4>
+        <ul>
+          <li><a href="../index.html">首页</a></li>
+          <li><a href="../topics.html">专题</a></li>
+          <li><a href="../archive.html">归档</a></li>
+          <li><a href="../tags.html">标签</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>分类</h4>
+        <ul>
+          <li><a href="../topics.html#os">操作系统</a></li>
+          <li><a href="../topics.html#hardware">服务器硬件</a></li>
+          <li><a href="../topics.html#storage">存储与可靠性</a></li>
+          <li><a href="../topics.html#virtualization">虚拟化</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>链接</h4>
+        <ul>
+          <li><a href="https://github.com/1949hacker">GitHub</a></li>
+          <li><a href="https://blog.hackerbs.com">旧博客</a></li>
+          <li><a href="../about.html">联系我</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2022–2026 hackerbs.com · 探索知识的宇宙</span>
+      <span>本站为纯静态站点，无追踪、无广告</span>
+    </div>
+  </div>
+</footer>
+<button class="to-top" id="to-top" type="button" aria-label="回到顶部">
+  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+</button>
+
+<script src="../assets/js/main.js"></script>
+</body>
+</html>

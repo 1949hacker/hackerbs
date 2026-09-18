@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>服务器硬盘故障但带外无日志的排障与报修 · hackerbs.com</title>
+  <meta name="description" content="带外看不到错误日志时，如何用 smartctl 自行取证、判定硬盘故障并走厂商报修流程。">
+  <meta name="author" content="hackerbs">
+  <meta property="og:title" content="服务器硬盘故障但带外无日志的排障与报修 · hackerbs.com">
+  <meta property="og:description" content="带外看不到错误日志时，如何用 smartctl 自行取证、判定硬盘故障并走厂商报修流程。">
+  <meta property="og:type" content="website">
+  <link rel="stylesheet" href="../assets/css/main.css">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%2322d3ee'%3E%3C/rect%3E%3Ctext x='16' y='22' font-size='16' font-family='monospace' font-weight='bold' text-anchor='middle' fill='%23061318'%3Ehb%3C/text%3E%3C/svg%3E">
+  
+</head>
+<body>
+<header class="site-header">
+  <div class="header-inner">
+    <a class="brand" href="../index.html">
+      <span class="brand-mark">hb</span>
+      <span>hackerbs<span class="brand-domain">.com</span></span>
+    </a>
+
+    <nav class="nav" id="site-nav">
+      <a href="../index.html">首页</a>
+      <a href="../topics.html">专题</a>
+      <a href="../archive.html">归档</a>
+      <a href="../tags.html">标签</a>
+      <a href="../search.html">搜索</a>
+      <a href="../about.html">关于</a>
+    </nav>
+
+    <div class="header-tools">
+      <button class="icon-btn" id="theme-toggle" type="button" aria-label="切换主题">
+        <svg class="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        <svg class="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+      </button>
+      <button class="icon-btn menu-btn" id="menu-btn" type="button" aria-label="菜单">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+<div class="reading-progress" id="reading-progress"></div>
+
+<main>
+  <div class="wrap-narrow">
+<div class="article-layout">
+<div>
+  <nav class="crumbs">
+    <a href="../index.html">首页</a><span class="sep">/</span><a href="../topics.html#storage">存储与可靠性</a>
+  </nav>
+
+  <article>
+    <header class="article-head">
+      <h1>服务器硬盘故障但带外无日志的排障与报修</h1>
+      <div class="meta-line">
+        <span>2025-09-18</span><span class="dot"></span>
+        <span>约 27 分钟</span><span class="dot"></span>
+        <span>13026 字</span>
+      </div>
+      <div class="summary-card">
+        <strong>摘要</strong>带外看不到错误日志时，如何用 smartctl 自行取证、判定硬盘故障并走厂商报修流程。
+      </div>
+    </header>
+
+    <div class="prose">
+<p>巡检时运维平台报出 IO 延迟告警，但带外（BMC / iDRAC）没有任何错误日志，这时只能进操作系统用 <code>smartctl</code> 排查。本文记录了向 Inspur、H3C、Lenovo、DELL 咨询后确认的告警参数、批量排查脚本，以及一次 DELL 报修被驳回的完整案例。</p>
+<h2 id="情况说明-1">情况说明</h2>
+<p>收到系统发出 IO 占用率和 IO 延迟的告警，登录带外排查无任何错误日志，随后进入操作系统使用脚本批量排查 smartctl 日志，发现存在错误计数，因 smartctl 并非厂家带外的告警日志，所以特此向 Inspur、H3C、Lenovo、DELL 进行了咨询，其中提到了一些日志参数的告警，目前已收到 H3C、Inspur 的回复。</p>
+<p><strong>厂商对日志中以下内容的告警表示认可并作为报修依据</strong></p>
+<table>
+<thead>
+<tr>
+<th>硬盘类型</th>
+<th>参数</th>
+<th>翻译</th>
+<th>说明</th>
+<th>来源</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SSD</td>
+<td>ID 5 Reallocated_Sector_Ct</td>
+<td>重分配扇区计数</td>
+<td>因坏块被重新分配的扇区数量，值越高健康状况越差</td>
+<td>新华三</td>
+</tr>
+<tr>
+<td>SSD</td>
+<td>ID 197 Current_Pending_Sector</td>
+<td>当前待处理扇区计数</td>
+<td>有潜在读写错误、待重新映射的扇区数量(&gt;100更换)</td>
+<td>浪潮/新华三</td>
+</tr>
+<tr>
+<td>SSD</td>
+<td>ID 187 Reported_Uncorrect</td>
+<td>已报告的不可纠正错误</td>
+<td>硬盘向主机报告的读/写过程中发生的不可恢复错误次数(&gt;10更换)</td>
+<td>浪潮</td>
+</tr>
+<tr>
+<td>HDD</td>
+<td>Total uncorrected errors</td>
+<td>总无法纠正错误</td>
+<td>所有无法纠正的读/写错误之和</td>
+<td>浪潮/新华三</td>
+</tr>
+<tr>
+<td>HDD</td>
+<td>Verify total uncorrected errors</td>
+<td>校验无法纠正错误</td>
+<td>硬盘控制器自检时无法通过 ECC 纠正的错误总数，高值表示可靠性下降</td>
+<td>新华三</td>
+</tr>
+<tr>
+<td>HDD</td>
+<td>Read total uncorrected errors</td>
+<td>读无法纠正错误</td>
+<td>读取/写入 IO 时无法通过 ECC 纠正的错误总数，高值表示可靠性下降</td>
+<td>新华三</td>
+</tr>
+<tr>
+<td>HDD</td>
+<td>Elements in grown defect list</td>
+<td>已增长缺陷列表中的元素</td>
+<td>硬盘运行中登记的坏块数量，用于追踪坏块增长</td>
+<td><a href="https://github.com/icenowy">@Icenowy</a>于清华 TUNA 协会技术群组内回复</td>
+</tr>
+</tbody>
+</table>
+<p><strong>以下是辅助日志，作为协助排障参考，不作为直接依据</strong></p>
+<table>
+<thead>
+<tr>
+<th>硬盘类型</th>
+<th>参数</th>
+<th>翻译</th>
+<th>说明</th>
+<th>来源</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SSD</td>
+<td>Reallocated Sector Count</td>
+<td>重分配扇区计数</td>
+<td>记录因物理损坏被替换到备用扇区的次数，数值增加说明介质退化(&gt;500 为不可靠)</td>
+<td>浪潮</td>
+</tr>
+<tr>
+<td>SSD</td>
+<td>CRC Error Count</td>
+<td>CRC 错误计数</td>
+<td>记录主机与硬盘之间传输数据时发生的 CRC 校验错误次数，常见原因包括数据线接触不良、电磁干扰或接口问题，单盘较多则可能为该盘本体故障，多个硬盘则进一步筛查是否位于同一个硬盘背板或同一个 SAS 端口</td>
+<td>浪潮</td>
+</tr>
+<tr>
+<td>HDD</td>
+<td>Non-medium error count</td>
+<td>非介质故障</td>
+<td>与上方 SSD 的是一样的意思</td>
+<td>浪潮</td>
+</tr>
+</tbody>
+</table>
+<p>清华大学 TUNA 协会技术群组</p>
+<p>感谢 <a href="https://github.com/icenowy">@Icenowy</a> 于<em>清华 TUNA 协会技术群组</em>内回复提出参考 <code>Elements in grown defect list</code> 参数的值，该值是 HDD 独有的指标，记录的是在使用过程中新发现的物理坏块数，数值持续增长则意味着该硬盘可靠性正在下降。</p>
+<h2 id="排查过程-2">排查过程</h2>
+<h3 id="对于-jbod-模式的硬盘-3">对于 JBOD 模式的硬盘</h3>
+<div class="code-block">
+  <div class="code-head">
+    <span class="lang">Bash</span>
+    <button class="copy" type="button">复制</button>
+  </div>
+  <pre><code><span class="c1"># 使用smartctl直接查询即可</span>
+smartctl<span class="w"> </span>-a<span class="w"> </span>/dev/sdX
+
+<span class="c1"># 可以增加grep快速筛选想要查询的参数，在替换双引号中的即可</span>
+smartctl<span class="w"> </span>-a<span class="w"> </span>/dev/sdX<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s2">"Elements in grown defect list"</span>
+
+<span class="c1"># 配合for迅速遍历磁盘，{a..z}则是遍历sda到sdz的所有盘</span>
+<span class="c1"># 如果盘很多那可以直接写为{a..zz}，则是遍历sda到sdzz共702个盘</span>
+<span class="c1"># [ -b "/dev/sd$i" ] test命令的简写，判断该设备是不是一个硬盘</span>
+<span class="c1"># echo "sd$i"是在输出日志前输出盘号，避免不知道是哪个盘的报错</span>
+<span class="k">for</span><span class="w"> </span>i<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="o">{</span>a..z<span class="o">}</span><span class="p">;</span><span class="w"> </span><span class="k">do</span><span class="w"> </span><span class="o">[</span><span class="w"> </span>-b<span class="w"> </span><span class="s2">"/dev/sd</span><span class="nv">$i</span><span class="s2">"</span><span class="w"> </span><span class="o">]</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"sd</span><span class="nv">$i</span><span class="s2">:"</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>sudo<span class="w"> </span>smartctl<span class="w"> </span>-a<span class="w"> </span><span class="s2">"/dev/sd</span><span class="nv">$i</span><span class="s2">"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s2">"Elements in grown defect list"</span><span class="p">;</span><span class="w"> </span><span class="k">done</span>
+</code></pre>
+</div>
+<h3 id="对于-lsi-megaraid-控制器raid-模式的硬盘-4">对于 LSI MegaRAID 控制器，RAID 模式的硬盘</h3>
+<div class="code-block">
+  <div class="code-head">
+    <span class="lang">Bash</span>
+    <button class="copy" type="button">复制</button>
+  </div>
+  <pre><code><span class="c1"># 由于硬盘由阵列卡接管，所以需要调用MegaRAID驱动程序才可访问</span>
+<span class="c1"># /dev/sdX输入你挂载到系统的阵列，例如通常/dev/sda是RAID1系统盘</span>
+<span class="c1"># 其中megaraid,后面的数字对应该硬盘是该阵列中的第几个盘，从编号0开始是第一个</span>
+smartctl<span class="w"> </span>-a<span class="w"> </span>-d<span class="w"> </span>megaraid,0<span class="w"> </span>/dev/sdX
+
+<span class="c1"># 同样的grep筛选</span>
+smartctl<span class="w"> </span>-a<span class="w"> </span>-d<span class="w"> </span>megaraid,0<span class="w"> </span>/dev/sdX<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s2">"Non-medium error count"</span>
+
+<span class="c1"># 遍历快速排查所有盘</span>
+<span class="k">for</span><span class="w"> </span>raid<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="o">{</span>a..z<span class="o">}</span><span class="p">;</span><span class="k">do</span><span class="w"> </span><span class="o">[</span><span class="w"> </span>-b<span class="w"> </span><span class="s2">"/dev/sd</span><span class="nv">$raid</span><span class="s2">"</span><span class="w"> </span><span class="o">]</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="k">for</span><span class="w"> </span>disk<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="o">{</span><span class="m">0</span>..20<span class="o">}</span><span class="p">;</span><span class="k">do</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span>-e<span class="w"> </span><span class="s2">"\033[36;1m阵列 sd</span><span class="nv">$raid</span><span class="s2"> 中硬盘 </span><span class="nv">$disk</span><span class="s2"> 日志: "</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>smartctl<span class="w"> </span>-a<span class="w"> </span>-d<span class="w"> </span>megaraid,<span class="nv">$disk</span><span class="w"> </span>/dev/sd<span class="nv">$raid</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s2">"Non-medium error count"</span><span class="p">;</span><span class="k">done</span><span class="p">;</span><span class="k">done</span>
+
+<span class="c1"># 上方命令为单行，方便复制粘贴执行，以下是拆解后可读的版本</span>
+<span class="k">for</span><span class="w"> </span>raid<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="o">{</span>a..z<span class="o">}</span><span class="p">;</span><span class="w"> </span><span class="k">do</span><span class="w"> </span><span class="c1"># 遍历sda到sdz的设备</span>
+<span class="w">    </span><span class="o">[</span><span class="w"> </span>-b<span class="w"> </span><span class="s2">"/dev/sd</span><span class="nv">$raid</span><span class="s2">"</span><span class="w"> </span><span class="o">]</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="c1"># 判断是不是硬盘，不是就跳过</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span>disk<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="o">{</span><span class="m">0</span>..20<span class="o">}</span><span class="p">;</span><span class="w"> </span><span class="k">do</span><span class="w"> </span><span class="c1"># 预设是0到20共21个硬盘，可以自行设置</span>
+<span class="w">        </span><span class="nb">echo</span><span class="w"> </span>-e<span class="w"> </span><span class="s2">"\033[36;1m阵列 sd</span><span class="nv">$raid</span><span class="s2"> 中硬盘 </span><span class="nv">$disk</span><span class="s2"> 日志: "</span><span class="w"> </span><span class="c1"># 打印个开头，不然不知道是哪个设备的日志</span>
+<span class="w">        </span>smartctl<span class="w"> </span>-a<span class="w"> </span>-d<span class="w"> </span>megaraid,<span class="nv">$disk</span><span class="w"> </span>/dev/sd<span class="nv">$raid</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s2">"Non-medium error count"</span><span class="w"> </span><span class="c1"># 根据你的需要调整grep筛选的内容</span>
+<span class="w">    </span><span class="k">done</span>
+<span class="k">done</span>
+</code></pre>
+</div>
+<h2 id="进阶脚本-5">进阶脚本</h2>
+<p><strong>该脚本会在当前目录输出 <code>smartctl</code> 的日志源码到 <code>disk_error_$(date +%Y%m%d_%H%M%S).log</code> 文件。</strong></p>
+<p>推荐使用此单行模式，复制粘贴直接用，不需要创建 shell 文件。</p>
+<div class="code-block">
+  <div class="code-head">
+    <span class="lang">Bash</span>
+    <button class="copy" type="button">复制</button>
+  </div>
+  <pre><code><span class="nv">log_file</span><span class="o">=</span><span class="s2">"disk_error_</span><span class="k">$(</span>date<span class="w"> </span>+%Y%m%d_%H%M%S<span class="k">)</span><span class="s2">.log"</span><span class="p">;</span><span class="w"> </span><span class="k">for</span><span class="w"> </span>raid<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="o">{</span>a..d<span class="o">}</span><span class="p">;</span><span class="w"> </span><span class="k">do</span><span class="w"> </span><span class="o">[</span><span class="w"> </span>-b<span class="w"> </span><span class="s2">"/dev/sd</span><span class="nv">$raid</span><span class="s2">"</span><span class="w"> </span><span class="o">]</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="k">for</span><span class="w"> </span>disk<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="o">{</span><span class="m">0</span>..23<span class="o">}</span><span class="p">;</span><span class="w"> </span><span class="k">do</span><span class="w"> </span>smartctl<span class="w"> </span>-d<span class="w"> </span>megaraid,<span class="nv">$disk</span><span class="w"> </span>/dev/sd<span class="nv">$raid</span><span class="w"> </span>-i<span class="w"> </span>&gt;/dev/null<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nv">output</span><span class="o">=</span><span class="k">$(</span>smartctl<span class="w"> </span>-a<span class="w"> </span>-d<span class="w"> </span>megaraid,<span class="nv">$disk</span><span class="w"> </span>/dev/sd<span class="nv">$raid</span><span class="k">)</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nv">serial</span><span class="o">=</span><span class="k">$(</span><span class="nb">echo</span><span class="w"> </span><span class="s2">"</span><span class="nv">$output</span><span class="s2">"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s2">"Serial number:"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">'{print $3}'</span><span class="k">)</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"</span><span class="nv">$output</span><span class="s2">"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-q<span class="w"> </span><span class="s2">"SSD"</span><span class="p">;</span><span class="w"> </span><span class="k">then</span><span class="w"> </span><span class="nv">reallocated_sectors</span><span class="o">=</span><span class="k">$(</span><span class="nb">echo</span><span class="w"> </span><span class="s2">"</span><span class="nv">$output</span><span class="s2">"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s2">"Reallocated_Sector_Ct"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">'{print $10}'</span><span class="k">)</span><span class="p">;</span><span class="w"> </span><span class="nv">reallocated_sectors</span><span class="o">=</span><span class="si">${</span><span class="nv">reallocated_sectors</span><span class="k">:-</span><span class="nv">0</span><span class="si">}</span><span class="p">;</span><span class="w"> </span><span class="nv">current_pending</span><span class="o">=</span><span class="k">$(</span><span class="nb">echo</span><span class="w"> </span><span class="s2">"</span><span class="nv">$output</span><span class="s2">"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s2">"Current_Pending_Sector"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">'{print $10}'</span><span class="k">)</span><span class="p">;</span><span class="w"> </span><span class="nv">current_pending</span><span class="o">=</span><span class="si">${</span><span class="nv">current_pending</span><span class="k">:-</span><span class="nv">0</span><span class="si">}</span><span class="p">;</span><span class="w"> </span><span class="nv">reported_uncorrect</span><span class="o">=</span><span class="k">$(</span><span class="nb">echo</span><span class="w"> </span><span class="s2">"</span><span class="nv">$output</span><span class="s2">"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s2">"Reported_Uncorrect"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">'{print $10}'</span><span class="k">)</span><span class="p">;</span><span class="w"> </span><span class="nv">reported_uncorrect</span><span class="o">=</span><span class="si">${</span><span class="nv">reported_uncorrect</span><span class="k">:-</span><span class="nv">0</span><span class="si">}</span><span class="p">;</span><span class="w"> </span><span class="nv">offline_uncorrect</span><span class="o">=</span><span class="k">$(</span><span class="nb">echo</span><span class="w"> </span><span class="s2">"</span><span class="nv">$output</span><span class="s2">"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s2">"Offline_Uncorrectable"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">'{print $10}'</span><span class="k">)</span><span class="p">;</span><span class="w"> </span><span class="nv">offline_uncorrect</span><span class="o">=</span><span class="si">${</span><span class="nv">offline_uncorrect</span><span class="k">:-</span><span class="nv">0</span><span class="si">}</span><span class="p">;</span><span class="w"> </span><span class="nv">crc_errors</span><span class="o">=</span><span class="k">$(</span><span class="nb">echo</span><span class="w"> </span><span class="s2">"</span><span class="nv">$output</span><span class="s2">"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s2">"CRC_Error_Count"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">'{print $10}'</span><span class="k">)</span><span class="p">;</span><span class="w"> </span><span class="nv">crc_errors</span><span class="o">=</span><span class="si">${</span><span class="nv">crc_errors</span><span class="k">:-</span><span class="nv">0</span><span class="si">}</span><span class="p">;</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="s2">"</span><span class="nv">$reallocated_sectors</span><span class="s2">"</span><span class="w"> </span>-gt<span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="o">]</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="s2">"</span><span class="nv">$current_pending</span><span class="s2">"</span><span class="w"> </span>-gt<span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="o">]</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="s2">"</span><span class="nv">$reported_uncorrect</span><span class="s2">"</span><span class="w"> </span>-gt<span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="o">]</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="s2">"</span><span class="nv">$offline_uncorrect</span><span class="s2">"</span><span class="w"> </span>-gt<span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="o">]</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="s2">"</span><span class="nv">$crc_errors</span><span class="s2">"</span><span class="w"> </span>-gt<span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="o">]</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"</span><span class="nv">$output</span><span class="s2">"</span><span class="w"> </span>&gt;&gt;<span class="w"> </span><span class="s2">"</span><span class="nv">$log_file</span><span class="s2">"</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span>-e<span class="w"> </span><span class="s2">"\033[36;1mRAID \033[32;1msd</span><span class="nv">$raid</span><span class="s2"> \033[36;1m中的 SSD 磁盘 \033[32;1m#</span><span class="nv">$disk</span><span class="s2"> \033[36;1m(SN:\033[33;1m </span><span class="nv">$serial</span><span class="s2">) 检测到异常：\033[0m\n\033[36;1m05 重分配扇区计数(Reallocated Sector Count)：\033[31;1m</span><span class="nv">$reallocated_sectors</span><span class="s2">\033[0m\n\033[36;1m197 当前待处理扇区(Current Pending Sector Count)：\033[31;1m</span><span class="nv">$current_pending</span><span class="s2">\033[0m\n\033[36;1m已报告的不可纠正错误(Reported Uncorrectable Errors)：\033[31;1m</span><span class="nv">$reported_uncorrect</span><span class="s2">\033[0m\n\033[36;1m离线不可纠正错误(Offline Uncorrectable)：\033[31;1m</span><span class="nv">$offline_uncorrect</span><span class="s2">\033[0m\n\033[36;1m接口CRC错误计数(CRC Error Count)：\033[31;1m</span><span class="nv">$crc_errors</span><span class="s2">\033[0m\n"</span><span class="p">;</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="nv">read_uncorrected</span><span class="o">=</span><span class="k">$(</span><span class="nb">echo</span><span class="w"> </span><span class="s2">"</span><span class="nv">$output</span><span class="s2">"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-A<span class="w"> </span><span class="m">10</span><span class="w"> </span><span class="s2">"Error counter log:"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s2">"^read:"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">'{print $NF}'</span><span class="k">)</span><span class="p">;</span><span class="w"> </span><span class="nv">read_uncorrected</span><span class="o">=</span><span class="si">${</span><span class="nv">read_uncorrected</span><span class="k">:-</span><span class="nv">0</span><span class="si">}</span><span class="p">;</span><span class="w"> </span><span class="nv">verify_uncorrected</span><span class="o">=</span><span class="k">$(</span><span class="nb">echo</span><span class="w"> </span><span class="s2">"</span><span class="nv">$output</span><span class="s2">"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-A<span class="w"> </span><span class="m">10</span><span class="w"> </span><span class="s2">"Error counter log:"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s2">"^verify:"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">'{print $NF}'</span><span class="k">)</span><span class="p">;</span><span class="w"> </span><span class="nv">verify_uncorrected</span><span class="o">=</span><span class="si">${</span><span class="nv">verify_uncorrected</span><span class="k">:-</span><span class="nv">0</span><span class="si">}</span><span class="p">;</span><span class="w"> </span><span class="nv">total_uncorrected</span><span class="o">=</span><span class="k">$(</span><span class="nb">echo</span><span class="w"> </span><span class="s2">"</span><span class="nv">$output</span><span class="s2">"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s2">"Total uncorrected errors"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">'{print $NF}'</span><span class="k">)</span><span class="p">;</span><span class="w"> </span><span class="nv">total_uncorrected</span><span class="o">=</span><span class="si">${</span><span class="nv">total_uncorrected</span><span class="k">:-</span><span class="nv">0</span><span class="si">}</span><span class="p">;</span><span class="w"> </span><span class="nv">grown_defect_list</span><span class="o">=</span><span class="k">$(</span><span class="nb">echo</span><span class="w"> </span><span class="s2">"</span><span class="nv">$output</span><span class="s2">"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s2">"Elements in grown defect list"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">'{print $NF}'</span><span class="k">)</span><span class="p">;</span><span class="w"> </span><span class="nv">grown_defect_list</span><span class="o">=</span><span class="si">${</span><span class="nv">grown_defect_list</span><span class="k">:-</span><span class="nv">0</span><span class="si">}</span><span class="p">;</span><span class="w"> </span><span class="nv">non_medium</span><span class="o">=</span><span class="k">$(</span><span class="nb">echo</span><span class="w"> </span><span class="s2">"</span><span class="nv">$output</span><span class="s2">"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s2">"Non-medium error count:"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">'{print $NF}'</span><span class="k">)</span><span class="p">;</span><span class="w"> </span><span class="nv">non_medium</span><span class="o">=</span><span class="si">${</span><span class="nv">non_medium</span><span class="k">:-</span><span class="nv">0</span><span class="si">}</span><span class="p">;</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="s2">"</span><span class="nv">$read_uncorrected</span><span class="s2">"</span><span class="w"> </span>-gt<span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="o">]</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="s2">"</span><span class="nv">$verify_uncorrected</span><span class="s2">"</span><span class="w"> </span>-gt<span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="o">]</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="s2">"</span><span class="nv">$total_uncorrected</span><span class="s2">"</span><span class="w"> </span>-gt<span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="o">]</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="s2">"</span><span class="nv">$grown_defect_list</span><span class="s2">"</span><span class="w"> </span>-gt<span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="o">]</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="s2">"</span><span class="nv">$non_medium</span><span class="s2">"</span><span class="w"> </span>-gt<span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="o">]</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"</span><span class="nv">$output</span><span class="s2">"</span><span class="w"> </span>&gt;&gt;<span class="w"> </span><span class="s2">"</span><span class="nv">$log_file</span><span class="s2">"</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span>-e<span class="w"> </span><span class="s2">"\033[36;1mRAID \033[32;1msd</span><span class="nv">$raid</span><span class="s2"> \033[36;1m中的 HDD 磁盘 \033[32;1m#</span><span class="nv">$disk</span><span class="s2"> \033[36;1m(SN:\033[33;1m </span><span class="nv">$serial</span><span class="s2">) 检测到异常：\033[0m\n\033[36;1m读无法纠正错误(Read total uncorrected errors)：\033[31;1m</span><span class="nv">$read_uncorrected</span><span class="s2">\033[0m\n\033[36;1m校验无法纠正错误(Verify total uncorrected errors)：\033[31;1m</span><span class="nv">$verify_uncorrected</span><span class="s2">\033[0m\n\033[36;1m总无法纠正错误(Total uncorrected errors)：\033[31;1m</span><span class="nv">$total_uncorrected</span><span class="s2">\033[0m\n\033[36;1m已增长缺陷列表元素(Elements in grown defect list)：\033[31;1m</span><span class="nv">$grown_defect_list</span><span class="s2">\033[0m\n\033[36;1m非介质错误(Non-medium error count)：\033[31;1m</span><span class="nv">$non_medium</span><span class="s2">\033[0m\n"</span><span class="p">;</span><span class="w"> </span><span class="k">fi</span><span class="p">;</span><span class="w"> </span><span class="k">done</span><span class="p">;</span><span class="w"> </span><span class="k">done</span>
+</code></pre>
+</div>
+<div class="code-block">
+  <div class="code-head">
+    <span class="lang">Bash</span>
+    <button class="copy" type="button">复制</button>
+  </div>
+  <pre><code><span class="ch">#!/bin/bash</span>
+
+<span class="c1"># 日志文件以日期时间命名</span>
+<span class="nv">log_file</span><span class="o">=</span><span class="s2">"disk_error_</span><span class="k">$(</span>date<span class="w"> </span>+%Y%m%d_%H%M%S<span class="k">)</span><span class="s2">.log"</span>
+
+<span class="c1"># 遍历可能的RAID设备（sda, sdb, sdc, sdd）</span>
+<span class="k">for</span><span class="w"> </span>raid<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="o">{</span>a..d<span class="o">}</span><span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span>-b<span class="w"> </span><span class="s2">"/dev/sd</span><span class="nv">$raid</span><span class="s2">"</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">        </span><span class="k">for</span><span class="w"> </span>disk<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="o">{</span><span class="m">0</span>..23<span class="o">}</span><span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span>smartctl<span class="w"> </span>-d<span class="w"> </span>megaraid,<span class="nv">$disk</span><span class="w"> </span>/dev/sd<span class="nv">$raid</span><span class="w"> </span>-i<span class="w"> </span>&gt;/dev/null<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">                </span><span class="nv">output</span><span class="o">=</span><span class="k">$(</span>smartctl<span class="w"> </span>-a<span class="w"> </span>-d<span class="w"> </span>megaraid,<span class="nv">$disk</span><span class="w"> </span>/dev/sd<span class="nv">$raid</span><span class="k">)</span>
+
+<span class="w">                </span><span class="nv">serial</span><span class="o">=</span><span class="k">$(</span><span class="nb">echo</span><span class="w"> </span><span class="s2">"</span><span class="nv">$output</span><span class="s2">"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s2">"Serial number:"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">'{print $3}'</span><span class="k">)</span>
+
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"</span><span class="nv">$output</span><span class="s2">"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-q<span class="w"> </span><span class="s2">"SSD"</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">                    </span><span class="c1"># ================= SSD =================</span>
+<span class="w">                    </span><span class="nv">reallocated_sectors</span><span class="o">=</span><span class="k">$(</span><span class="nb">echo</span><span class="w"> </span><span class="s2">"</span><span class="nv">$output</span><span class="s2">"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s2">"Reallocated_Sector_Ct"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">'{print $10}'</span><span class="k">)</span>
+<span class="w">                    </span><span class="nv">reallocated_sectors</span><span class="o">=</span><span class="si">${</span><span class="nv">reallocated_sectors</span><span class="k">:-</span><span class="nv">0</span><span class="si">}</span>
+
+<span class="w">                    </span><span class="nv">current_pending</span><span class="o">=</span><span class="k">$(</span><span class="nb">echo</span><span class="w"> </span><span class="s2">"</span><span class="nv">$output</span><span class="s2">"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s2">"Current_Pending_Sector"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">'{print $10}'</span><span class="k">)</span>
+<span class="w">                    </span><span class="nv">current_pending</span><span class="o">=</span><span class="si">${</span><span class="nv">current_pending</span><span class="k">:-</span><span class="nv">0</span><span class="si">}</span>
+
+<span class="w">                    </span><span class="nv">reported_uncorrect</span><span class="o">=</span><span class="k">$(</span><span class="nb">echo</span><span class="w"> </span><span class="s2">"</span><span class="nv">$output</span><span class="s2">"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s2">"Reported_Uncorrect"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">'{print $10}'</span><span class="k">)</span>
+<span class="w">                    </span><span class="nv">reported_uncorrect</span><span class="o">=</span><span class="si">${</span><span class="nv">reported_uncorrect</span><span class="k">:-</span><span class="nv">0</span><span class="si">}</span>
+
+<span class="w">                    </span><span class="nv">offline_uncorrect</span><span class="o">=</span><span class="k">$(</span><span class="nb">echo</span><span class="w"> </span><span class="s2">"</span><span class="nv">$output</span><span class="s2">"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s2">"Offline_Uncorrectable"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">'{print $10}'</span><span class="k">)</span>
+<span class="w">                    </span><span class="nv">offline_uncorrect</span><span class="o">=</span><span class="si">${</span><span class="nv">offline_uncorrect</span><span class="k">:-</span><span class="nv">0</span><span class="si">}</span>
+
+<span class="w">                    </span><span class="nv">crc_errors</span><span class="o">=</span><span class="k">$(</span><span class="nb">echo</span><span class="w"> </span><span class="s2">"</span><span class="nv">$output</span><span class="s2">"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s2">"CRC_Error_Count"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">'{print $10}'</span><span class="k">)</span>
+<span class="w">                    </span><span class="nv">crc_errors</span><span class="o">=</span><span class="si">${</span><span class="nv">crc_errors</span><span class="k">:-</span><span class="nv">0</span><span class="si">}</span>
+
+<span class="w">                    </span><span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="s2">"</span><span class="nv">$reallocated_sectors</span><span class="s2">"</span><span class="w"> </span>-gt<span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="o">]</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="s2">"</span><span class="nv">$current_pending</span><span class="s2">"</span><span class="w"> </span>-gt<span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="o">]</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="se">\</span>
+<span class="w">                       </span><span class="o">[</span><span class="w"> </span><span class="s2">"</span><span class="nv">$reported_uncorrect</span><span class="s2">"</span><span class="w"> </span>-gt<span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="o">]</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="s2">"</span><span class="nv">$offline_uncorrect</span><span class="s2">"</span><span class="w"> </span>-gt<span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="o">]</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="s2">"</span><span class="nv">$crc_errors</span><span class="s2">"</span><span class="w"> </span>-gt<span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">                        </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"</span><span class="nv">$output</span><span class="s2">"</span><span class="w"> </span>&gt;&gt;<span class="w"> </span><span class="s2">"</span><span class="nv">$log_file</span><span class="s2">"</span>
+<span class="w">                        </span><span class="nb">echo</span><span class="w"> </span>-e<span class="w"> </span><span class="s2">"\033[36;1mRAID \033[32;1msd</span><span class="nv">$raid</span><span class="s2"> \033[36;1m中的 SSD 磁盘 \033[32;1m#</span><span class="nv">$disk</span><span class="s2"> \033[36;1m(SN:\033[33;1m </span><span class="nv">$serial</span><span class="s2">) 检测到异常：\033[0m\n"</span>
+<span class="w">                        </span><span class="nb">echo</span><span class="w"> </span>-e<span class="w"> </span><span class="s2">"\033[36;1m05 重分配扇区计数(Reallocated Sector Count)：\033[31;1m</span><span class="nv">$reallocated_sectors</span><span class="s2">\033[0m"</span>
+<span class="w">                        </span><span class="nb">echo</span><span class="w"> </span>-e<span class="w"> </span><span class="s2">"\033[36;1m197 当前待处理扇区(Current Pending Sector Count)：\033[31;1m</span><span class="nv">$current_pending</span><span class="s2">\033[0m"</span>
+<span class="w">                        </span><span class="nb">echo</span><span class="w"> </span>-e<span class="w"> </span><span class="s2">"\033[36;1m已报告的不可纠正错误(Reported Uncorrectable Errors)：\033[31;1m</span><span class="nv">$reported_uncorrect</span><span class="s2">\033[0m"</span>
+<span class="w">                        </span><span class="nb">echo</span><span class="w"> </span>-e<span class="w"> </span><span class="s2">"\033[36;1m离线不可纠正错误(Offline Uncorrectable)：\033[31;1m</span><span class="nv">$offline_uncorrect</span><span class="s2">\033[0m"</span>
+<span class="w">                        </span><span class="nb">echo</span><span class="w"> </span>-e<span class="w"> </span><span class="s2">"\033[36;1m接口CRC错误计数(CRC Error Count)：\033[31;1m</span><span class="nv">$crc_errors</span><span class="s2">\033[0m\n"</span>
+<span class="w">                    </span><span class="k">fi</span>
+<span class="w">                </span><span class="k">else</span>
+<span class="w">                    </span><span class="c1"># ================= HDD =================</span>
+<span class="w">                    </span><span class="nv">read_uncorrected</span><span class="o">=</span><span class="k">$(</span><span class="nb">echo</span><span class="w"> </span><span class="s2">"</span><span class="nv">$output</span><span class="s2">"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-A<span class="w"> </span><span class="m">10</span><span class="w"> </span><span class="s2">"Error counter log:"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s2">"^read:"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">'{print $NF}'</span><span class="k">)</span>
+<span class="w">                    </span><span class="nv">read_uncorrected</span><span class="o">=</span><span class="si">${</span><span class="nv">read_uncorrected</span><span class="k">:-</span><span class="nv">0</span><span class="si">}</span>
+
+<span class="w">                    </span><span class="nv">verify_uncorrected</span><span class="o">=</span><span class="k">$(</span><span class="nb">echo</span><span class="w"> </span><span class="s2">"</span><span class="nv">$output</span><span class="s2">"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-A<span class="w"> </span><span class="m">10</span><span class="w"> </span><span class="s2">"Error counter log:"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s2">"^verify:"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">'{print $NF}'</span><span class="k">)</span>
+<span class="w">                    </span><span class="nv">verify_uncorrected</span><span class="o">=</span><span class="si">${</span><span class="nv">verify_uncorrected</span><span class="k">:-</span><span class="nv">0</span><span class="si">}</span>
+
+<span class="w">                    </span><span class="nv">total_uncorrected</span><span class="o">=</span><span class="k">$(</span><span class="nb">echo</span><span class="w"> </span><span class="s2">"</span><span class="nv">$output</span><span class="s2">"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s2">"Total uncorrected errors"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">'{print $NF}'</span><span class="k">)</span>
+<span class="w">                    </span><span class="nv">total_uncorrected</span><span class="o">=</span><span class="si">${</span><span class="nv">total_uncorrected</span><span class="k">:-</span><span class="nv">0</span><span class="si">}</span>
+
+<span class="w">                    </span><span class="nv">grown_defect_list</span><span class="o">=</span><span class="k">$(</span><span class="nb">echo</span><span class="w"> </span><span class="s2">"</span><span class="nv">$output</span><span class="s2">"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s2">"Elements in grown defect list"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">'{print $NF}'</span><span class="k">)</span>
+<span class="w">                    </span><span class="nv">grown_defect_list</span><span class="o">=</span><span class="si">${</span><span class="nv">grown_defect_list</span><span class="k">:-</span><span class="nv">0</span><span class="si">}</span>
+
+<span class="w">                    </span><span class="nv">non_medium</span><span class="o">=</span><span class="k">$(</span><span class="nb">echo</span><span class="w"> </span><span class="s2">"</span><span class="nv">$output</span><span class="s2">"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s2">"Non-medium error count:"</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">'{print $NF}'</span><span class="k">)</span>
+<span class="w">                    </span><span class="nv">non_medium</span><span class="o">=</span><span class="si">${</span><span class="nv">non_medium</span><span class="k">:-</span><span class="nv">0</span><span class="si">}</span>
+
+<span class="w">                    </span><span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="s2">"</span><span class="nv">$read_uncorrected</span><span class="s2">"</span><span class="w"> </span>-gt<span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="o">]</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="s2">"</span><span class="nv">$verify_uncorrected</span><span class="s2">"</span><span class="w"> </span>-gt<span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="o">]</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="se">\</span>
+<span class="w">                       </span><span class="o">[</span><span class="w"> </span><span class="s2">"</span><span class="nv">$total_uncorrected</span><span class="s2">"</span><span class="w"> </span>-gt<span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="o">]</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="s2">"</span><span class="nv">$grown_defect_list</span><span class="s2">"</span><span class="w"> </span>-gt<span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="o">]</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="s2">"</span><span class="nv">$non_medium</span><span class="s2">"</span><span class="w"> </span>-gt<span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">                        </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"</span><span class="nv">$output</span><span class="s2">"</span><span class="w"> </span>&gt;&gt;<span class="w"> </span><span class="s2">"</span><span class="nv">$log_file</span><span class="s2">"</span>
+<span class="w">                        </span><span class="nb">echo</span><span class="w"> </span>-e<span class="w"> </span><span class="s2">"\033[36;1mRAID \033[32;1msd</span><span class="nv">$raid</span><span class="s2"> \033[36;1m中的 HDD 磁盘 \033[32;1m#</span><span class="nv">$disk</span><span class="s2"> \033[36;1m(SN:\033[33;1m </span><span class="nv">$serial</span><span class="s2">) 检测到异常：\033[0m\n"</span>
+<span class="w">                        </span><span class="nb">echo</span><span class="w"> </span>-e<span class="w"> </span><span class="s2">"\033[36;1m读无法纠正错误(Read total uncorrected errors)：\033[31;1m</span><span class="nv">$read_uncorrected</span><span class="s2">\033[0m"</span>
+<span class="w">                        </span><span class="nb">echo</span><span class="w"> </span>-e<span class="w"> </span><span class="s2">"\033[36;1m校验无法纠正错误(Verify total uncorrected errors)：\033[31;1m</span><span class="nv">$verify_uncorrected</span><span class="s2">\033[0m"</span>
+<span class="w">                        </span><span class="nb">echo</span><span class="w"> </span>-e<span class="w"> </span><span class="s2">"\033[36;1m总无法纠正错误(Total uncorrected errors)：\033[31;1m</span><span class="nv">$total_uncorrected</span><span class="s2">\033[0m"</span>
+<span class="w">                        </span><span class="nb">echo</span><span class="w"> </span>-e<span class="w"> </span><span class="s2">"\033[36;1m已增长缺陷列表元素(Elements in grown defect list)：\033[31;1m</span><span class="nv">$grown_defect_list</span><span class="s2">\033[0m"</span>
+<span class="w">                        </span><span class="nb">echo</span><span class="w"> </span>-e<span class="w"> </span><span class="s2">"\033[36;1m非介质错误(Non-medium error count)：\033[31;1m</span><span class="nv">$non_medium</span><span class="s2">\033[0m\n"</span>
+<span class="w">                    </span><span class="k">fi</span>
+<span class="w">                </span><span class="k">fi</span>
+<span class="w">            </span><span class="k">fi</span>
+<span class="w">        </span><span class="k">done</span>
+<span class="w">    </span><span class="k">fi</span>
+<span class="k">done</span>
+</code></pre>
+</div>
+<p>输出效果如下</p>
+<p><img alt="20250918173418" src="https://img.hackerbs.com//20250918173418.png" /></p>
+<h2 id="关于-dell-tsr-日志idrac没有硬盘故障告警的报修办法-6">关于 DELL TSR 日志(iDRAC)没有硬盘故障告警的报修办法</h2>
+<p>DELL 通常只认可其自身硬件的告警日志。</p>
+<p>在硬盘出现非致命故障，无法直观的在操作系统看到硬盘离线或 RAID 降级，同时 TSR 日志中没有记录到硬盘故障，iDRAC 网页也没有显示硬盘故障时。</p>
+<p>DELL 通常不会认可运维工程师提供的 smartctl 日志和其他非 DELL 硬件报告的日志，且有时 smartctl 也并不能很好的定位故障。</p>
+<p>为此和 DELL 进行漫长的沟通后，最终定下来以下排障方式：</p>
+<p><img alt="DELL承认的额外日志" src="https://img.hackerbs.com//企业微信截图_1760520869936.png" /></p>
+<ul>
+<li>带外由故障日志时：提供 TSR 日志报修</li>
+<li>带外没有故障日志时：提供 TSR 日志 + <code>perccli64 /call show alilog</code> 的日志用于报修</li>
+</ul>
+<p>此外还可通过分析上文提到的 smartctl 日志和以下日志用于综合定位问题：</p>
+<div class="code-block">
+  <div class="code-head">
+    <span class="lang">Bash</span>
+    <button class="copy" type="button">复制</button>
+  </div>
+  <pre><code>ls<span class="w"> </span>-l<span class="w"> </span>/sys/class/block<span class="w"> </span>&gt;<span class="w"> </span>/tmp/lsblock.txt
+perccli64<span class="w"> </span>/call<span class="w"> </span>show<span class="w"> </span>alilog<span class="w"> </span>&gt;<span class="w"> </span>/tmp/target.txt
+perccli64<span class="w"> </span>/call/eall/sall<span class="w"> </span>show<span class="w"> </span>all<span class="w"> </span>&gt;<span class="w"> </span>/tmp/slot.txt
+</code></pre>
+</div>
+<p>以下是本次案例的记录，可以作为排障及报修的参考</p>
+<p>情况说明：</p>
+<p>本次是日常巡检时运维平台报障 IO 延迟大于 100ms</p>
+<p>随后排查了带外，没有告警，继续排查 smartctl，定位 slot8 存在无法纠正的错误记录 1 次。</p>
+<p>随后向 DELL 提出报修，并上传 TSR 日志，但因为没有记录告警，所以 DELL 并不认可，要求进一步调查故障。</p>
+<p>排障过程中针对 <code>smartctl -a -d megaraid</code> 输出的 <code>Error counter log</code>，也就是上文解释的 smartctl 日志；其中有巨量的 <code>Errors Corrected by ECC</code> 的 <code>fast纠正</code> 错误计数，达到了 <code>1737961798</code> 次，针对该项报错，DELL 不参考，并且未对此进行分析，所以只能自行分析。</p>
+<p>结合硬盘运行时间约 5.8 年，且几乎从未停机；而这份报错是由 RAID 卡报告给 smartctl，所以在计数准确性上无法验证，同时鉴于运行了很长时间，计数的累计也是可能的因素；</p>
+<p>此处有个疑点：该天文数字般的 ECC 纠错计数是否可能是整个 RAID5 阵列的纠错被记录到了其中？再加上硬盘存在故障长期未发现，导致了频繁的纠错？</p>
+<p>以上两个疑问仅为猜测，不过该 ECC 纠错确实会导致 IO 延迟增加。</p>
+<p>在进一步的排查中发现 slot9 才是故障盘，且其中的 <code>Errors Corrected by ECC</code> 的 <code>fast纠正</code> 为 0，反而是 <code>delayed纠正</code> 为 <code>8396</code> 次，因此进一步核实这块盘才是真正的故障盘。</p>
+<p>因为 <code>fast</code> 纠正是常规现象，<code>delayed</code> 纠正才是有可能存在问题的，<code>delayed</code> 纠正是无法快速纠错时进行的深度纠错</p>
+<p><a href="https://hackerbs.com/DELL%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%A1%AC%E7%9B%98IO%E5%91%8A%E8%AD%A6%E6%8E%92%E9%9A%9C%E6%80%9D%E8%B7%AF?highlight=delay#HDD%E8%8C%83%E4%BE%8B">见此处说明</a></p>
+<p>接下来讲如何通过分析 <code>perccli64 /call show alilog</code> 定位到了真正故障的硬盘。</p>
+<p>首先，<code>perccli64</code>，顾名思义，这是 DELL PERC 官方的工具，用于操作 DELL RAID 卡。</p>
+<p>因为日志内容较多，所以选择使用 <code>perccli64 /call show alilog &gt; /tmp/target.txt</code> 查询适配器日志并输出到文件。</p>
+<p>随后使用 vscode 浏览发现，在 35200 行日志中，光是 PD02 和 PD09 的 timeout 就出现了 11938 行，因此该日志足以说明 <code>slot2</code> 和 <code>slot9</code> 这两个硬盘出现了故障，并进一步结合 <code>smartctl</code> 日志交叉验证了这两块盘存在故障，也就是上文说的 <code>delayed</code> 的错误计数。</p>
+<p>随后同时将 <code>TSR日志</code> 和 <code>perccli64</code> 的 <code>alilog</code> 适配器日志提交给 DELL，DELL 认可并以此作为依据成功报修。</p>
+<div class="code-block">
+  <div class="code-head">
+    <span class="lang">Bash</span>
+    <button class="copy" type="button">复制</button>
+  </div>
+  <pre><code><span class="c1"># PD02的timeout</span>
+<span class="m">24368</span>:<span class="w"> </span>YY-MM-DD<span class="w"> </span>HH:MM:SS<span class="w"> </span>WARNING:Command<span class="w"> </span>timeout<span class="w"> </span>on<span class="w"> </span>PD<span class="w"> </span><span class="m">02</span><span class="o">(</span>e0x20/s2<span class="o">)</span><span class="w"> </span>Path<span class="w"> </span>5000c500cdda6095,<span class="w"> </span>CDB:<span class="w"> </span>2a<span class="w"> </span><span class="m">00</span><span class="w"> </span>0f<span class="w"> </span>1a<span class="w"> </span>ee<span class="w"> </span><span class="m">00</span><span class="w"> </span><span class="m">00</span><span class="w"> </span><span class="m">00</span><span class="w"> </span><span class="m">80</span><span class="w"> </span><span class="m">00</span>
+<span class="c1"># PD09的timeout</span>
+<span class="m">2413</span>:<span class="w"> </span>YY-MM-DD<span class="w"> </span>HH:MM:SS<span class="w"> </span>WARNING:Command<span class="w"> </span>timeout<span class="w"> </span>on<span class="w"> </span>PD<span class="w"> </span><span class="m">09</span><span class="o">(</span>e0x20/s9<span class="o">)</span><span class="w"> </span>Path<span class="w"> </span>5000c500cdd04681,<span class="w"> </span>CDB:<span class="w"> </span>4d<span class="w"> </span><span class="m">00</span><span class="w"> </span>4e<span class="w"> </span><span class="m">00</span><span class="w"> </span><span class="m">00</span><span class="w"> </span><span class="m">00</span><span class="w"> </span><span class="m">00</span><span class="w"> </span><span class="m">00</span><span class="w"> </span><span class="m">04</span><span class="w"> </span><span class="m">00</span>
+
+<span class="c1"># 同时在这份日志顶部部分也输出了RAID控制器和磁盘的详情</span>
+<span class="c1"># Device Information部分的Slot Number也对应了PD02 PD09</span>
+</code></pre>
+</div>
+<h3 id="2025-10-16-最新消息dell-高级工程师驳回了维修请求-7">2025-10-16 最新消息：DELL 高级工程师驳回了维修请求</h3>
+<p>然后给出了下面两篇文章</p>
+<p><a href="https://www.dell.com/support/kbdoc/zh-cn/000147878/poweredge-%E6%9F%90%E4%BA%9B%E4%BC%81%E4%B8%9A%E7%A1%AC%E7%9B%98%E9%A9%B1%E5%8A%A8%E5%99%A8%E4%B8%8A%E8%AF%BB%E5%8F%96%E5%92%8C%E9%AA%8C%E8%AF%81-ecc-%E9%94%99%E8%AF%AF%E7%9A%84-smart-%E9%94%99%E8%AF%AF%E7%8E%87%E8%BE%83%E9%AB%98">PowerEdge：某些企业硬盘驱动器上读取和验证 ECC 错误的 SMART 错误率较高</a></p>
+<p><a href="https://www.dell.com/support/kbdoc/zh-cn/000168487/scaleio-%E7%A1%AC%E4%BB%B6%E6%84%9F%E7%9F%A5%E5%8A%9F%E8%83%BD%E5%A1%AB%E5%86%99-perc-%E6%9C%AF%E8%AF%AD?lang=zh">ScaleIO 硬件感知功能填写 PERC 术语</a></p>
+<p>故障盘 PD 02/09</p>
+<p>slot2、9: TOSHIBA AL14SXB30ENY</p>
+<p>slot3-8、10-13: Seagate ST300MP0026</p>
+<p>结合上面两篇文章和硬盘情况来看，确实，iDRAC 没有报故障，同时 smartctl 和 perccli64 调查出所谓的"故障"，恰好是两块 TOSHIBA 的硬盘。</p>
+<p>TOSHIBA 的其他硬盘确实也被记录到了文章中，提到了会在 <code>perccli64</code> 中误报 <code>timeout</code>，结合 <code>smartctl</code> 记录的 ECC 纠错数量为天文数字，侧面反映了 DELL 所说的 <code>smartctl</code> ECC 纠错计数不可靠也是事实。</p>
+<p><strong>目前看来，维修诉求被 DELL 工程师驳回也属于合理范围</strong></p>
+<p><strong>且故障仅仅体现在运维监测平台告警 IO 延迟达到 128ms，持续时间不足 1 分钟，随后恢复</strong></p>
+<p><strong>故本次报障取消</strong></p>
+<p>补充：</p>
+<p>该问题提交给了 DELL 客户经理</p>
+<blockquote>
+<p>您好，我这边有台 XXX PowerEdge XXX，在我们运维监控平台发现告警 IO 延迟过高，触发时值: XXXms。
+针对该告警我们筛查了 TSR 日志，并未发现告警记录；
+进一步筛查了 smartctl 日志，发现 PD 02/09 存在 perccli64 告警 Command timeout on PD 02/09；
+且 smartctl 记录到 ECC delayed 纠正 8XXX 次。</p>
+<p>目前工程师回复提到了 smartctl 日志错误率，对于某些企业的硬盘仅供参考，实际现象：
+其他 Seagate 硬盘存在 1X 亿次 ECC fast 纠错计数，故我们忽略该告警。
+故障的 PD02/09 为 TOSHIBA，存在 8XXX 次 ECC delayed 纠错计数，不过尚未出现无法纠错和扇区故障记录，我们暂时忽略。</p>
+<p>工程师回复提到了 perccli64 日志告警 timeout，文章解释为：
+某个供应商的固态硬盘 （SSD） 不支持其中一个命令 （cdb= 4d 00 51 00 00 00 00 00 00 04 00）
+复查后发现，PD 02/09 恰好是 TOSHIBA 的硬盘，且在文章中也有提到 TOSHIBA 的某个型号 SSD 不支持该命令，且其他 Seagate 硬盘均为记录该错误。
+故我们根据文章内容，忽略该告警。</p>
+<p>鉴于本次排障报修涉及的日志和排障过程较为繁琐，目前理清楚前因后果之后，XXX 要求我询问下您，看看这次的报障是驳回继续观察，还是说直接安排更换？</p>
+</blockquote>
+<p>目前尚未收到回复...</p>
+    </div>
+
+    <div class="tag-row">
+  <a class="tag" href="../tags.html#smartctl">#smartctl</a>
+  <a class="tag" href="../tags.html#硬盘">#硬盘</a>
+  <a class="tag" href="../tags.html#排障">#排障</a>
+  <a class="tag" href="../tags.html#带外">#带外</a>
+  <a class="tag" href="../tags.html#报修">#报修</a>
+    </div>
+
+<nav class="post-nav">  <span></span>  <a class="next" href="dell-disk-io-alert.html"><span class="dir">下一篇</span><span class="t">DELL 服务器硬盘 IO 告警排障思路</span></a></nav>
+  </article>
+</div>
+  <aside class="toc" id="toc">
+    <div class="toc-title">目录</div>
+    <a class="toc-h2" href="#情况说明-1">情况说明</a>
+    <a class="toc-h2" href="#排查过程-2">排查过程</a>
+    <a class="toc-h3" href="#对于-jbod-模式的硬盘-3">对于 JBOD 模式的硬盘</a>
+    <a class="toc-h3" href="#对于-lsi-megaraid-控制器raid-模式的硬盘-4">对于 LSI MegaRAID 控制器，RAID 模式的硬盘</a>
+    <a class="toc-h2" href="#进阶脚本-5">进阶脚本</a>
+    <a class="toc-h2" href="#关于-dell-tsr-日志idrac没有硬盘故障告警的报修办法-6">关于 DELL TSR 日志(iDRAC)没有硬盘故障告警的报修办法</a>
+    <a class="toc-h3" href="#2025-10-16-最新消息dell-高级工程师驳回了维修请求-7">2025-10-16 最新消息：DELL 高级工程师驳回了维修请求</a>
+  </aside>
+</div>
+  </div>
+</main>
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div class="footer-about">
+        <h4>About</h4>
+        <p>hackerbs = hacker brainstorm。记录数据中心、Linux、虚拟化与工程实践，把零散经验连成一张可复用的知识网络。</p>
+      </div>
+      <div>
+        <h4>导航</h4>
+        <ul>
+          <li><a href="../index.html">首页</a></li>
+          <li><a href="../topics.html">专题</a></li>
+          <li><a href="../archive.html">归档</a></li>
+          <li><a href="../tags.html">标签</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>分类</h4>
+        <ul>
+          <li><a href="../topics.html#os">操作系统</a></li>
+          <li><a href="../topics.html#hardware">服务器硬件</a></li>
+          <li><a href="../topics.html#storage">存储与可靠性</a></li>
+          <li><a href="../topics.html#virtualization">虚拟化</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>链接</h4>
+        <ul>
+          <li><a href="https://github.com/1949hacker">GitHub</a></li>
+          <li><a href="https://blog.hackerbs.com">旧博客</a></li>
+          <li><a href="../about.html">联系我</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2022–2026 hackerbs.com · 探索知识的宇宙</span>
+      <span>本站为纯静态站点，无追踪、无广告</span>
+    </div>
+  </div>
+</footer>
+<button class="to-top" id="to-top" type="button" aria-label="回到顶部">
+  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+</button>
+
+<script src="../assets/js/main.js"></script>
+</body>
+</html>

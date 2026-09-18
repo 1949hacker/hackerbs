@@ -1,11 +1,6 @@
+# 纯静态站点，无构建产物
+node_modules/
 .DS_Store
-.gitignore
-node_modules
-public
-prof
-tsconfig.tsbuildinfo
-.obsidian
-.quartz-cache
-private/
-.replit
-replit.nix
+Thumbs.db
+*.log
+.env

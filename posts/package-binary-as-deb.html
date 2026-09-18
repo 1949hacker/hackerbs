@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>将二进制可执行程序构建为 deb 包 · hackerbs.com</title>
+  <meta name="description" content="不走源码编译，直接把一个现成的二进制程序连同配置打包成可安装的 deb 包。">
+  <meta name="author" content="hackerbs">
+  <meta property="og:title" content="将二进制可执行程序构建为 deb 包 · hackerbs.com">
+  <meta property="og:description" content="不走源码编译，直接把一个现成的二进制程序连同配置打包成可安装的 deb 包。">
+  <meta property="og:type" content="website">
+  <link rel="stylesheet" href="../assets/css/main.css">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%2322d3ee'%3E%3C/rect%3E%3Ctext x='16' y='22' font-size='16' font-family='monospace' font-weight='bold' text-anchor='middle' fill='%23061318'%3Ehb%3C/text%3E%3C/svg%3E">
+  
+</head>
+<body>
+<header class="site-header">
+  <div class="header-inner">
+    <a class="brand" href="../index.html">
+      <span class="brand-mark">hb</span>
+      <span>hackerbs<span class="brand-domain">.com</span></span>
+    </a>
+
+    <nav class="nav" id="site-nav">
+      <a href="../index.html">首页</a>
+      <a href="../topics.html">专题</a>
+      <a href="../archive.html">归档</a>
+      <a href="../tags.html">标签</a>
+      <a href="../search.html">搜索</a>
+      <a href="../about.html">关于</a>
+    </nav>
+
+    <div class="header-tools">
+      <button class="icon-btn" id="theme-toggle" type="button" aria-label="切换主题">
+        <svg class="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        <svg class="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+      </button>
+      <button class="icon-btn menu-btn" id="menu-btn" type="button" aria-label="菜单">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+<div class="reading-progress" id="reading-progress"></div>
+
+<main>
+  <div class="wrap-narrow">
+  <nav class="crumbs">
+    <a href="../index.html">首页</a><span class="sep">/</span><a href="../topics.html#engineering">工程与工具</a>
+  </nav>
+
+  <article>
+    <header class="article-head">
+      <h1>将二进制可执行程序构建为 deb 包</h1>
+      <div class="meta-line">
+        <span>2023-10-17</span><span class="dot"></span>
+        <span>约 11 分钟</span><span class="dot"></span>
+        <span>5247 字</span>
+      </div>
+      <div class="summary-card">
+        <strong>摘要</strong>不走源码编译，直接把一个现成的二进制程序连同配置打包成可安装的 deb 包。
+      </div>
+    </header>
+
+    <div class="prose">
+<p>本文记录了我把一个用 pyinstaller 打包出来的二进制可执行程序，通过 <code>dh_make</code> 和 <code>dpkg-buildpackage</code> 构建成标准 deb 包的全过程。适合需要把自研命令行工具分发到多台 Debian 主机、又不想手动拷贝二进制的场景。</p>
+<p>构建 deb 包所需依赖：</p>
+<p><code>apt install dh-make</code></p>
+<p>本文使用本站 aptdownloader 包做为演示。</p>
+<p>第一步，创建项目目录，项目目录名称格式应为 <code>包名-版本号</code>，如 <code>aptdownloader-1.0.0</code>。</p>
+<div class="code-block">
+  <div class="code-head">
+    <span class="lang">Bash</span>
+    <button class="copy" type="button">复制</button>
+  </div>
+  <pre><code><span class="c1"># 我在我的/root/目录下创建了一个deb文件夹，也就是https://github.com/1949hacker/deb的仓库</span>
+<span class="c1"># 使用tree列出目录结构并指定只显示3层</span>
+tree<span class="w"> </span>-L<span class="w"> </span><span class="m">3</span>
+<span class="c1"># 目录结构如下</span>
+deb
+├──<span class="w"> </span>LICENSE<span class="w"> </span><span class="c1"># 这个就不用解释了，git仓库的许可</span>
+├──<span class="w"> </span>package<span class="w"> </span><span class="c1"># 这个是我用来存构建deb的文件的文件夹</span>
+│<span class="w">   </span>└──<span class="w"> </span>aptdownloader<span class="w"> </span><span class="c1"># aptdownloader包</span>
+│<span class="w">       </span>├──<span class="w"> </span>aptdownloader-1.0.0<span class="w"> </span><span class="c1"># 按照包名-版本规则创建的文件夹</span>
+│<span class="w">       </span>├──<span class="w"> </span>aptdownloader_1.0.0-1_amd64.buildinfo<span class="w"> </span><span class="c1"># dpkg-buildpackage -us -uc -nc生成的文件</span>
+│<span class="w">       </span>├──<span class="w"> </span>aptdownloader_1.0.0-1_amd64.changes<span class="w"> </span><span class="c1"># dpkg-buildpackage -us -uc -nc生成的文件</span>
+│<span class="w">       </span>├──<span class="w"> </span>aptdownloader_1.0.0-1_amd64.deb<span class="w"> </span><span class="c1"># dpkg-buildpackage -us -uc -nc生成的deb包</span>
+│<span class="w">       </span>└──<span class="w"> </span>aptdownloader_1.0.0.orig.tar.xz<span class="w"> </span><span class="c1"># dpkg-buildpackage -us -uc -nc生成的文件</span>
+├──<span class="w"> </span>python-source<span class="w"> </span><span class="c1"># 这个是我用来存放python源码的目录</span>
+│<span class="w">   </span>├──<span class="w"> </span>64pxlogo.ico<span class="w"> </span><span class="c1"># logo的ico</span>
+│<span class="w">   </span>├──<span class="w"> </span>aptdownloader<span class="w"> </span><span class="c1"># aptdownloader的源码文件夹</span>
+│<span class="w">   </span>│<span class="w">   </span>└──<span class="w"> </span>aptdownloader.py<span class="w"> </span><span class="c1"># aptdownloader的源码</span>
+│<span class="w">   </span>├──<span class="w"> </span>dist<span class="w"> </span><span class="c1"># pyinstaller生成的可运行的二进制文件</span>
+│<span class="w">   </span>│<span class="w">   </span>└──<span class="w"> </span>aptdownloader<span class="w"> </span><span class="c1"># 二进制文件</span>
+│<span class="w">   </span>└──<span class="w"> </span>pip<span class="w"> </span><span class="c1"># python venv的文件夹</span>
+│<span class="w">       </span>├──<span class="w"> </span>bin
+│<span class="w">       </span>├──<span class="w"> </span>include
+│<span class="w">       </span>├──<span class="w"> </span>lib
+│<span class="w">       </span>├──<span class="w"> </span>lib64<span class="w"> </span>-&gt;<span class="w"> </span>lib
+│<span class="w">       </span>└──<span class="w"> </span>pyvenv.cfg
+├──<span class="w"> </span>README_en.md<span class="w"> </span><span class="c1"># 自述文件英文版</span>
+└──<span class="w"> </span>README.md<span class="w"> </span><span class="c1"># 自述文件中文版</span>
+
+<span class="c1"># 首先，进入python-source目录，使用以下命令激活python虚拟环境</span>
+<span class="c1"># source后面的路径以你的python venv地址为准，your_path/bin/active</span>
+<span class="nb">source</span><span class="w"> </span>pip/bin/activate
+<span class="c1"># 使用pyinstaller命令将aptdownloader.py转换为二进制可执行程序</span>
+<span class="c1"># -i是指定图标，我linux都是用命令行，没试过图形化里会不会显示图标</span>
+<span class="c1"># -F是生成单文件，后面紧跟着的就是源代码</span>
+<span class="c1"># --distpath bin表示将生成的可执行程序输出到当前目录的bin文件夹中</span>
+<span class="c1"># --workpath temp_build和--specpath temp_spec都是指定一个临时构建目录temp_build和一个临时spec配置文件目录temp_spec</span>
+<span class="c1"># 使用&amp;&amp;链接符确保执行成功后分别rm删除两个临时目录</span>
+pyinstaller<span class="w"> </span>-F<span class="w"> </span>aptdownloader/aptdownloader.py<span class="w"> </span>-i<span class="w"> </span>64pxlogo.ico<span class="w"> </span>--distpath<span class="w"> </span>bin<span class="w"> </span>--workpath<span class="w"> </span>temp_build<span class="w"> </span>--specpath<span class="w"> </span>temp_spec<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>rm<span class="w"> </span>temp_build<span class="w"> </span>-rf<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>rm<span class="w"> </span>temp_spec<span class="w"> </span>-rf
+
+<span class="c1"># 最终会将生成的程序输出到当前目录的bin文件夹</span>
+deb/python-source
+├──<span class="w"> </span>64pxlogo.ico<span class="w"> </span><span class="c1"># 本就存在的图标文件</span>
+├──<span class="w"> </span>aptdownloader<span class="w"> </span><span class="c1"># 本就存在的源码文件夹</span>
+│<span class="w">   </span>└──<span class="w"> </span>aptdownloader.py<span class="w"> </span><span class="c1"># python源码</span>
+├──<span class="w"> </span>bin<span class="w"> </span><span class="c1"># 存放可执行程序的目录</span>
+│<span class="w">   </span>└──<span class="w"> </span>aptdownloader<span class="w"> </span><span class="c1"># 生成的可执行程序</span>
+└──<span class="w"> </span>pip<span class="w"> </span><span class="c1"># 我创建的python venv环境目录</span>
+
+<span class="c1"># 返回最外层目录，我的是deb目录且位于用户主目录，然后进入package目录</span>
+<span class="nb">cd</span><span class="w"> </span>~/deb
+<span class="nb">cd</span><span class="w"> </span>package
+<span class="c1"># 新建aptdownloader目录并进入</span>
+mkdir<span class="w"> </span>aptdownloader<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">cd</span><span class="w"> </span>aptdownloader
+
+<span class="c1"># 按照包名+版本的规则创建目录</span>
+mkdir<span class="w"> </span>aptdownloader-1.0.0
+<span class="c1"># 进入并使用dh_make创建项目文件</span>
+<span class="nb">cd</span><span class="w"> </span>aptdownloader-1.0.0
+dh_make<span class="w"> </span>--createorig
+<span class="c1"># 输入该命令后终端显示内容如下</span>
+dh_make<span class="w"> </span>--createorig
+/usr/bin/dh_make:10:<span class="w"> </span>DeprecationWarning:<span class="w"> </span><span class="s1">'nis'</span><span class="w"> </span>is<span class="w"> </span>deprecated<span class="w"> </span>and<span class="w"> </span>slated<span class="w"> </span><span class="k">for</span><span class="w"> </span>removal<span class="w"> </span><span class="k">in</span><span class="w"> </span>Python<span class="w"> </span><span class="m">3</span>.13
+<span class="w">  </span>import<span class="w"> </span>nis
+Type<span class="w"> </span>of<span class="w"> </span>package:<span class="w"> </span><span class="o">(</span>single,<span class="w"> </span>indep,<span class="w"> </span>library,<span class="w"> </span>python<span class="o">)</span>
+<span class="o">[</span>s/i/l/p<span class="o">]</span>?<span class="w"> </span><span class="c1"># 我要生成的是单包，所以这一步我按的是s键，按键就行，不需要Enter</span>
+Maintainer<span class="w"> </span>Name<span class="w">     </span>:<span class="w"> </span>root
+Email-Address<span class="w">       </span>:<span class="w"> </span>root@localhost.localdomain
+Date<span class="w">                </span>:<span class="w"> </span>Fri,<span class="w"> </span><span class="m">21</span><span class="w"> </span>Jun<span class="w"> </span><span class="m">2024</span><span class="w"> </span><span class="m">16</span>:47:31<span class="w"> </span>+0800
+Package<span class="w"> </span>Name<span class="w">        </span>:<span class="w"> </span>aptdownloader
+Version<span class="w">             </span>:<span class="w"> </span><span class="m">1</span>.0.0
+License<span class="w">             </span>:<span class="w"> </span>blank
+Package<span class="w"> </span>Type<span class="w">        </span>:<span class="w"> </span>single
+Are<span class="w"> </span>the<span class="w"> </span>details<span class="w"> </span>correct?<span class="w"> </span><span class="o">[</span>Y/n/q<span class="o">]</span><span class="w"> </span><span class="c1"># 这一步按Y确认</span>
+Currently<span class="w"> </span>there<span class="w"> </span>is<span class="w"> </span>not<span class="w"> </span>top<span class="w"> </span>level<span class="w"> </span>Makefile.<span class="w"> </span>This<span class="w"> </span>may<span class="w"> </span>require<span class="w"> </span>additional<span class="w"> </span>tuning
+Done.<span class="w"> </span>Please<span class="w"> </span>edit<span class="w"> </span>the<span class="w"> </span>files<span class="w"> </span><span class="k">in</span><span class="w"> </span>the<span class="w"> </span>debian/<span class="w"> </span>subdirectory<span class="w"> </span>now.
+
+<span class="c1"># 现在当前目录便生成了debian文件夹</span>
+<span class="c1"># 编辑debian/control文件，以你的为准，我的源内容如下，参照我给的注释修改即可</span>
+Source:<span class="w"> </span>aptdownloader<span class="w"> </span><span class="c1"># 来源，这个是默认生成的，不管</span>
+Section:<span class="w"> </span>unknown<span class="w"> </span><span class="c1"># 默认是unknown，我改成了utils（工具）</span>
+Priority:<span class="w"> </span>optional<span class="w"> </span><span class="c1"># 默认不用改</span>
+Maintainer:<span class="w"> </span>root<span class="w"> </span>&lt;root@localhost.localdomain&gt;<span class="w"> </span><span class="c1"># 这一步改成你的信息，参考下方我的control文件内容</span>
+Rules-Requires-Root:<span class="w"> </span>no<span class="w"> </span><span class="c1"># 默认不用改</span>
+Build-Depends:<span class="w"> </span><span class="c1"># 默认不用改</span>
+<span class="w"> </span>debhelper-compat<span class="w"> </span><span class="o">(=</span><span class="w"> </span><span class="m">13</span><span class="o">)</span>,<span class="w"> </span><span class="c1"># 默认不用改</span>
+Standards-Version:<span class="w"> </span><span class="m">4</span>.6.2<span class="w"> </span><span class="c1"># 默认不用改</span>
+Homepage:<span class="w"> </span>&lt;insert<span class="w"> </span>the<span class="w"> </span>upstream<span class="w"> </span>URL,<span class="w"> </span><span class="k">if</span><span class="w"> </span>relevant&gt;<span class="w"> </span><span class="c1"># 改成你的官网，没有就不管</span>
+<span class="c1">#Vcs-Browser: https://salsa.debian.org/debian/aptdownloader # 默认不用改</span>
+<span class="c1">#Vcs-Git: https://salsa.debian.org/debian/aptdownloader.git # 默认不用改</span>
+
+Package:<span class="w"> </span>aptdownloader<span class="w"> </span><span class="c1"># 根据你的文件夹生成，默认不用改</span>
+Architecture:<span class="w"> </span>any<span class="w"> </span><span class="c1"># 默认不用改</span>
+Depends:<span class="w"> </span><span class="c1"># 默认不用改</span>
+<span class="w"> </span><span class="si">${</span><span class="nv">shlibs</span><span class="p">:</span><span class="nv">Depends</span><span class="si">}</span>,<span class="w"> </span><span class="c1"># 默认不用改</span>
+<span class="w"> </span><span class="si">${</span><span class="nv">misc</span><span class="p">:</span><span class="nv">Depends</span><span class="si">}</span>,<span class="w"> </span><span class="c1"># 默认不用改，需要前置依赖就换行写你的依赖，参考我的control文件</span>
+Description:<span class="w"> </span>&lt;insert<span class="w"> </span>up<span class="w"> </span>to<span class="w"> </span><span class="m">60</span><span class="w"> </span>chars<span class="w"> </span>description&gt;<span class="w"> </span><span class="c1"># 60字简短描述</span>
+<span class="w"> </span>&lt;Insert<span class="w"> </span>long<span class="w"> </span>description,<span class="w"> </span>indented<span class="w"> </span>with<span class="w"> </span>spaces.&gt;<span class="w"> </span><span class="c1"># 换行后再写详细描述</span>
+
+<span class="w"> </span><span class="c1"># 以下是我的deb/control文件内容</span>
+Source:<span class="w"> </span>aptdownloader
+Section:<span class="w"> </span>utils
+Priority:<span class="w"> </span>optional
+Maintainer:<span class="w"> </span>Vladimir<span class="w"> </span>Yang<span class="w"> </span>&lt;<span class="m">0</span>@hackerbs.com&gt;
+Rules-Requires-Root:<span class="w"> </span>no
+Build-Depends:
+<span class="w"> </span>debhelper-compat<span class="w"> </span><span class="o">(=</span><span class="w"> </span><span class="m">13</span><span class="o">)</span>,
+Standards-Version:<span class="w"> </span><span class="m">4</span>.6.2
+Homepage:<span class="w"> </span>https://hackerbs.com
+<span class="c1">#Vcs-Browser: https://salsa.debian.org/debian/aptdownloader</span>
+<span class="c1">#Vcs-Git: https://salsa.debian.org/debian/aptdownloader.git</span>
+
+Package:<span class="w"> </span>aptdownloader
+Architecture:<span class="w"> </span>any
+Depends:
+<span class="w"> </span><span class="si">${</span><span class="nv">shlibs</span><span class="p">:</span><span class="nv">Depends</span><span class="si">}</span>,
+<span class="w"> </span><span class="si">${</span><span class="nv">misc</span><span class="p">:</span><span class="nv">Depends</span><span class="si">}</span>,
+<span class="w"> </span>apt-rdepends<span class="w"> </span><span class="o">(</span>&gt;<span class="o">=</span><span class="w"> </span><span class="m">1</span>.0<span class="o">)</span><span class="w"> </span><span class="c1"># 我的前置需要该包，所以要这样写</span>
+Description:<span class="w"> </span>A<span class="w"> </span>tool<span class="w"> </span><span class="k">for</span><span class="w"> </span>downloading<span class="w"> </span>apt<span class="w"> </span>packages<span class="w"> </span>and<span class="w"> </span>their<span class="w"> </span>dependencies.
+<span class="w"> </span>Use<span class="w"> </span><span class="s1">'aptdownloader &lt;package name&gt;'</span><span class="w"> </span>to<span class="w"> </span>download<span class="w"> </span>the<span class="w"> </span>software<span class="w"> </span>package<span class="w"> </span>and<span class="w"> </span>its<span class="w"> </span>dependencies<span class="w"> </span>to<span class="w"> </span>the<span class="w"> </span>current<span class="w"> </span>directory.
+<span class="w"> </span>example:
+<span class="w">    </span>aptdownloader<span class="w"> </span>docker-ce<span class="w"> </span>docker-ce-cli<span class="w"> </span>containerd.io<span class="w"> </span>docker-buildx-plugin<span class="w"> </span>docker-compose-plugin
+
+<span class="c1"># 编辑debian/install文件（需新建），告诉dpkg我的aptdownloader可执行程序应该放到/usr/bin下</span>
+<span class="c1"># 格式为：包名 安装目录</span>
+<span class="c1"># 我的install内容：</span>
+aptdownloader<span class="w"> </span>usr/bin
+
+<span class="c1"># 回到aptdownloader-1.0.0目录</span>
+<span class="nb">cd</span><span class="w"> </span>/root/deb/package/aptdownloader/aptdownloader-1.
+<span class="m">0</span>.0/
+<span class="c1"># 将我的可执行程序aptdownloader放到该目录</span>
+cp<span class="w"> </span>../../../python-source/bin/aptdownloader<span class="w"> </span>./
+<span class="c1"># 现在便可执行最后一步，运行dpkg-buildpackage</span>
+dpkg-buildpackage<span class="w"> </span>-us<span class="w"> </span>-uc<span class="w"> </span>-nc
+<span class="c1"># 然后退回到上层aptdownloader目录，即可看到</span>
+/root/deb/package/aptdownloader
+├──<span class="w"> </span>aptdownloader-1.0.0<span class="w"> </span><span class="c1"># 项目版本目录</span>
+├──<span class="w"> </span>aptdownloader_1.0.0-1_amd64.buildinfo<span class="w"> </span><span class="c1"># dpkg-buildpackage生成的构建信息</span>
+├──<span class="w"> </span>aptdownloader_1.0.0-1_amd64.changes<span class="w"> </span><span class="c1"># dpkg-buildpackage生成的变更信息</span>
+├──<span class="w"> </span>aptdownloader_1.0.0-1_amd64.deb<span class="w"> </span><span class="c1"># dpkg-buildpackage构建好的deb包</span>
+└──<span class="w"> </span>aptdownloader_1.0.0.orig.tar.xz<span class="w"> </span><span class="c1"># dpkg-buildpackage生成的其他文件的归档</span>
+</code></pre>
+</div>
+<p>至此，构建 deb 包的教程结束，请移步《如何搭建具有 GPG key 验证的可信任 apt 源》。</p>
+    </div>
+
+    <div class="tag-row">
+  <a class="tag" href="../tags.html#Debian">#Debian</a>
+  <a class="tag" href="../tags.html#deb">#deb</a>
+  <a class="tag" href="../tags.html#打包">#打包</a>
+  <a class="tag" href="../tags.html#dpkg">#dpkg</a>
+    </div>
+
+<nav class="post-nav">  <a class="prev" href="private-apt-repo.html"><span class="dir">上一篇</span><span class="t">私有 apt 源仓库与自制实用 deb 包</span></a>  <a class="next" href="python-fio-tool.html"><span class="dir">下一篇</span><span class="t">记录初学 Python 开发 fio 测试工具</span></a></nav>
+  </article>
+  </div>
+</main>
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div class="footer-about">
+        <h4>About</h4>
+        <p>hackerbs = hacker brainstorm。记录数据中心、Linux、虚拟化与工程实践，把零散经验连成一张可复用的知识网络。</p>
+      </div>
+      <div>
+        <h4>导航</h4>
+        <ul>
+          <li><a href="../index.html">首页</a></li>
+          <li><a href="../topics.html">专题</a></li>
+          <li><a href="../archive.html">归档</a></li>
+          <li><a href="../tags.html">标签</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>分类</h4>
+        <ul>
+          <li><a href="../topics.html#os">操作系统</a></li>
+          <li><a href="../topics.html#hardware">服务器硬件</a></li>
+          <li><a href="../topics.html#storage">存储与可靠性</a></li>
+          <li><a href="../topics.html#virtualization">虚拟化</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>链接</h4>
+        <ul>
+          <li><a href="https://github.com/1949hacker">GitHub</a></li>
+          <li><a href="https://blog.hackerbs.com">旧博客</a></li>
+          <li><a href="../about.html">联系我</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2022–2026 hackerbs.com · 探索知识的宇宙</span>
+      <span>本站为纯静态站点，无追踪、无广告</span>
+    </div>
+  </div>
+</footer>
+<button class="to-top" id="to-top" type="button" aria-label="回到顶部">
+  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+</button>
+
+<script src="../assets/js/main.js"></script>
+</body>
+</html>
