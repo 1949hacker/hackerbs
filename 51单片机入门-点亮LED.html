@@ -1,0 +1,214 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>51单片机入门-点亮LED | hackerbs's Blog - 探索知识的宇宙</title><meta name="author" content="hackerbs.com"><meta name="copyright" content="hackerbs.com"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="1e1e2e"><meta name="description" content="初次接触51单片机，记录下第一个程序，LED跑马灯，源代码如下： 12345678910111213141516171819202122232425262728293031323334353637383940414243444546474849505152535455565758596061626364#include &lt;reg52.h&gt;&#x2F;&#x2F;引入52系列单片机头文件&#x2F;&#x2F;位定义，sbit">
+<meta property="og:type" content="article">
+<meta property="og:title" content="51单片机入门-点亮LED">
+<meta property="og:url" content="https://hackerbs.com/51%E5%8D%95%E7%89%87%E6%9C%BA%E5%85%A5%E9%97%A8-%E7%82%B9%E4%BA%AELED.html">
+<meta property="og:site_name" content="hackerbs&#39;s Blog - 探索知识的宇宙">
+<meta property="og:description" content="初次接触51单片机，记录下第一个程序，LED跑马灯，源代码如下： 12345678910111213141516171819202122232425262728293031323334353637383940414243444546474849505152535455565758596061626364#include &lt;reg52.h&gt;&#x2F;&#x2F;引入52系列单片机头文件&#x2F;&#x2F;位定义，sbit">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hackerbs.com/images/avatar.svg">
+<meta property="article:published_time" content="2023-09-25T02:14:36.000Z">
+<meta property="article:modified_time" content="2026-09-22T16:13:25.605Z">
+<meta property="article:author" content="hackerbs.com">
+<meta property="article:tag" content="嵌入式开发">
+<meta property="article:tag" content="51单片机">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hackerbs.com/images/avatar.svg"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "51单片机入门-点亮LED",
+  "url": "https://hackerbs.com/51%E5%8D%95%E7%89%87%E6%9C%BA%E5%85%A5%E9%97%A8-%E7%82%B9%E4%BA%AELED.html",
+  "image": "https://hackerbs.com/images/avatar.svg",
+  "datePublished": "2023-09-25T02:14:36.000Z",
+  "dateModified": "2026-09-22T16:13:25.605Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "hackerbs.com",
+      "url": "https://hackerbs.com"
+    }
+  ]
+}</script><link rel="shortcut icon" href="images/favicon.svg"><link rel="canonical" href="https://hackerbs.com/51%E5%8D%95%E7%89%87%E6%9C%BA%E5%85%A5%E9%97%A8-%E7%82%B9%E4%BA%AELED.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="css/index.css?v=5.7.1.260810"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.3.1/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        try {
+          const data = { value }
+
+          if (ttl != null) {
+            data.expiry = Date.now() + ttl * 86400000
+          }
+
+          localStorage.setItem(key, JSON.stringify(data))
+        } catch (e) {
+          console.error(e)
+        }
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return
+
+        try {
+          const data = JSON.parse(itemStr)
+
+          if (data.expiry && Date.now() > data.expiry) {
+            localStorage.removeItem(key)
+            return
+          }
+
+          return data.value
+        } catch {
+          localStorage.removeItem(key)
+        }
+      }
+    }
+
+    const scriptCache = new Map()
+    const cssCache = new Map()
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => {
+        if (scriptCache.has(url)) {
+          return scriptCache.get(url)
+        }
+
+        const promise = new Promise((resolve, reject) => {
+          const script = document.createElement('script')
+
+          script.src = url
+          script.async = true
+
+          for (const key in attr) {
+            script.setAttribute(key, attr[key])
+          }
+
+          script.onload = resolve
+          script.onerror = reject
+
+          document.head.appendChild(script)
+        })
+
+        scriptCache.set(url, promise)
+
+        return promise
+      },
+      getCSS: (url, id) => {
+        if (cssCache.has(url)) {
+          return cssCache.get(url)
+        }
+
+        const promise = new Promise((resolve, reject) => {
+          const link = document.createElement('link')
+
+          link.rel = 'stylesheet'
+          link.href = url
+
+          if (id) {
+            link.id = id
+          }
+
+          link.onload = resolve
+          link.onerror = reject
+
+          document.head.appendChild(link)
+        })
+
+        cssCache.set(url, promise)
+
+        return promise
+      },
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const metaThemeColor = document.querySelector('meta[name="theme-color"]')
+      const activateDarkMode = () => {
+        document.documentElement.dataset.theme = 'dark'
+        if (metaThemeColor !== null) {
+          metaThemeColor.setAttribute('content', '1e1e2e')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.dataset.theme = 'light'
+        if (metaThemeColor !== null) {
+          metaThemeColor.setAttribute('content', '1e1e2e')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '51单片机入门-点亮LED',
+  isHighlightShrink: false,
+  isToc: false,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/inter@5/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/space-grotesk@5/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/jetbrains-mono@5/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/fraunces@5/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.7.0/style.css"><link rel="stylesheet" href="css/beautify.css"><meta name="generator" content="Hexo 6.3.0"></head><body><div class="post" id="body-wrap"><header class="post-bg fixed" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="index.html"><span class="site-name">hackerbs's Blog - 探索知识的宇宙</span></a><a class="nav-page-title" href="index.html"><span class="site-name">51单片机入门-点亮LED</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"></div></nav><div id="post-info"><h1 class="post-title">51单片机入门-点亮LED</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-09-25T02:14:36.000Z" title="发表于 2023-09-25 10:14:36">2023-09-25</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-09-22T16:13:25.605Z" title="更新于 2026-09-23 00:13:25">2026-09-23</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="categories/%E7%9F%A5%E8%AF%86%E5%BA%93/">知识库</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="categories/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%B5%8C%E5%85%A5%E5%BC%8F/">嵌入式</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><p>初次接触51单片机，记录下第一个程序，LED跑马灯，源代码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;reg52.h&gt;</span><span class="comment">//引入52系列单片机头文件</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">//位定义，sbit 标识符 = 地址值</span></span><br><span class="line">sbit led1=P2^<span class="number">0</span>;</span><br><span class="line">sbit led2=P2^<span class="number">1</span>;</span><br><span class="line">sbit led3=P2^<span class="number">2</span>;</span><br><span class="line">sbit led4=P2^<span class="number">3</span>;</span><br><span class="line">sbit led5=P2^<span class="number">4</span>;</span><br><span class="line">sbit led6=P2^<span class="number">5</span>;</span><br><span class="line">sbit led7=P2^<span class="number">6</span>;</span><br><span class="line">sbit led8=P2^<span class="number">7</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">//延迟函数,单位约10微秒，此处利用的是CPU处理的延时，并不准确</span></span><br><span class="line"><span class="comment">//11.0952MHz测得执行时间为0.000009771593，约为9.771593微秒</span></span><br><span class="line"><span class="type">void</span> <span class="title function_">delay</span><span class="params">(<span class="type">int</span> us)</span></span><br><span class="line">&#123;</span><br><span class="line"> <span class="keyword">while</span>(us--);<span class="comment">//循环执行，递减</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">main</span><span class="params">()</span></span><br><span class="line">&#123;</span><br><span class="line"> <span class="keyword">while</span>(<span class="number">1</span>)</span><br><span class="line"> &#123;</span><br><span class="line">  led1=<span class="number">0</span>;<span class="comment">//设置低电平点亮LED，断点开始时间0.00042318</span></span><br><span class="line">  delay(<span class="number">10000</span>);<span class="comment">//1秒为1000毫秒1000000微秒，此处为0.1秒，断点结束时间0.09813911</span></span><br><span class="line">  led1=<span class="number">1</span>;<span class="comment">//设置高电平熄灭LED</span></span><br><span class="line">  delay(<span class="number">10000</span>);</span><br><span class="line">  </span><br><span class="line">  led2=<span class="number">0</span>;</span><br><span class="line">  delay(<span class="number">10000</span>);</span><br><span class="line">  led2=<span class="number">1</span>;</span><br><span class="line">  delay(<span class="number">10000</span>);</span><br><span class="line">  </span><br><span class="line">  led3=<span class="number">0</span>;</span><br><span class="line">  delay(<span class="number">10000</span>);</span><br><span class="line">  led3=<span class="number">1</span>;</span><br><span class="line">  delay(<span class="number">10000</span>);</span><br><span class="line">  </span><br><span class="line">  led4=<span class="number">0</span>;</span><br><span class="line">  delay(<span class="number">10000</span>);</span><br><span class="line">  led4=<span class="number">1</span>;</span><br><span class="line">  delay(<span class="number">10000</span>);</span><br><span class="line">  </span><br><span class="line">  led5=<span class="number">0</span>;</span><br><span class="line">  delay(<span class="number">10000</span>);</span><br><span class="line">  led5=<span class="number">1</span>;</span><br><span class="line">  delay(<span class="number">10000</span>);</span><br><span class="line">  </span><br><span class="line">  led6=<span class="number">0</span>;</span><br><span class="line">  delay(<span class="number">10000</span>);</span><br><span class="line">  led6=<span class="number">1</span>;</span><br><span class="line">  delay(<span class="number">10000</span>);</span><br><span class="line">  </span><br><span class="line">  led7=<span class="number">0</span>;</span><br><span class="line">  delay(<span class="number">10000</span>);</span><br><span class="line">  led7=<span class="number">1</span>;</span><br><span class="line">  delay(<span class="number">10000</span>);</span><br><span class="line">  </span><br><span class="line">  led8=<span class="number">0</span>;</span><br><span class="line">  delay(<span class="number">10000</span>);</span><br><span class="line">  led8=<span class="number">1</span>;</span><br><span class="line">  delay(<span class="number">10000</span>);</span><br><span class="line"> &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>改进版</strong></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;reg52.h&gt;</span><span class="comment">//引入52系列单片机头文件</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;intrins.h&gt;</span><span class="comment">//引入intrins内置函数</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">//延迟函数,单位约10微秒，此处利用的是CPU处理的延时，并不准确</span></span><br><span class="line"><span class="comment">//11.0952MHz测得执行时间为0.000009771593，约为9.771593微秒</span></span><br><span class="line"><span class="type">void</span> <span class="title function_">delay</span><span class="params">(<span class="type">unsigned</span> <span class="type">int</span> us)</span></span><br><span class="line">&#123;</span><br><span class="line"> <span class="keyword">while</span>(us--);<span class="comment">//循环执行，递减</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">main</span><span class="params">()</span></span><br><span class="line">&#123;</span><br><span class="line"> <span class="keyword">while</span>(<span class="number">1</span>)</span><br><span class="line"> &#123;</span><br><span class="line">  <span class="type">int</span> i;</span><br><span class="line">  P2 = <span class="number">0xfe</span>;<span class="comment">//二进制11111110，对应LED P2^7到0</span></span><br><span class="line">  <span class="keyword">for</span>(i=<span class="number">0</span>;i&lt;<span class="number">7</span>;i++)</span><br><span class="line">  &#123;</span><br><span class="line">   P2 = _crol_(P2,<span class="number">1</span>);<span class="comment">//使LED 从11111110左移一位11111101</span></span><br><span class="line">   delay(<span class="number">5000</span>);<span class="comment">//1秒为1000毫秒1000000微秒，此处为0.05秒，断点结束时间0.09813911</span></span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">for</span>(i=<span class="number">0</span>;i&lt;<span class="number">7</span>;i++)</span><br><span class="line">  &#123;</span><br><span class="line">   P2 = _cror_(P2,<span class="number">1</span>);<span class="comment">//使LED从上方代码执行后的01111111右移一位变为10111111</span></span><br><span class="line">   delay(<span class="number">5000</span>);</span><br><span class="line">  &#125;</span><br><span class="line"> &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://hackerbs.com">hackerbs.com</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://hackerbs.com/51%E5%8D%95%E7%89%87%E6%9C%BA%E5%85%A5%E9%97%A8-%E7%82%B9%E4%BA%AELED.html">https://hackerbs.com/51%E5%8D%95%E7%89%87%E6%9C%BA%E5%85%A5%E9%97%A8-%E7%82%B9%E4%BA%AELED.html</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://hackerbs.com" target="_blank">hackerbs's Blog - 探索知识的宇宙</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="tags/%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/">嵌入式开发</a><a class="post-meta__tags" href="tags/51%E5%8D%95%E7%89%87%E6%9C%BA/">51单片机</a></div><div class="post-share"><div class="social-share" data-image="/images/avatar.svg" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="%E5%B0%86%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%8F%AF%E6%89%A7%E8%A1%8C%E7%A8%8B%E5%BA%8F%E6%9E%84%E5%BB%BA%E4%B8%BAdeb%E5%8C%85.html" title="将二进制可执行程序构建为deb包"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">将二进制可执行程序构建为deb包</div></div><div class="info-2"><div class="info-item-1">构建deb包所需依赖：apt install dh-make 本文使用本站aptdownloader包做为演示 第一步，创建项目目录，项目目录名称格式应为包名-版本号如aptdownloader-1.0.0 123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960616263646566676869707172737475767778798081828384858687888990919293949596979899100101102103104105106107108109110111112113114115116117118119120121122123124125126127128129130131132133134135136137138139140141# 我在我的/root/目录下创建了一个deb文件夹，也就是https://github.com/1949hacker/deb的仓库# 使用tree列出目录...</div></div></div></a><a class="pagination-related" href="Debian%20x86_64%E5%B9%B3%E5%8F%B0%E6%90%AD%E5%BB%BAarm%20docker%E7%8E%AF%E5%A2%83.html" title="Debian x86_64平台搭建arm docker环境"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">Debian x86_64平台搭建arm docker环境</div></div><div class="info-2"><div class="info-item-1">在Debian x86_64平台搭建Docker arm环境的方法 123456# 安装QEMU用户模式工具：QEMU将用于在x86_64主机上模拟ARMv8架构apt install qemu-system binfmt-support qemu-user-static# 启用QEMU用户模式支持update-binfmts --enable qemu-armupdate-binfmts --enable qemu-aarch64  使用以上命令便可搭建Docker的arm环境，再使用如下命令即可测试环境是否可以正常使用 123456# 拉取debian armv8镜像docker pull arm64v8/debian# 运行该镜像，使用了--rm参数，会在退出时自动删除容器# 执行成功便会自动进入容器shell，使用exit即可退出docker run -it --rm arm64v8/debian /bin/bash </div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="51%E5%8D%95%E7%89%87%E6%9C%BA%E7%9A%84%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0.html" title="51单片机的学习笔记"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2022-11-21</div><div class="info-item-2">51单片机的学习笔记</div></div><div class="info-2"><div class="info-item-1">51单片机的学习及其关联知识开始前的一段话： 求知欲是人类进步的源泉，每接触一项新的知识就像是一滴墨滴在了宣纸上，向着四周疯狂扩散，这种极度的求知欲深深地刺激着我，撕裂我的思维向四周辐射，贪婪地、疯狂地汲取着接触到的每一项知识，这种知识爆炸的感觉带给我成瘾的快感！ 对于单片机的起步，始于我小时候的梦想，我想有高度智能的科技、机械围绕着我的生活，我想拥有一个高度智能的工厂，想要无数无数乃至我甚至不知如何形容的科技，我痴迷着这些技术，我疯狂的汲取各种知识，每一次突破一个新的知识面就像是进入一个未知的宇宙！偶然间，我发现我我的梦想可以从两个两个方面入手：  软件层面的技术：编程，人工智能等 硬件层面的技术：机械，电路开发等  于是我有了方向，向着我想要的极力冲刺！ 我于2022.11.21日凌晨开始了51单片机的学习，从茫然无知，到那一滴墨滴在了宣纸上，围绕着单片机开始的知识爆炸让我无比亢奋！从一块小小的51单片机，知识开始爆炸开来，我从未接触过的领域，芯片，电路，逻辑……无数的知识冲刷着我的大脑，无法抑制的激动，发现未知的知识宇宙，我疯狂的汲取着无穷无尽的知识，感叹着人类智慧的结晶！...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="images/avatar.svg" onerror="this.onerror=null;this.src='img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">hackerbs.com</div><div class="author-info-description">hackerbs's Blog - 探索知识的宇宙</div><div class="site-data"><a href="archives/"><div class="headline">文章</div><div class="length-num">43</div></a><a href="tags/"><div class="headline">标签</div><div class="length-num">133</div></a><a href="categories/"><div class="headline">分类</div><div class="length-num">15</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="%E9%9A%8F%E7%AC%94%20-%20%E3%80%8A%E6%88%91%E5%A7%8B%E7%BB%88%E6%98%AF%E6%88%91%E3%80%8B.html" title="随笔 - 《我始终是我》">随笔 - 《我始终是我》</a><time datetime="2026-07-18T00:00:00.000Z" title="发表于 2026-07-18 08:00:00">2026-07-18</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="%E9%9A%8F%E7%AC%94%20-%20%E3%80%8A%E7%A0%B4%E5%B1%80%E7%9A%84%E7%89%A9%E7%90%86%E5%AD%A6%EF%BC%9A%E9%87%8D%E9%87%8F%E3%80%81%E6%9D%A0%E6%9D%86%E4%B8%8E%E6%B6%9F%E6%BC%AA%E3%80%8B.html" title="随笔 - 《破局的物理学：重量、杠杆与涟漪》">随笔 - 《破局的物理学：重量、杠杆与涟漪》</a><time datetime="2026-07-05T00:00:00.000Z" title="发表于 2026-07-05 08:00:00">2026-07-05</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="%E9%9A%8F%E7%AC%94%20-%20%E3%80%8A%E5%AD%98%E5%9C%A8%E7%9A%84%E7%97%95%E8%BF%B9%EF%BC%9A%E4%B8%8D%E5%9C%A8%E4%BA%8E%E7%9F%B3%E7%A2%91%EF%BC%8C%E8%80%8C%E4%BA%8E%E6%B6%9F%E6%BC%AA%E3%80%8B.html" title="随笔 - 《存在的痕迹：不在于石碑，而于涟漪》">随笔 - 《存在的痕迹：不在于石碑，而于涟漪》</a><time datetime="2025-10-17T08:15:00.000Z" title="发表于 2025-10-17 16:15:00">2025-10-17</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="IT%E5%9C%BA%E6%99%AF%E4%B8%93%E4%B8%9A%E6%9C%AF%E8%AF%AD%E8%A1%A8.html" title="IT场景专业术语表">IT场景专业术语表</a><time datetime="2025-10-17T05:45:45.000Z" title="发表于 2025-10-17 13:45:45">2025-10-17</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="%E5%85%B3%E4%BA%8E%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%A1%AC%E7%9B%98%E6%95%85%E9%9A%9C%E4%BD%86%E5%B8%A6%E5%A4%96%E6%B2%A1%E6%9C%89%E9%94%99%E8%AF%AF%E6%97%A5%E5%BF%97%E7%9A%84%E6%8E%92%E9%9A%9C%E4%B8%8E%E6%8A%A5%E4%BF%AE%E7%AC%94%E8%AE%B0.html" title="关于服务器硬盘故障但带外没有错误日志的排障与报修笔记">关于服务器硬盘故障但带外没有错误日志的排障与报修笔记</a><time datetime="2025-09-18T07:49:46.000Z" title="发表于 2025-09-18 15:49:46">2025-09-18</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By hackerbs.com</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 6.3.0</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.7.1.260810</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="js/utils.js?v=5.7.1.260810"></script><script src="js/main.js?v=5.7.1.260810"></script><div class="js-pjax"></div><script src="js/effects.js" defer></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
