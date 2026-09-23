@@ -1,0 +1,360 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>关于服务器硬盘故障但带外没有错误日志的排障与报修笔记 | hackerbs's Blog - 探索知识的宇宙</title><meta name="author" content="hackerbs.com"><meta name="copyright" content="hackerbs.com"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="1e1e2e"><meta name="description" content="情况说明收到系统发出IO占用率和IO延迟的告警，登录带外排查无任何错误日志，随后进入操作系统使用脚本批量排查smartctl日志，发现存在错误计数，因smartctl并非厂家带外的告警日志，所以特此向Inspur、H3C、Lenovo、DELL进行了咨询，其中提到了一些日志参数的告警，目前已收到H3C、Inspur的回复 厂商对日志中以下内容的告警表示认可并作为报修依据    硬盘类型 参数 翻译">
+<meta property="og:type" content="article">
+<meta property="og:title" content="关于服务器硬盘故障但带外没有错误日志的排障与报修笔记">
+<meta property="og:url" content="https://hackerbs.com/%E5%85%B3%E4%BA%8E%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%A1%AC%E7%9B%98%E6%95%85%E9%9A%9C%E4%BD%86%E5%B8%A6%E5%A4%96%E6%B2%A1%E6%9C%89%E9%94%99%E8%AF%AF%E6%97%A5%E5%BF%97%E7%9A%84%E6%8E%92%E9%9A%9C%E4%B8%8E%E6%8A%A5%E4%BF%AE%E7%AC%94%E8%AE%B0.html">
+<meta property="og:site_name" content="hackerbs&#39;s Blog - 探索知识的宇宙">
+<meta property="og:description" content="情况说明收到系统发出IO占用率和IO延迟的告警，登录带外排查无任何错误日志，随后进入操作系统使用脚本批量排查smartctl日志，发现存在错误计数，因smartctl并非厂家带外的告警日志，所以特此向Inspur、H3C、Lenovo、DELL进行了咨询，其中提到了一些日志参数的告警，目前已收到H3C、Inspur的回复 厂商对日志中以下内容的告警表示认可并作为报修依据    硬盘类型 参数 翻译">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hackerbs.com/images/avatar.svg">
+<meta property="article:published_time" content="2025-09-18T07:49:46.000Z">
+<meta property="article:modified_time" content="2026-09-23T08:18:22.009Z">
+<meta property="article:author" content="hackerbs.com">
+<meta property="article:tag" content="DELL">
+<meta property="article:tag" content="华三">
+<meta property="article:tag" content="带外">
+<meta property="article:tag" content="排障">
+<meta property="article:tag" content="故障">
+<meta property="article:tag" content="日志">
+<meta property="article:tag" content="服务器">
+<meta property="article:tag" content="浪潮">
+<meta property="article:tag" content="硬盘">
+<meta property="article:tag" content="联想">
+<meta property="article:tag" content="超聚变">
+<meta property="article:tag" content="运维">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hackerbs.com/images/avatar.svg"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "关于服务器硬盘故障但带外没有错误日志的排障与报修笔记",
+  "url": "https://hackerbs.com/%E5%85%B3%E4%BA%8E%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%A1%AC%E7%9B%98%E6%95%85%E9%9A%9C%E4%BD%86%E5%B8%A6%E5%A4%96%E6%B2%A1%E6%9C%89%E9%94%99%E8%AF%AF%E6%97%A5%E5%BF%97%E7%9A%84%E6%8E%92%E9%9A%9C%E4%B8%8E%E6%8A%A5%E4%BF%AE%E7%AC%94%E8%AE%B0.html",
+  "image": "https://hackerbs.com/images/avatar.svg",
+  "datePublished": "2025-09-18T07:49:46.000Z",
+  "dateModified": "2026-09-23T08:18:22.009Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "hackerbs.com",
+      "url": "https://hackerbs.com"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/images/favicon.svg"><link rel="canonical" href="https://hackerbs.com/%E5%85%B3%E4%BA%8E%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%A1%AC%E7%9B%98%E6%95%85%E9%9A%9C%E4%BD%86%E5%B8%A6%E5%A4%96%E6%B2%A1%E6%9C%89%E9%94%99%E8%AF%AF%E6%97%A5%E5%BF%97%E7%9A%84%E6%8E%92%E9%9A%9C%E4%B8%8E%E6%8A%A5%E4%BF%AE%E7%AC%94%E8%AE%B0.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.7.1.260810"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.3.1/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        try {
+          const data = { value }
+
+          if (ttl != null) {
+            data.expiry = Date.now() + ttl * 86400000
+          }
+
+          localStorage.setItem(key, JSON.stringify(data))
+        } catch (e) {
+          console.error(e)
+        }
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return
+
+        try {
+          const data = JSON.parse(itemStr)
+
+          if (data.expiry && Date.now() > data.expiry) {
+            localStorage.removeItem(key)
+            return
+          }
+
+          return data.value
+        } catch {
+          localStorage.removeItem(key)
+        }
+      }
+    }
+
+    const scriptCache = new Map()
+    const cssCache = new Map()
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => {
+        if (scriptCache.has(url)) {
+          return scriptCache.get(url)
+        }
+
+        const promise = new Promise((resolve, reject) => {
+          const script = document.createElement('script')
+
+          script.src = url
+          script.async = true
+
+          for (const key in attr) {
+            script.setAttribute(key, attr[key])
+          }
+
+          script.onload = resolve
+          script.onerror = reject
+
+          document.head.appendChild(script)
+        })
+
+        scriptCache.set(url, promise)
+
+        return promise
+      },
+      getCSS: (url, id) => {
+        if (cssCache.has(url)) {
+          return cssCache.get(url)
+        }
+
+        const promise = new Promise((resolve, reject) => {
+          const link = document.createElement('link')
+
+          link.rel = 'stylesheet'
+          link.href = url
+
+          if (id) {
+            link.id = id
+          }
+
+          link.onload = resolve
+          link.onerror = reject
+
+          document.head.appendChild(link)
+        })
+
+        cssCache.set(url, promise)
+
+        return promise
+      },
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const metaThemeColor = document.querySelector('meta[name="theme-color"]')
+      const activateDarkMode = () => {
+        document.documentElement.dataset.theme = 'dark'
+        if (metaThemeColor !== null) {
+          metaThemeColor.setAttribute('content', '1e1e2e')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.dataset.theme = 'light'
+        if (metaThemeColor !== null) {
+          metaThemeColor.setAttribute('content', '1e1e2e')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '关于服务器硬盘故障但带外没有错误日志的排障与报修笔记',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/inter@5/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/space-grotesk@5/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/jetbrains-mono@5/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/fraunces@5/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.7.0/style.css"><link rel="stylesheet" href="/css/beautify.css"><meta name="generator" content="Hexo 8.1.2"></head><body><div class="post" id="body-wrap"><header class="post-bg fixed" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">hackerbs's Blog - 探索知识的宇宙</span></a><a class="nav-page-title" href="/"><span class="site-name">关于服务器硬盘故障但带外没有错误日志的排障与报修笔记</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"></div></nav><div id="post-info"><h1 class="post-title">关于服务器硬盘故障但带外没有错误日志的排障与报修笔记</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-09-18T07:49:46.000Z" title="发表于 2025-09-18 15:49:46">2025-09-18</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-09-23T08:18:22.009Z" title="更新于 2026-09-23 16:18:22">2026-09-23</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E7%9F%A5%E8%AF%86%E5%BA%93/">知识库</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%AD%98%E5%82%A8/">存储</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h2 id="情况说明"><a href="#情况说明" class="headerlink" title="情况说明"></a>情况说明</h2><p>收到系统发出IO占用率和IO延迟的告警，登录带外排查无任何错误日志，随后进入操作系统使用脚本批量排查smartctl日志，发现存在错误计数，因smartctl并非厂家带外的告警日志，所以特此向Inspur、H3C、Lenovo、DELL进行了咨询，其中提到了一些日志参数的告警，目前已收到H3C、Inspur的回复</p>
+<p><strong>厂商对日志中以下内容的告警表示认可并作为报修依据</strong></p>
+<table>
+<thead>
+<tr>
+<th>硬盘类型</th>
+<th>参数</th>
+<th>翻译</th>
+<th>说明</th>
+<th>来源</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>SSD</td>
+<td>ID 5 Reallocated_Sector_Ct</td>
+<td>重分配扇区计数</td>
+<td>因坏块被重新分配的扇区数量，值越高健康状况越差</td>
+<td>新华三</td>
+</tr>
+<tr>
+<td>SSD</td>
+<td>ID 197 Current_Pending_Sector</td>
+<td>当前待处理扇区计数</td>
+<td>有潜在读写错误、待重新映射的扇区数量(&gt;100更换)</td>
+<td>浪潮&#x2F;新华三</td>
+</tr>
+<tr>
+<td>SSD</td>
+<td>ID 187 Reported_Uncorrect</td>
+<td>已报告的不可纠正错误</td>
+<td>硬盘向主机报告的读&#x2F;写过程中发生的不可恢复错误次数(&gt;10更换)</td>
+<td>浪潮</td>
+</tr>
+<tr>
+<td>HDD</td>
+<td>Total uncorrected errors</td>
+<td>总无法纠正错误</td>
+<td>所有无法纠正的读&#x2F;写错误之和</td>
+<td>浪潮&#x2F;新华三</td>
+</tr>
+<tr>
+<td>HDD</td>
+<td>Verify total uncorrected errors</td>
+<td>校验无法纠正错误</td>
+<td>硬盘控制器自检时无法通过ECC纠正的错误总数，高值表示可靠性下降</td>
+<td>新华三</td>
+</tr>
+<tr>
+<td>HDD</td>
+<td>Read total uncorrected errors</td>
+<td>读无法纠正错误</td>
+<td>读取&#x2F;写入IO时无法通过ECC纠正的错误总数，高值表示可靠性下降</td>
+<td>新华三</td>
+</tr>
+<tr>
+<td>HDD</td>
+<td>Elements in grown defect list</td>
+<td>已增长缺陷列表中的元素</td>
+<td>硬盘运行中登记的坏块数量，用于追踪坏块增长</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/icenowy">@Icenowy</a>于清华TUNA协会技术群组内回复</td>
+</tr>
+</tbody></table>
+<p><strong>以下是辅助日志，作为协助排障参考，不作为直接依据</strong></p>
+<table>
+<thead>
+<tr>
+<th>硬盘类型</th>
+<th>参数</th>
+<th>翻译</th>
+<th>说明</th>
+<th>来源</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>SSD</td>
+<td>Reallocated Sector Count</td>
+<td>重分配扇区计数</td>
+<td>记录因物理损坏被替换到备用扇区的次数，数值增加说明介质退化(&gt;500为不可靠)</td>
+<td>浪潮</td>
+</tr>
+<tr>
+<td>SSD</td>
+<td>CRC Error Count</td>
+<td>CRC 错误计数</td>
+<td>记录主机与硬盘之间传输数据时发生的 CRC 校验错误次数，常见原因包括数据线接触不良、电磁干扰或接口问题，单盘较多则可能为该盘本体故障，多个硬盘则进一步筛查是否位于同一个硬盘背板或同一个SAS端口</td>
+<td>浪潮</td>
+</tr>
+<tr>
+<td>HDD</td>
+<td>Non-medium error count</td>
+<td>非介质故障</td>
+<td>与上方SSD的是一样的意思</td>
+<td>浪潮</td>
+</tr>
+</tbody></table>
+<hr>
+<p>清华大学TUNA协会技术群组</p>
+<p>感谢<a target="_blank" rel="noopener" href="https://github.com/icenowy">@Icenowy</a>于<em>清华TUNA协会技术群组</em>内回复提出参考<code>Elements in grown defect list</code>参数的值，该值是HDD独有的指标，记录的是在使用过长中新发现的物理坏块数，数值持续增长则意味着该硬盘可靠性正在下降</p>
+<h2 id="排查过程"><a href="#排查过程" class="headerlink" title="排查过程"></a>排查过程</h2><h3 id="对于JBOD模式的硬盘"><a href="#对于JBOD模式的硬盘" class="headerlink" title="对于JBOD模式的硬盘"></a>对于JBOD模式的硬盘</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">使用smartctl直接查询即可</span></span><br><span class="line">smartctl -a /dev/sdX</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">可以增加grep快速筛选想要查询的参数，在替换双引号中的即可</span></span><br><span class="line">smartctl -a /dev/sdX | grep -E &quot;Elements in grown defect list&quot;</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">配合<span class="keyword">for</span>迅速遍历磁盘，&#123;a..z&#125;则是遍历sda到sdz的所有盘</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">如果盘很多那可以直接写为&#123;a..zz&#125;，则是遍历sda到sdzz共702个盘</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">[ -b <span class="string">&quot;/dev/sd<span class="variable">$i</span>&quot;</span> ] <span class="built_in">test</span>命令的简写，判断该设备是不是一个硬盘</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash"><span class="built_in">echo</span> <span class="string">&quot;sd<span class="variable">$i</span>&quot;</span>是在输出日志前输出盘号，避免不知道是哪个盘的报错</span></span><br><span class="line">for i in &#123;a..z&#125;; do [ -b &quot;/dev/sd$i&quot; ] &amp;&amp; echo &quot;sd$i:&quot; &amp;&amp; sudo smartctl -a &quot;/dev/sd$i&quot; | grep &quot;Elements in grown defect list&quot;; done</span><br></pre></td></tr></table></figure>
+
+<h3 id="对于LSI-MegaRAID控制器，RAID模式的硬盘"><a href="#对于LSI-MegaRAID控制器，RAID模式的硬盘" class="headerlink" title="对于LSI MegaRAID控制器，RAID模式的硬盘"></a>对于LSI MegaRAID控制器，RAID模式的硬盘</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">由于硬盘由阵列卡接管，所以需要调用MegaRAID驱动程序才可访问</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">/dev/sdX输入你挂载到系统的阵列，例如通常/dev/sda是RAID1系统盘</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">其中megaraid,后面的数字对应该硬盘是该阵列中的第几个盘，从编号0开始是第一个</span></span><br><span class="line">smartctl -a -d megaraid,0 /dev/sdX</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">同样的grep筛选</span></span><br><span class="line">smartctl -a -d megaraid,0 /dev/sdX | grep -E &quot;Non-medium error count&quot;</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">遍历快速排查所有盘</span></span><br><span class="line">for raid in &#123;a..z&#125;;do [ -b &quot;/dev/sd$raid&quot; ] &amp;&amp; for disk in &#123;0..20&#125;;do echo -e &quot;\033[36;1m阵列 sd$raid 中硬盘 $disk 日志: &quot; &amp;&amp; smartctl -a -d megaraid,$disk /dev/sd$raid | grep -E &quot;Non-medium error count&quot;;done;done</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">上方命令为单行，方便复制粘贴执行，以下是拆解后可读的版本</span></span><br><span class="line">for raid in &#123;a..z&#125;; do # 遍历sda到sdz的设备</span><br><span class="line">    [ -b &quot;/dev/sd$raid&quot; ] &amp;&amp; # 判断是不是硬盘，不是就跳过</span><br><span class="line">    for disk in &#123;0..20&#125;; do # 预设是0到20共21个硬盘，可以自行设置</span><br><span class="line">        echo -e &quot;\033[36;1m阵列 sd$raid 中硬盘 $disk 日志: &quot; # 打印个开头，不然不知道是哪个设备的日志</span><br><span class="line">        smartctl -a -d megaraid,$disk /dev/sd$raid | grep -E &quot;Non-medium error count&quot; # 根据你的需要调整grep筛选的内容</span><br><span class="line">    done</span><br><span class="line">done</span><br></pre></td></tr></table></figure>
+<h2 id="进阶脚本"><a href="#进阶脚本" class="headerlink" title="进阶脚本"></a>进阶脚本</h2><p><strong>该脚本会在当前目录输出<code>smartctl</code>的日志源码到<code>disk_error_$(date +%Y%m%d_%H%M%S).log</code>文件</strong></p>
+<p>推荐使用此单行模式，复制粘贴直接用，不需要创建shell文件</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">log_file=&quot;disk_error_$(date +%Y%m%d_%H%M%S).log&quot;; for raid in &#123;a..d&#125;; do [ -b &quot;/dev/sd$raid&quot; ] &amp;&amp; for disk in &#123;0..23&#125;; do smartctl -d megaraid,$disk /dev/sd$raid -i &gt;/dev/null 2&gt;&amp;1 &amp;&amp; output=$(smartctl -a -d megaraid,$disk /dev/sd$raid) &amp;&amp; serial=$(echo &quot;$output&quot; | grep &quot;Serial number:&quot; | awk &#x27;&#123;print $3&#125;&#x27;) &amp;&amp; if echo &quot;$output&quot; | grep -q &quot;SSD&quot;; then reallocated_sectors=$(echo &quot;$output&quot; | grep &quot;Reallocated_Sector_Ct&quot; | awk &#x27;&#123;print $10&#125;&#x27;); reallocated_sectors=$&#123;reallocated_sectors:-0&#125;; current_pending=$(echo &quot;$output&quot; | grep &quot;Current_Pending_Sector&quot; | awk &#x27;&#123;print $10&#125;&#x27;); current_pending=$&#123;current_pending:-0&#125;; reported_uncorrect=$(echo &quot;$output&quot; | grep &quot;Reported_Uncorrect&quot; | awk &#x27;&#123;print $10&#125;&#x27;); reported_uncorrect=$&#123;reported_uncorrect:-0&#125;; offline_uncorrect=$(echo &quot;$output&quot; | grep &quot;Offline_Uncorrectable&quot; | awk &#x27;&#123;print $10&#125;&#x27;); offline_uncorrect=$&#123;offline_uncorrect:-0&#125;; crc_errors=$(echo &quot;$output&quot; | grep &quot;CRC_Error_Count&quot; | awk &#x27;&#123;print $10&#125;&#x27;); crc_errors=$&#123;crc_errors:-0&#125;; [ &quot;$reallocated_sectors&quot; -gt 0 ] || [ &quot;$current_pending&quot; -gt 0 ] || [ &quot;$reported_uncorrect&quot; -gt 0 ] || [ &quot;$offline_uncorrect&quot; -gt 0 ] || [ &quot;$crc_errors&quot; -gt 0 ] &amp;&amp; echo &quot;$output&quot; &gt;&gt; &quot;$log_file&quot; &amp;&amp; echo -e &quot;\033[36;1mRAID \033[32;1msd$raid \033[36;1m中的 SSD 磁盘 \033[32;1m#$disk \033[36;1m(SN:\033[33;1m $serial) 检测到异常：\033[0m\n\033[36;1m05 重分配扇区计数(Reallocated Sector Count)：\033[31;1m$reallocated_sectors\033[0m\n\033[36;1m197 当前待处理扇区(Current Pending Sector Count)：\033[31;1m$current_pending\033[0m\n\033[36;1m已报告的不可纠正错误(Reported Uncorrectable Errors)：\033[31;1m$reported_uncorrect\033[0m\n\033[36;1m离线不可纠正错误(Offline Uncorrectable)：\033[31;1m$offline_uncorrect\033[0m\n\033[36;1m接口CRC错误计数(CRC Error Count)：\033[31;1m$crc_errors\033[0m\n&quot;; else read_uncorrected=$(echo &quot;$output&quot; | grep -A 10 &quot;Error counter log:&quot; | grep &quot;^read:&quot; | awk &#x27;&#123;print $NF&#125;&#x27;); read_uncorrected=$&#123;read_uncorrected:-0&#125;; verify_uncorrected=$(echo &quot;$output&quot; | grep -A 10 &quot;Error counter log:&quot; | grep &quot;^verify:&quot; | awk &#x27;&#123;print $NF&#125;&#x27;); verify_uncorrected=$&#123;verify_uncorrected:-0&#125;; total_uncorrected=$(echo &quot;$output&quot; | grep &quot;Total uncorrected errors&quot; | awk &#x27;&#123;print $NF&#125;&#x27;); total_uncorrected=$&#123;total_uncorrected:-0&#125;; grown_defect_list=$(echo &quot;$output&quot; | grep &quot;Elements in grown defect list&quot; | awk &#x27;&#123;print $NF&#125;&#x27;); grown_defect_list=$&#123;grown_defect_list:-0&#125;; non_medium=$(echo &quot;$output&quot; | grep &quot;Non-medium error count:&quot; | awk &#x27;&#123;print $NF&#125;&#x27;); non_medium=$&#123;non_medium:-0&#125;; [ &quot;$read_uncorrected&quot; -gt 0 ] || [ &quot;$verify_uncorrected&quot; -gt 0 ] || [ &quot;$total_uncorrected&quot; -gt 0 ] || [ &quot;$grown_defect_list&quot; -gt 0 ] || [ &quot;$non_medium&quot; -gt 0 ] &amp;&amp; echo &quot;$output&quot; &gt;&gt; &quot;$log_file&quot; &amp;&amp; echo -e &quot;\033[36;1mRAID \033[32;1msd$raid \033[36;1m中的 HDD 磁盘 \033[32;1m#$disk \033[36;1m(SN:\033[33;1m $serial) 检测到异常：\033[0m\n\033[36;1m读无法纠正错误(Read total uncorrected errors)：\033[31;1m$read_uncorrected\033[0m\n\033[36;1m校验无法纠正错误(Verify total uncorrected errors)：\033[31;1m$verify_uncorrected\033[0m\n\033[36;1m总无法纠正错误(Total uncorrected errors)：\033[31;1m$total_uncorrected\033[0m\n\033[36;1m已增长缺陷列表元素(Elements in grown defect list)：\033[31;1m$grown_defect_list\033[0m\n\033[36;1m非介质错误(Non-medium error count)：\033[31;1m$non_medium\033[0m\n&quot;; fi; done; done</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">!/bin/bash</span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">日志文件以日期时间命名</span></span><br><span class="line">log_file=&quot;disk_error_$(date +%Y%m%d_%H%M%S).log&quot;</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">遍历可能的RAID设备（sda, sdb, sdc, sdd）</span></span><br><span class="line">for raid in &#123;a..d&#125;; do</span><br><span class="line">    if [ -b &quot;/dev/sd$raid&quot; ]; then</span><br><span class="line">        for disk in &#123;0..23&#125;; do</span><br><span class="line">            if smartctl -d megaraid,$disk /dev/sd$raid -i &gt;/dev/null 2&gt;&amp;1; then</span><br><span class="line">                output=$(smartctl -a -d megaraid,$disk /dev/sd$raid)</span><br><span class="line"></span><br><span class="line">                serial=$(echo &quot;$output&quot; | grep &quot;Serial number:&quot; | awk &#x27;&#123;print $3&#125;&#x27;)</span><br><span class="line"></span><br><span class="line">                if echo &quot;$output&quot; | grep -q &quot;SSD&quot;; then</span><br><span class="line">                    # ================= SSD =================</span><br><span class="line">                    reallocated_sectors=$(echo &quot;$output&quot; | grep &quot;Reallocated_Sector_Ct&quot; | awk &#x27;&#123;print $10&#125;&#x27;)</span><br><span class="line">                    reallocated_sectors=$&#123;reallocated_sectors:-0&#125;</span><br><span class="line"></span><br><span class="line">                    current_pending=$(echo &quot;$output&quot; | grep &quot;Current_Pending_Sector&quot; | awk &#x27;&#123;print $10&#125;&#x27;)</span><br><span class="line">                    current_pending=$&#123;current_pending:-0&#125;</span><br><span class="line"></span><br><span class="line">                    reported_uncorrect=$(echo &quot;$output&quot; | grep &quot;Reported_Uncorrect&quot; | awk &#x27;&#123;print $10&#125;&#x27;)</span><br><span class="line">                    reported_uncorrect=$&#123;reported_uncorrect:-0&#125;</span><br><span class="line"></span><br><span class="line">                    offline_uncorrect=$(echo &quot;$output&quot; | grep &quot;Offline_Uncorrectable&quot; | awk &#x27;&#123;print $10&#125;&#x27;)</span><br><span class="line">                    offline_uncorrect=$&#123;offline_uncorrect:-0&#125;</span><br><span class="line"></span><br><span class="line">                    crc_errors=$(echo &quot;$output&quot; | grep &quot;CRC_Error_Count&quot; | awk &#x27;&#123;print $10&#125;&#x27;)</span><br><span class="line">                    crc_errors=$&#123;crc_errors:-0&#125;</span><br><span class="line"></span><br><span class="line">                    if [ &quot;$reallocated_sectors&quot; -gt 0 ] || [ &quot;$current_pending&quot; -gt 0 ] || \</span><br><span class="line">                       [ &quot;$reported_uncorrect&quot; -gt 0 ] || [ &quot;$offline_uncorrect&quot; -gt 0 ] || [ &quot;$crc_errors&quot; -gt 0 ]; then</span><br><span class="line">                        echo &quot;$output&quot; &gt;&gt; &quot;$log_file&quot;</span><br><span class="line">                        echo -e &quot;\033[36;1mRAID \033[32;1msd$raid \033[36;1m中的 SSD 磁盘 \033[32;1m#$disk \033[36;1m(SN:\033[33;1m $serial) 检测到异常：\033[0m\n&quot;</span><br><span class="line">                        echo -e &quot;\033[36;1m05 重分配扇区计数(Reallocated Sector Count)：\033[31;1m$reallocated_sectors\033[0m&quot;</span><br><span class="line">                        echo -e &quot;\033[36;1m197 当前待处理扇区(Current Pending Sector Count)：\033[31;1m$current_pending\033[0m&quot;</span><br><span class="line">                        echo -e &quot;\033[36;1m已报告的不可纠正错误(Reported Uncorrectable Errors)：\033[31;1m$reported_uncorrect\033[0m&quot;</span><br><span class="line">                        echo -e &quot;\033[36;1m离线不可纠正错误(Offline Uncorrectable)：\033[31;1m$offline_uncorrect\033[0m&quot;</span><br><span class="line">                        echo -e &quot;\033[36;1m接口CRC错误计数(CRC Error Count)：\033[31;1m$crc_errors\033[0m\n&quot;</span><br><span class="line">                    fi</span><br><span class="line">                else</span><br><span class="line">                    # ================= HDD =================</span><br><span class="line">                    read_uncorrected=$(echo &quot;$output&quot; | grep -A 10 &quot;Error counter log:&quot; | grep &quot;^read:&quot; | awk &#x27;&#123;print $NF&#125;&#x27;)</span><br><span class="line">                    read_uncorrected=$&#123;read_uncorrected:-0&#125;</span><br><span class="line"></span><br><span class="line">                    verify_uncorrected=$(echo &quot;$output&quot; | grep -A 10 &quot;Error counter log:&quot; | grep &quot;^verify:&quot; | awk &#x27;&#123;print $NF&#125;&#x27;)</span><br><span class="line">                    verify_uncorrected=$&#123;verify_uncorrected:-0&#125;</span><br><span class="line"></span><br><span class="line">                    total_uncorrected=$(echo &quot;$output&quot; | grep &quot;Total uncorrected errors&quot; | awk &#x27;&#123;print $NF&#125;&#x27;)</span><br><span class="line">                    total_uncorrected=$&#123;total_uncorrected:-0&#125;</span><br><span class="line"></span><br><span class="line">                    grown_defect_list=$(echo &quot;$output&quot; | grep &quot;Elements in grown defect list&quot; | awk &#x27;&#123;print $NF&#125;&#x27;)</span><br><span class="line">                    grown_defect_list=$&#123;grown_defect_list:-0&#125;</span><br><span class="line"></span><br><span class="line">                    non_medium=$(echo &quot;$output&quot; | grep &quot;Non-medium error count:&quot; | awk &#x27;&#123;print $NF&#125;&#x27;)</span><br><span class="line">                    non_medium=$&#123;non_medium:-0&#125;</span><br><span class="line"></span><br><span class="line">                    if [ &quot;$read_uncorrected&quot; -gt 0 ] || [ &quot;$verify_uncorrected&quot; -gt 0 ] || \</span><br><span class="line">                       [ &quot;$total_uncorrected&quot; -gt 0 ] || [ &quot;$grown_defect_list&quot; -gt 0 ] || [ &quot;$non_medium&quot; -gt 0 ]; then</span><br><span class="line">                        echo &quot;$output&quot; &gt;&gt; &quot;$log_file&quot;</span><br><span class="line">                        echo -e &quot;\033[36;1mRAID \033[32;1msd$raid \033[36;1m中的 HDD 磁盘 \033[32;1m#$disk \033[36;1m(SN:\033[33;1m $serial) 检测到异常：\033[0m\n&quot;</span><br><span class="line">                        echo -e &quot;\033[36;1m读无法纠正错误(Read total uncorrected errors)：\033[31;1m$read_uncorrected\033[0m&quot;</span><br><span class="line">                        echo -e &quot;\033[36;1m校验无法纠正错误(Verify total uncorrected errors)：\033[31;1m$verify_uncorrected\033[0m&quot;</span><br><span class="line">                        echo -e &quot;\033[36;1m总无法纠正错误(Total uncorrected errors)：\033[31;1m$total_uncorrected\033[0m&quot;</span><br><span class="line">                        echo -e &quot;\033[36;1m已增长缺陷列表元素(Elements in grown defect list)：\033[31;1m$grown_defect_list\033[0m&quot;</span><br><span class="line">                        echo -e &quot;\033[36;1m非介质错误(Non-medium error count)：\033[31;1m$non_medium\033[0m\n&quot;</span><br><span class="line">                    fi</span><br><span class="line">                fi</span><br><span class="line">            fi</span><br><span class="line">        done</span><br><span class="line">    fi</span><br><span class="line">done</span><br></pre></td></tr></table></figure>
+
+<p>输出效果如下</p>
+<p><img src="https://img.hackerbs.com/20250918173418.png" alt="20250918173418"></p>
+<h2 id="关于DELL-TSR日志-iDRAC-没有硬盘故障告警的报修办法"><a href="#关于DELL-TSR日志-iDRAC-没有硬盘故障告警的报修办法" class="headerlink" title="关于DELL TSR日志(iDRAC)没有硬盘故障告警的报修办法"></a>关于DELL TSR日志(iDRAC)没有硬盘故障告警的报修办法</h2><p>DELL通常只认可其自身硬件的告警日志。<br>在硬盘出现非致命故障，无法直观的在操作系统看到硬盘离线或RAID降级，同时TSR日志中没有记录到硬盘故障，iDRAC网页也没有显示硬盘故障时。<br>DELL通常不会认可运维工程师提供的smartctl日志和其他非DELL硬件报告的日志，<br>且有时smartctl也并不能很好的定位故障。</p>
+<p>为此和DELL进行漫长的沟通后，最终定下来以下排障方式：</p>
+<p><img src="https://img.hackerbs.com/%E4%BC%81%E4%B8%9A%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_1760520869936.png" alt="DELL承认的额外日志"></p>
+<ul>
+<li>带外由故障日志时：提供TSR日志报修</li>
+<li>带外没有故障日志时：提供TSR日志+perccli64 &#x2F;call show alilog的日志用于报修</li>
+</ul>
+<p>此外还可通过分析上文提到的smartctl日志和以下日志用于综合定位问题：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ls -l /sys/class/block &gt; /tmp/lsblock.txt</span><br><span class="line">perccli64 /call show alilog &gt; /tmp/target.txt</span><br><span class="line">perccli64 /call/eall/sall show all &gt; /tmp/slot.txt</span><br></pre></td></tr></table></figure>
+
+<p>以下是本次案例的记录，可以作为排障及报修的参考</p>
+<p>情况说明：<br>本次是日常巡检时运维平台报障IO延迟大于100ms<br>随后排查了带外，没有告警，继续排查smartctl，定位slot8存在无法纠正的错误记录1次。<br>随后向DELL提出报修，并上传TSR日志，但因为没有记录告警，所以DELL并不认可，要求进一步调查故障。<br>排障过程中针对<code>smartctl -a -d megaraid</code>输出的<code>Error counter log</code>，也就是上文解释的smartctl日志；<br>其中有巨量的<code>Errors Corrected by ECC</code>的<code>fast纠正</code>错误计数，达到了<code>1737961798</code>次，<br>针对该项报错，DELL不参考，并且未对此进行分析，所以只能自行分析。<br>结合硬盘运行时间约5.8年，且几乎从未停机；而这份报错是由RAID卡报告给smartctl，<br>所以在计数准确性上无法验证，同时鉴于运行了很长时间，计数的累计也是可能的因素；<br>此处有个疑点：该天文数字般的ECC纠错计数是否可能是整个RAID5阵列的纠错被记录到了其中？<br>再加上硬盘存在故障长期未发现，导致了频繁的纠错？<br>以上两个疑问仅为猜测，不过该ECC纠错确实会导致IO延迟增加。<br>在进一步的排查中发现slot9才是故障盘，且其中的<code>Errors Corrected by ECC</code>的<code>fast纠正</code>为0，<br>反而是<code>delayed纠正</code>为<code>8396</code>次，因此进一步核实这块盘才是真正的故障盘。<br>因为<code>fast</code>纠正是常规现象，<code>delayed</code>纠正才是有可能存在问题的，<code>delayed</code>纠正是无法快速纠错时进行的深度纠错</p>
+<p>见此处说明</p>
+<p>接下来讲如何通过分析<code>perccli64 /call show alilog</code>定位到了真正故障的硬盘<br>首先，<code>perccli64</code>，顾名思义，这是DELL PERC官方的工具，用于操作DELL RAID卡。<br>因为日志内容较多，所以选择使用<code>perccli64 /call show alilog &gt; /tmp/target.txt</code>查询适配器日志并输出到文件。<br>随后使用vscode浏览发现，在35200行日志中，光是PD02和PD09的timeout就出现了11938行，<br>因此该日志足以说明<code>slot2</code>和<code>slot9</code>这两个硬盘出现了故障，<br>并进一步结合<code>smartctl</code>日志交叉验证了这两块盘存在故障，也就是上文说的<code>delayed</code>的错误计数。<br>随后同时将<code>TSR日志</code>和<code>perccli64</code>的<code>alilog</code>适配器日志提交给DELL，DELL认可并以此作为依据成功报修。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">PD02的<span class="built_in">timeout</span></span></span><br><span class="line">24368: YY-MM-DD HH:MM:SS WARNING:Command timeout on PD 02(e0x20/s2) Path 5000c500cdda6095, CDB: 2a 00 0f 1a ee 00 00 00 80 00</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">PD09的<span class="built_in">timeout</span></span></span><br><span class="line">2413: YY-MM-DD HH:MM:SS WARNING:Command timeout on PD 09(e0x20/s9) Path 5000c500cdd04681, CDB: 4d 00 4e 00 00 00 00 00 04 00</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">同时在这份日志顶部部分也输出了RAID控制器和磁盘的详情</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">Device Information部分的Slot Number也对应了PD02 PD09</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="2025-10-16最新消息：DELL高级工程师驳回了维修请求"><a href="#2025-10-16最新消息：DELL高级工程师驳回了维修请求" class="headerlink" title="2025-10-16最新消息：DELL高级工程师驳回了维修请求"></a>2025-10-16最新消息：DELL高级工程师驳回了维修请求</h3><p>然后给出了下面两篇文章</p>
+<p><a target="_blank" rel="noopener" href="https://www.dell.com/support/kbdoc/zh-cn/000147878/poweredge-%E6%9F%90%E4%BA%9B%E4%BC%81%E4%B8%9A%E7%A1%AC%E7%9B%98%E9%A9%B1%E5%8A%A8%E5%99%A8%E4%B8%8A%E8%AF%BB%E5%8F%96%E5%92%8C%E9%AA%8C%E8%AF%81-ecc-%E9%94%99%E8%AF%AF%E7%9A%84-smart-%E9%94%99%E8%AF%AF%E7%8E%87%E8%BE%83%E9%AB%98">PowerEdge：某些企业硬盘驱动器上读取和验证 ECC 错误的 SMART 错误率较高</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.dell.com/support/kbdoc/zh-cn/000168487/scaleio-%E7%A1%AC%E4%BB%B6%E6%84%9F%E7%9F%A5%E5%8A%9F%E8%83%BD%E5%A1%AB%E5%86%99-perc-%E6%9C%AF%E8%AF%AD?lang=zh">ScaleIO 硬件感知功能填写 PERC 术语</a></p>
+<p>故障盘PD 02&#x2F;09</p>
+<p>slot2、9: TOSHIBA AL14SXB30ENY</p>
+<p>slot3-8、10-13: Seagate ST300MP0026</p>
+<p>结合上面两篇文章和硬盘情况来看，确实，iDRAC没有报故障，同时smartctl和perccli64调查出所谓的”故障”，恰好是两块TOSHIBA的硬盘。<br>TOSHIBA的其他硬盘确实也被记录到了文章中，提到了会在<code>perccli64</code>中误报<code>timeout</code>，<br>结合<code>smartctl</code>记录的ECC纠错数量为天文数字，侧面反映了DELL所说的<code>smartctl</code>ECC纠错计数不可靠也是事实。<br><strong>目前看来，维修诉求被DELL工程师驳回也属于合理范围</strong><br><strong>且故障仅仅体现在运维监测平台告警IO延迟达到128ms，持续时间不足1分钟，随后恢复</strong><br><strong>故本次报障取消</strong></p>
+<p>补充：</p>
+<p>该问题提交给了DELL客户经理</p>
+<blockquote>
+<p>您好，我这边有台XXX PowerEdge XXX，在我们运维监控平台发现告警 IO延迟过高，触发时值: XXXms。<br>针对该告警我们筛查了TSR日志，并未发现告警记录；<br>进一步筛查了smartctl日志，发现PD 02&#x2F;09存在 perccli64告警 Command timeout on PD 02&#x2F;09；<br>且smartctl记录到ECC delayed纠正8XXX次。</p>
+<p>目前工程师回复提到了smartctl日志错误率，对于某些企业的硬盘仅供参考，实际现象：<br>其他Seagate硬盘存在1X亿次ECC fast纠错计数，故我们忽略该告警。<br>故障的PD02&#x2F;09为TOSHIBA，存在8XXX次 ECC delayed纠错计数，不过尚未出现无法纠错和扇区故障记录，我们暂时忽略。</p>
+<p>工程师回复提到了perccli64日志告警timeout，文章解释为：<br>某个供应商的固态硬盘 （SSD） 不支持其中一个命令 （cdb&#x3D; 4d 00 51 00 00 00 00 00 00 04 00）<br>复查后发现，PD 02&#x2F;09恰好是TOSHIBA的硬盘，且在文章中也有提到TOSHIBA的某个型号SSD不支持该命令，且其他Seagate硬盘均为记录该错误。<br>故我们根据文章内容，忽略该告警。</p>
+<p>鉴于本次排障报修涉及的日志和排障过程较为繁琐，目前理清楚前因后果之后，XXX要求我询问下您，看看这次的报障是驳回继续观察，还是说直接安排更换？</p>
+</blockquote>
+<p>目前尚未收到回复…</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://hackerbs.com">hackerbs.com</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://hackerbs.com/%E5%85%B3%E4%BA%8E%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%A1%AC%E7%9B%98%E6%95%85%E9%9A%9C%E4%BD%86%E5%B8%A6%E5%A4%96%E6%B2%A1%E6%9C%89%E9%94%99%E8%AF%AF%E6%97%A5%E5%BF%97%E7%9A%84%E6%8E%92%E9%9A%9C%E4%B8%8E%E6%8A%A5%E4%BF%AE%E7%AC%94%E8%AE%B0.html">https://hackerbs.com/%E5%85%B3%E4%BA%8E%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%A1%AC%E7%9B%98%E6%95%85%E9%9A%9C%E4%BD%86%E5%B8%A6%E5%A4%96%E6%B2%A1%E6%9C%89%E9%94%99%E8%AF%AF%E6%97%A5%E5%BF%97%E7%9A%84%E6%8E%92%E9%9A%9C%E4%B8%8E%E6%8A%A5%E4%BF%AE%E7%AC%94%E8%AE%B0.html</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://hackerbs.com" target="_blank">hackerbs's Blog - 探索知识的宇宙</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/DELL/">DELL</a><a class="post-meta__tags" href="/tags/%E7%A1%AC%E7%9B%98/">硬盘</a><a class="post-meta__tags" href="/tags/%E6%8E%92%E9%9A%9C/">排障</a><a class="post-meta__tags" href="/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8/">服务器</a><a class="post-meta__tags" href="/tags/%E8%BF%90%E7%BB%B4/">运维</a><a class="post-meta__tags" href="/tags/%E5%B8%A6%E5%A4%96/">带外</a><a class="post-meta__tags" href="/tags/%E6%B5%AA%E6%BD%AE/">浪潮</a><a class="post-meta__tags" href="/tags/%E8%81%94%E6%83%B3/">联想</a><a class="post-meta__tags" href="/tags/%E5%8D%8E%E4%B8%89/">华三</a><a class="post-meta__tags" href="/tags/%E8%B6%85%E8%81%9A%E5%8F%98/">超聚变</a><a class="post-meta__tags" href="/tags/%E6%95%85%E9%9A%9C/">故障</a><a class="post-meta__tags" href="/tags/%E6%97%A5%E5%BF%97/">日志</a></div><div class="post-share"><div class="social-share" data-image="/images/avatar.svg" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/IT%E5%9C%BA%E6%99%AF%E4%B8%93%E4%B8%9A%E6%9C%AF%E8%AF%AD%E8%A1%A8.html" title="IT场景专业术语表"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">IT场景专业术语表</div></div><div class="info-2"><div class="info-item-1">用于各IT场景的专业术语的中英文对照工单场景   英文 英文全称 中文 释义    TC Ticket Created 新建工单 工单已在系统中被成功创建，并进入待处理队列   PR Pending Report 等待报告 工单处理因等待（用户、第三方或系统提供的）额外信息、日志或报告而暂时挂起   SM Self-Maintenance 自行维护 问题由用户自行解决或无需运维团队介入（如过保服务器），随后工单可被关闭   R Resolved 已解决 问题已被运维团队成功修复，该工单处理完毕   IW In Warranty 在保内 表示设备或服务处于保修期内，维修通常由供应商免费提供   OOW Out of Warranty 已过保 表示设备或服务已超出保修期，维修通常需要付费   TPM Third-Party Maintenance 第三方维保 表示设备由原厂之外的第三方服务商提供维护支持   日常运维场景   英文 英文全称 中文 释义    Ops Task Status Board Ops(Operations ) 运维任务状态看板 一个实时展示运维任务进度和状态...</div></div></div></a><a class="pagination-related" href="/DELL%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%A1%AC%E7%9B%98IO%E5%91%8A%E8%AD%A6%E6%8E%92%E9%9A%9C%E6%80%9D%E8%B7%AF.html" title="DELL服务器硬盘IO告警排障思路"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">DELL服务器硬盘IO告警排障思路</div></div><div class="info-2"><div class="info-item-1">系统报IO告警，在带外无异常的情况下，在操作系统中进行排障故障现象监测平台报障IO占用率和延迟过高 初步排障登录带外观察是否有故障日志，无论是否有故障日志，均需要进一步进行二次核对 JBOD直通无RAID排障使用smartctl命令观察磁盘健康状态，网络上有大量教程，不再赘述 如果磁盘本身无故障，观察输出结果中的199  UltraDMA CRC Error Count这一行是否有记录，这是硬件通信错误的日志，如果有记录到纠正次数，那就说明发生了硬件连接的问题，如硬盘背板故障，连接线故障，接口松动等 批量排障命令参考 for i in {a..z}; do [ -b &quot;/dev/sd$i&quot; ] &amp;&amp; echo &quot;sd$i:&quot; &amp;&amp; sudo smartctl -a &quot;/dev/sd$i&quot; | grep &quot;199&quot;; done RAID阵列模式排障做了阵列的磁盘无法直接使用smartctl进行排障，需要改为smartctl -a -d megaraid,3 /dev/sd...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/DELL%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%A1%AC%E7%9B%98IO%E5%91%8A%E8%AD%A6%E6%8E%92%E9%9A%9C%E6%80%9D%E8%B7%AF.html" title="DELL服务器硬盘IO告警排障思路"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-09-17</div><div class="info-item-2">DELL服务器硬盘IO告警排障思路</div></div><div class="info-2"><div class="info-item-1">系统报IO告警，在带外无异常的情况下，在操作系统中进行排障故障现象监测平台报障IO占用率和延迟过高 初步排障登录带外观察是否有故障日志，无论是否有故障日志，均需要进一步进行二次核对 JBOD直通无RAID排障使用smartctl命令观察磁盘健康状态，网络上有大量教程，不再赘述 如果磁盘本身无故障，观察输出结果中的199  UltraDMA CRC Error Count这一行是否有记录，这是硬件通信错误的日志，如果有记录到纠正次数，那就说明发生了硬件连接的问题，如硬盘背板故障，连接线故障，接口松动等 批量排障命令参考 for i in {a..z}; do [ -b &quot;/dev/sd$i&quot; ] &amp;&amp; echo &quot;sd$i:&quot; &amp;&amp; sudo smartctl -a &quot;/dev/sd$i&quot; | grep &quot;199&quot;; done RAID阵列模式排障做了阵列的磁盘无法直接使用smartctl进行排障，需要改为smartctl -a -d megaraid,3 /dev/sd...</div></div></div></a><a class="pagination-related" href="/%E8%AE%B0%E5%BD%95%E4%B8%80%E6%AC%A1%E5%88%86%E6%9E%90%5B%E6%9C%8D%E5%8A%A1%E5%99%A8SSD%E6%8A%A5%E6%95%85%E9%9A%9C%E9%9A%8F%E5%90%8E%E8%87%AA%E8%A1%8C%E6%81%A2%E5%A4%8D%E6%AD%A3%E5%B8%B8%E7%8E%B0%E8%B1%A1%5D.html" title="记录一次分析[服务器SSD报故障随后自行恢复正常现象]"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-09-09</div><div class="info-item-2">记录一次分析[服务器SSD报故障随后自行恢复正常现象]</div></div><div class="info-2"><div class="info-item-1">日常巡检时发现带外出现INTEL SSD故障告警，随后又自行恢复，间隔约30分钟，无人工介入。 smartctl -a /dev/sda    故障原因推测 排障思路    硬盘背板接触问题 检查smartctl中ID 199 UltraDMA CRC Error Count的值，是否存在CRC校验错误   NAND闪存寿命是否不足 检查smartctl中ID 233 Media Wearout Indicator的值   是否存在坏扇区 检查smartctl中ID 5 Reallocated sector ct的值   硬盘备用空间是否不足 检查smartctl中ID 232 Available Reservd space的值   实例： 123Media Wearout Indicator: 当前值0 临界值100 - 健康Reallocated Sector Count: 当前值0 临界值75 - 健康Available Reservd Spare: 当前值0 临界值100 - 健康 </div></div></div></a><a class="pagination-related" href="/%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%A8%B3%E5%AE%9A%E6%80%A7%E5%8F%8A%E5%9F%BA%E5%87%86%E6%B5%8B%E8%AF%95%E6%96%B9%E6%B3%95.html" title="服务器稳定性及基准测试方法"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-09-11</div><div class="info-item-2">服务器稳定性及基准测试方法</div></div><div class="info-2"><div class="info-item-1"> 重要更新: 2025-11-4  硬盘测试开发了全自动测试工具，见下方硬盘测试部分  测试项测试前准备CPU调优BIOS关闭超线程方法：BIOS里找CPU或者Socket Configuration，进入其中，找Processor Configuration，进入其中关闭超线程即可超线程在BIOS的写法通常有：  SMT Logical Processor(LP) Hyper-Threading  理由：超线程的作用是让 CPU 能在一个线程等待（例如等待内存I&#x2F;O）时，利用空闲执行单元去执行另一个线程。所以对于CPU性能测试的浮点运算、以及CPU满载的业务场景，超线程导致的线程切换，反而会：  增加上下文切换与调度开销(Scheduler Overhead)  操作系统调度器看到两个逻辑核心，调度两个重量级任务上去，但实际上底层的物理核根本没法承担   导致缓存污染(Cache Pollution)  不同线程使用的数据不同，缓存反而会互相驱逐对方数据 这个问题与下文中根据L3缓存设计NB大小尤其相关    BIOS关闭C-State方法：BIOS里找CPU或者So...</div></div></div></a><a class="pagination-related" href="/%E5%BC%82%E5%B8%B8%E5%AE%95%E6%9C%BABMC%E6%97%A5%E5%BF%97%E6%97%A0%E5%8F%82%E8%80%83%E4%BB%B7%E5%80%BC%E6%97%B6%E7%9A%84%E6%8E%92%E9%9A%9C%E6%80%9D%E8%B7%AF.html" title="异常宕机BMC日志无参考价值时的排障思路"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-09-10</div><div class="info-item-2">异常宕机BMC日志无参考价值时的排障思路</div></div><div class="info-2"><div class="info-item-1">巡检发现异常宕机，带外日志仅有一条热复位的记录BMC日志如下： SYS_Restart    系统启动/重新启动   开始热复位 - 触发 仅有一条热复位记录，无物理按键记录，无操作系统发起重启记录    排障思路 命令    排查启动日志 &#96;journalctl -b   排查内核缓冲区 dmesg --level=err,warn   排查是否有内核崩溃转储文件 ls -la /var/crash/   排查是否有硬件错误 &#96;journalctl -k   排查watchdog是否触发 &#96;journalctl -k   排查过热日志 &#96;journalctl -k   检查内存不足事件 &#96;journalctl -k   检查 CPU 或 I&#x2F;O 阻塞 sar -q -f /var/log/sa/sa10   检查内存错误计数 &#96;dmidecode -t memory   检查电源日志 &#96;journalctl -k   </div></div></div></a><a class="pagination-related" href="/%E5%85%B3%E4%BA%8EDELL%20PowerEdge%E6%8A%A5%E9%94%99Correctable%20memory%20error%20logging%20disabled%20for%20a%20memory%20device%E7%9A%84%E8%AF%B4%E6%98%8E.html" title="关于DELL PowerEdge报错Correctable memory error logging disabled for a memory device的说明"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-09-04</div><div class="info-item-2">关于DELL PowerEdge报错Correctable memory error logging disabled for a memory device的说明</div></div><div class="info-2"><div class="info-item-1">关于DELL PowerEdge R740XD iDRAC报内存设备的可纠正内存错误日志记录已禁用问题的说明及解答 巡检发现：iDRAC报错Correctable memory error logging disabled for a memory  致电800-858-0613核实BIOS固件版本低于2.10，固件过旧，属于遗留问题 关于该报错的解释为：BIOS关闭了对于ECC纠错记录的保存，仅仅是没有记录进行了ECC纠错，实际上并不影响使用，可能存在的风险为：无法知晓ECC进行了多少次纠错。 2025-9-4已致电DELL800-858-0613核实，该信息可信 </div></div></div></a><a class="pagination-related" href="/DELL%E6%8A%A5%E9%94%99The%20PERC1%20battery%20is%20low.html" title="DELL报错The PERC1 battery is low"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-09-04</div><div class="info-item-2">DELL报错The PERC1 battery is low</div></div><div class="info-2"><div class="info-item-1">关于DELL iDRAC日志中PERC报错问题的记录及解答报错信息如下  Sun Jul 06 2025 07:24:49	The PERC1 battery is operating normally.	Sun Jul 06 2025 06:50:13	The PERC1 battery is low.	Mon Apr 07 2025 04:22:23	The PERC1 battery is operating normally.	Mon Apr 07 2025 04:20:18	The PERC1 battery is low.  报错内容为PERC电量低，随后又恢复正常，错误复现周期为3个月 查询发现DELL官方文档有记录《了解 PERC 电池错误》，其中《充电问题示例》中的报错疑似与该报错一致，但报错循环周期不同。 查询后了解到PERC是DELL阵列卡的电池，也就是俗称的RAID卡的BBU（Battery Backup Unit），而其中每三个月复现一次的该报错为DELL PERC的正常循环充放电操作，属于正常现象 总结PERC每3个月重复报错The PERC1 bat...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/images/avatar.svg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">hackerbs.com</div><div class="author-info-description">hackerbs's Blog - 探索知识的宇宙</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">43</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">133</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">15</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%83%85%E5%86%B5%E8%AF%B4%E6%98%8E"><span class="toc-number">1.</span> <span class="toc-text">情况说明</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8E%92%E6%9F%A5%E8%BF%87%E7%A8%8B"><span class="toc-number">2.</span> <span class="toc-text">排查过程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AF%B9%E4%BA%8EJBOD%E6%A8%A1%E5%BC%8F%E7%9A%84%E7%A1%AC%E7%9B%98"><span class="toc-number">2.1.</span> <span class="toc-text">对于JBOD模式的硬盘</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AF%B9%E4%BA%8ELSI-MegaRAID%E6%8E%A7%E5%88%B6%E5%99%A8%EF%BC%8CRAID%E6%A8%A1%E5%BC%8F%E7%9A%84%E7%A1%AC%E7%9B%98"><span class="toc-number">2.2.</span> <span class="toc-text">对于LSI MegaRAID控制器，RAID模式的硬盘</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%9B%E9%98%B6%E8%84%9A%E6%9C%AC"><span class="toc-number">3.</span> <span class="toc-text">进阶脚本</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B3%E4%BA%8EDELL-TSR%E6%97%A5%E5%BF%97-iDRAC-%E6%B2%A1%E6%9C%89%E7%A1%AC%E7%9B%98%E6%95%85%E9%9A%9C%E5%91%8A%E8%AD%A6%E7%9A%84%E6%8A%A5%E4%BF%AE%E5%8A%9E%E6%B3%95"><span class="toc-number">4.</span> <span class="toc-text">关于DELL TSR日志(iDRAC)没有硬盘故障告警的报修办法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2025-10-16%E6%9C%80%E6%96%B0%E6%B6%88%E6%81%AF%EF%BC%9ADELL%E9%AB%98%E7%BA%A7%E5%B7%A5%E7%A8%8B%E5%B8%88%E9%A9%B3%E5%9B%9E%E4%BA%86%E7%BB%B4%E4%BF%AE%E8%AF%B7%E6%B1%82"><span class="toc-number">4.1.</span> <span class="toc-text">2025-10-16最新消息：DELL高级工程师驳回了维修请求</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/%E9%9A%8F%E7%AC%94%20-%20%E3%80%8A%E6%88%91%E5%A7%8B%E7%BB%88%E6%98%AF%E6%88%91%E3%80%8B.html" title="随笔 - 《我始终是我》">随笔 - 《我始终是我》</a><time datetime="2026-07-18T00:00:00.000Z" title="发表于 2026-07-18 08:00:00">2026-07-18</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/%E9%9A%8F%E7%AC%94%20-%20%E3%80%8A%E7%A0%B4%E5%B1%80%E7%9A%84%E7%89%A9%E7%90%86%E5%AD%A6%EF%BC%9A%E9%87%8D%E9%87%8F%E3%80%81%E6%9D%A0%E6%9D%86%E4%B8%8E%E6%B6%9F%E6%BC%AA%E3%80%8B.html" title="随笔 - 《破局的物理学：重量、杠杆与涟漪》">随笔 - 《破局的物理学：重量、杠杆与涟漪》</a><time datetime="2026-07-05T00:00:00.000Z" title="发表于 2026-07-05 08:00:00">2026-07-05</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/%E9%9A%8F%E7%AC%94%20-%20%E3%80%8A%E5%AD%98%E5%9C%A8%E7%9A%84%E7%97%95%E8%BF%B9%EF%BC%9A%E4%B8%8D%E5%9C%A8%E4%BA%8E%E7%9F%B3%E7%A2%91%EF%BC%8C%E8%80%8C%E4%BA%8E%E6%B6%9F%E6%BC%AA%E3%80%8B.html" title="随笔 - 《存在的痕迹：不在于石碑，而于涟漪》">随笔 - 《存在的痕迹：不在于石碑，而于涟漪》</a><time datetime="2025-10-17T08:15:00.000Z" title="发表于 2025-10-17 16:15:00">2025-10-17</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/IT%E5%9C%BA%E6%99%AF%E4%B8%93%E4%B8%9A%E6%9C%AF%E8%AF%AD%E8%A1%A8.html" title="IT场景专业术语表">IT场景专业术语表</a><time datetime="2025-10-17T05:45:45.000Z" title="发表于 2025-10-17 13:45:45">2025-10-17</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/%E5%85%B3%E4%BA%8E%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%A1%AC%E7%9B%98%E6%95%85%E9%9A%9C%E4%BD%86%E5%B8%A6%E5%A4%96%E6%B2%A1%E6%9C%89%E9%94%99%E8%AF%AF%E6%97%A5%E5%BF%97%E7%9A%84%E6%8E%92%E9%9A%9C%E4%B8%8E%E6%8A%A5%E4%BF%AE%E7%AC%94%E8%AE%B0.html" title="关于服务器硬盘故障但带外没有错误日志的排障与报修笔记">关于服务器硬盘故障但带外没有错误日志的排障与报修笔记</a><time datetime="2025-09-18T07:49:46.000Z" title="发表于 2025-09-18 15:49:46">2025-09-18</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By hackerbs.com</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.7.1.260810</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.7.1.260810"></script><script src="/js/main.js?v=5.7.1.260810"></script><div class="js-pjax"></div><script src="/js/effects.js" defer></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
