@@ -1,0 +1,49 @@
+﻿# Butterfly 主题覆盖 —— 多套成熟配色主题（可切换）
+nav:
+  fixed: true
+display_mode: dark
+avatar:
+  img: /images/avatar.svg
+  effect: false
+disable_top_img: false
+default_top_img:
+index_img:
+archive_img:
+favicon: /images/favicon.svg
+cover:
+  index_enable: false
+  aside_enable: false
+  archives_enable: false
+  default_cover:
+subtitle:
+  enable: true
+  effect: false
+theme_color:
+  enable: true
+  main: "#89b4fa"
+  paginator: "#89b4fa"
+  button_hover: "#89b4fa"
+  text_selection: "#89b4fa"
+  link_color: "#89b4fa"
+  meta_color: "#7f849c"
+  hr_color: "#313244"
+  code_foreground: "#89b4fa"
+  code_background: "rgba(137,180,250,0.06)"
+  toc_color: "#89b4fa"
+  blockquote_padding_color: "#f9e2af"
+  blockquote_background_color: "transparent"
+  scrollbar_color: "#45475a"
+  meta_theme_color_light: "1e1e2e"
+  meta_theme_color_dark: "1e1e2e"
+beautify:
+  enable: false
+inject:
+  head:
+    - '<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/inter@5/index.css">'
+    - '<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/space-grotesk@5/index.css">'
+    - '<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/jetbrains-mono@5/index.css">'
+    - '<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/fraunces@5/index.css">'
+    - '<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.7.0/style.css">'
+    - '<link rel="stylesheet" href="/css/beautify.css">'
+  bottom:
+    - '<script src="/js/effects.js" defer></script>'

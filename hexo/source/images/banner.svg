@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 600" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#4f46e5"/>
+      <stop offset="48%" stop-color="#7c3aed"/>
+      <stop offset="100%" stop-color="#db2777"/>
+    </linearGradient>
+    <radialGradient id="glow1" cx="22%" cy="22%" r="42%">
+      <stop offset="0%" stop-color="#22d3ee" stop-opacity="0.55"/>
+      <stop offset="100%" stop-color="#22d3ee" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glow2" cx="82%" cy="82%" r="46%">
+      <stop offset="0%" stop-color="#fb7185" stop-opacity="0.5"/>
+      <stop offset="100%" stop-color="#fb7185" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="dots" width="38" height="38" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1.3" fill="#ffffff" fill-opacity="0.16"/>
+    </pattern>
+  </defs>
+  <rect width="1920" height="600" fill="url(#g)"/>
+  <rect width="1920" height="600" fill="url(#glow1)"/>
+  <rect width="1920" height="600" fill="url(#glow2)"/>
+  <rect width="1920" height="600" fill="url(#dots)"/>
+  <path d="M0,470 C420,390 820,520 1220,448 C1520,398 1720,470 1920,430 L1920,600 L0,600 Z" fill="#000000" fill-opacity="0.12"/>
+  <path d="M0,525 C520,475 900,560 1320,505 C1620,465 1820,520 1920,495 L1920,600 L0,600 Z" fill="#000000" fill-opacity="0.12"/>
+</svg>

@@ -1,0 +1,362 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Debian安装教程 | hackerbs's Blog - 探索知识的宇宙</title><meta name="author" content="hackerbs.com"><meta name="copyright" content="hackerbs.com"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="1e1e2e"><meta name="description" content="debian-live-12.5.0-amd64-standard安装教程该系统下载地址： 中科大镜像站下载 网盘ISO文件夹中下载  nano打开文件便可直接编辑，保存则需要先使用Ctrl+o保存然后使用Ctrl+x退出  进入安装程序选择Start installer  选择语言这一步切记，只选择English，不要选择其他，否则在命令行模式会导致无法正常显示字体，出现方块状乱码  选择地区选">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Debian安装教程">
+<meta property="og:url" content="https://hackerbs.com/Debian%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B.html">
+<meta property="og:site_name" content="hackerbs&#39;s Blog - 探索知识的宇宙">
+<meta property="og:description" content="debian-live-12.5.0-amd64-standard安装教程该系统下载地址： 中科大镜像站下载 网盘ISO文件夹中下载  nano打开文件便可直接编辑，保存则需要先使用Ctrl+o保存然后使用Ctrl+x退出  进入安装程序选择Start installer  选择语言这一步切记，只选择English，不要选择其他，否则在命令行模式会导致无法正常显示字体，出现方块状乱码  选择地区选">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hackerbs.com/images/avatar.svg">
+<meta property="article:published_time" content="2024-06-03T06:29:16.000Z">
+<meta property="article:modified_time" content="2026-09-22T16:13:24.515Z">
+<meta property="article:author" content="hackerbs.com">
+<meta property="article:tag" content="Debian">
+<meta property="article:tag" content="Debian安装">
+<meta property="article:tag" content="Debian服务器">
+<meta property="article:tag" content="Linux">
+<meta property="article:tag" content="Linux安装">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hackerbs.com/images/avatar.svg"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Debian安装教程",
+  "url": "https://hackerbs.com/Debian%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B.html",
+  "image": "https://hackerbs.com/images/avatar.svg",
+  "datePublished": "2024-06-03T06:29:16.000Z",
+  "dateModified": "2026-09-22T16:13:24.515Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "hackerbs.com",
+      "url": "https://hackerbs.com"
+    }
+  ]
+}</script><link rel="shortcut icon" href="images/favicon.svg"><link rel="canonical" href="https://hackerbs.com/Debian%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="css/index.css?v=5.7.1.260810"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.3.1/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        try {
+          const data = { value }
+
+          if (ttl != null) {
+            data.expiry = Date.now() + ttl * 86400000
+          }
+
+          localStorage.setItem(key, JSON.stringify(data))
+        } catch (e) {
+          console.error(e)
+        }
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return
+
+        try {
+          const data = JSON.parse(itemStr)
+
+          if (data.expiry && Date.now() > data.expiry) {
+            localStorage.removeItem(key)
+            return
+          }
+
+          return data.value
+        } catch {
+          localStorage.removeItem(key)
+        }
+      }
+    }
+
+    const scriptCache = new Map()
+    const cssCache = new Map()
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => {
+        if (scriptCache.has(url)) {
+          return scriptCache.get(url)
+        }
+
+        const promise = new Promise((resolve, reject) => {
+          const script = document.createElement('script')
+
+          script.src = url
+          script.async = true
+
+          for (const key in attr) {
+            script.setAttribute(key, attr[key])
+          }
+
+          script.onload = resolve
+          script.onerror = reject
+
+          document.head.appendChild(script)
+        })
+
+        scriptCache.set(url, promise)
+
+        return promise
+      },
+      getCSS: (url, id) => {
+        if (cssCache.has(url)) {
+          return cssCache.get(url)
+        }
+
+        const promise = new Promise((resolve, reject) => {
+          const link = document.createElement('link')
+
+          link.rel = 'stylesheet'
+          link.href = url
+
+          if (id) {
+            link.id = id
+          }
+
+          link.onload = resolve
+          link.onerror = reject
+
+          document.head.appendChild(link)
+        })
+
+        cssCache.set(url, promise)
+
+        return promise
+      },
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const metaThemeColor = document.querySelector('meta[name="theme-color"]')
+      const activateDarkMode = () => {
+        document.documentElement.dataset.theme = 'dark'
+        if (metaThemeColor !== null) {
+          metaThemeColor.setAttribute('content', '1e1e2e')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.dataset.theme = 'light'
+        if (metaThemeColor !== null) {
+          metaThemeColor.setAttribute('content', '1e1e2e')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Debian安装教程',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/inter@5/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/space-grotesk@5/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/jetbrains-mono@5/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/fraunces@5/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.7.0/style.css"><link rel="stylesheet" href="css/beautify.css"><meta name="generator" content="Hexo 8.1.2"></head><body><div class="post" id="body-wrap"><header class="post-bg fixed" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="index.html"><span class="site-name">hackerbs's Blog - 探索知识的宇宙</span></a><a class="nav-page-title" href="index.html"><span class="site-name">Debian安装教程</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"></div></nav><div id="post-info"><h1 class="post-title">Debian安装教程</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2024-06-03T06:29:16.000Z" title="发表于 2024-06-03 14:29:16">2024-06-03</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-09-22T16:13:24.515Z" title="更新于 2026-09-23 00:13:24">2026-09-23</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="categories/%E7%9F%A5%E8%AF%86%E5%BA%93/">知识库</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="categories/%E7%9F%A5%E8%AF%86%E5%BA%93/%E7%B3%BB%E7%BB%9F/">系统</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h2 id="debian-live-12-5-0-amd64-standard安装教程"><a href="#debian-live-12-5-0-amd64-standard安装教程" class="headerlink" title="debian-live-12.5.0-amd64-standard安装教程"></a>debian-live-12.5.0-amd64-standard安装教程</h2><p>该系统下载地址：</p>
+<p><a target="_blank" rel="noopener" href="https://iso.mirrors.ustc.edu.cn/debian-cd/current-live/amd64/iso-hybrid/debian-live-12.5.0-amd64-standard.iso">中科大镜像站下载</a></p>
+<p><a target="_blank" rel="noopener" href="https://disk.ygeit.cn/s/RpAtcoJcbpYtaoa">网盘ISO文件夹中下载</a></p>
+<blockquote>
+<p>nano打开文件便可直接编辑，保存则需要先使用Ctrl+o保存然后使用Ctrl+x退出</p>
+</blockquote>
+<h3 id="进入安装程序"><a href="#进入安装程序" class="headerlink" title="进入安装程序"></a>进入安装程序</h3><p>选择<code>Start installer</code></p>
+<p><img src="https://img.hackerbs.com/20240603143147.png" alt="20240603143147"></p>
+<h3 id="选择语言"><a href="#选择语言" class="headerlink" title="选择语言"></a>选择语言</h3><p><strong>这一步切记，只选择English，不要选择其他，否则在命令行模式会导致无法正常显示字体，出现方块状乱码</strong></p>
+<p><img src="https://img.hackerbs.com/20240603143249.png" alt="20240603143249"></p>
+<h3 id="选择地区"><a href="#选择地区" class="headerlink" title="选择地区"></a>选择地区</h3><p>选择other -&gt; Asia -&gt; China</p>
+<p><img src="https://img.hackerbs.com/20240603143317.png" alt="20240603143317"></p>
+<p><img src="https://img.hackerbs.com/20240603143329.png" alt="20240603143329"></p>
+<p><img src="https://img.hackerbs.com/20240603143338.png" alt="20240603143338"></p>
+<h3 id="本地化配置"><a href="#本地化配置" class="headerlink" title="本地化配置"></a>本地化配置</h3><p>这一步和上一步都相当于Windows的地区&#x2F;语言，跟着教程选择默认的即可，除了English、en_UF.UTF-8之外的任何，除非你是老手，否则新手一律选择默认，避免字体显示错误</p>
+<p><img src="https://img.hackerbs.com/20240603143448.png" alt="20240603143448"></p>
+<h3 id="配置键盘"><a href="#配置键盘" class="headerlink" title="配置键盘"></a>配置键盘</h3><p>默认 American English</p>
+<p><img src="https://img.hackerbs.com/20240603143508.png" alt="20240603143508"></p>
+<h3 id="配置网络"><a href="#配置网络" class="headerlink" title="配置网络"></a>配置网络</h3><p>如果有DHCP，这一步会直接跳过，没有DHCP需要手动配置的参考下文手动配置IP</p>
+<p><img src="https://img.hackerbs.com/20240603143600.png" alt="20240603143600"></p>
+<h4 id="手动配置IP"><a href="#手动配置IP" class="headerlink" title="手动配置IP"></a>手动配置IP</h4><p>若没有DHCP或没有网线,这一步会提示网络连接失败</p>
+<p>图中提示的内容大概意思是<code>您的网络没有DHCP服务器或DHCP响应过慢</code></p>
+<p><img src="https://img.hackerbs.com/20240603143716.png" alt="20240603143716"></p>
+<p>选择<code>Continue</code>，选择<code>Configure network manually</code>手动配置网络</p>
+<p><img src="https://img.hackerbs.com/20240603143838.png" alt="20240603143838"></p>
+<p>填写IP地址和子网掩码前缀，在Linux建议更多是使用前缀，而不是输一堆255</p>
+<p>255.255.255.0 &#x3D; 11111111.11111111.11111111.0 &#x3D; 24 （前缀就是有多少个1就是多少，所以是24）</p>
+<p>255.255.252.0 &#x3D; 11111111.11111111.11111100.0 &#x3D; 22</p>
+<p><img src="https://img.hackerbs.com/20240603145231.png" alt="20240603145231"></p>
+<p>填写网关</p>
+<p><img src="https://img.hackerbs.com/20240603145247.png" alt="20240603145247"></p>
+<p>填写DNS</p>
+<p>国内腾讯<code>119.29.29.29</code>，境外谷歌<code>8.8.8.8</code>，这两个DNS足够解析全世界的域名并兼顾速度了</p>
+<p><img src="https://img.hackerbs.com/20240603154540.png" alt="20240603154540"></p>
+<h3 id="填写主机名"><a href="#填写主机名" class="headerlink" title="填写主机名"></a>填写主机名</h3><p>也就是hostname，没啥可说的，默认或者按需修改</p>
+<p><img src="https://img.hackerbs.com/20240603154644.png" alt="20240603154644"></p>
+<h3 id="填写域名"><a href="#填写域名" class="headerlink" title="填写域名"></a>填写域名</h3><p>留空或者按需填写</p>
+<p><img src="https://img.hackerbs.com/20240603154725.png" alt="20240603154725"></p>
+<h3 id="设置root用户密码"><a href="#设置root用户密码" class="headerlink" title="设置root用户密码"></a>设置root用户密码</h3><p>设强点，别老用弱密码</p>
+<p><img src="https://img.hackerbs.com/20240603154847.png" alt="20240603154847"></p>
+<h3 id="创建新用户"><a href="#创建新用户" class="headerlink" title="创建新用户"></a>创建新用户</h3><p>这一步无法跳过，如果没有特别需要，直接随便建，进了系统删了即可</p>
+<p>这一步<code>Full name for the new user:</code>是显示名称，和登陆无关，可以理解为QQ名</p>
+<p><img src="https://img.hackerbs.com/20240603154927.png" alt="20240603154927"></p>
+<p>这一步才是用户名，要遵循规范，可以理解为QQ号，是登陆系统的账号</p>
+<p><img src="https://img.hackerbs.com/20240603155108.png" alt="20240603155108"></p>
+<p>设密码</p>
+<p><img src="https://img.hackerbs.com/20240603155132.png" alt="20240603155132"></p>
+<h3 id="格式化磁盘"><a href="#格式化磁盘" class="headerlink" title="格式化磁盘"></a>格式化磁盘</h3><p>如果你玩不来（你都看我教程了肯定是玩不来），那就记住了，选<code>Guided - use entire disk and set up LVM</code>，<strong>必须必须必须使用LVM逻辑卷</strong>，不然后期调整磁盘你就整个傻住了（恕我直言，不用lvm逻辑卷的全是瓜娃子！）</p>
+<p><img src="https://img.hackerbs.com/20240603160221.png" alt="20240603160221"></p>
+<p>选择硬盘</p>
+<p><img src="https://img.hackerbs.com/20240603160247.png" alt="20240603160247"></p>
+<h3 id="选择分区方式"><a href="#选择分区方式" class="headerlink" title="选择分区方式"></a>选择分区方式</h3><p>新手，听我的，直接第一个<code>All files in  one partition</code>，将所有文件放到一个分区就行，别觉得分开分区有什么卵用，就算是生产环境都基本用不着</p>
+<p><img src="https://img.hackerbs.com/20240603160451.png" alt="20240603160451"></p>
+<h3 id="确认是否分区"><a href="#确认是否分区" class="headerlink" title="确认是否分区"></a>确认是否分区</h3><p>选Yes然后Enter就完事儿了</p>
+<p><img src="https://img.hackerbs.com/20240603160521.png" alt="20240603160521"></p>
+<p>默认会选择全部空间，或者你也可以输个max</p>
+<p><img src="https://img.hackerbs.com/20240603160550.png" alt="20240603160550"></p>
+<p>选择<code>Finish partitionging and write changes to disk</code>然后<code>Continue</code></p>
+<p><img src="https://img.hackerbs.com/20240603160627.png" alt="20240603160627"></p>
+<p>选择Yes然后Enter</p>
+<p><img src="https://img.hackerbs.com/20240603160645.png" alt="20240603160645"></p>
+<h3 id="等待系统安装"><a href="#等待系统安装" class="headerlink" title="等待系统安装"></a>等待系统安装</h3><p><img src="https://img.hackerbs.com/20240603160756.png" alt="20240603160756"></p>
+<h3 id="是否启用网络镜像"><a href="#是否启用网络镜像" class="headerlink" title="是否启用网络镜像"></a>是否启用网络镜像</h3><p>没网的直接NO，有网的Yes然后Enter</p>
+<p><img src="https://img.hackerbs.com/20240603160857.png" alt="20240603160857"></p>
+<p>选择China</p>
+<p><img src="https://img.hackerbs.com/20240603160918.png" alt="20240603160918"></p>
+<p>建议<code>mirrors.ustc.edu.cn</code>，中科大万岁</p>
+<p><img src="https://img.hackerbs.com/20240603160943.png" alt="20240603160943"></p>
+<p>不需要代理，直接Enter下一步</p>
+<p><img src="https://img.hackerbs.com/20240603161008.png" alt="20240603161008"></p>
+<p>开始配置apt，也就是网络镜像</p>
+<p><img src="https://img.hackerbs.com/20240603161318.png" alt="20240603161318"></p>
+<h4 id="提示镜像故障"><a href="#提示镜像故障" class="headerlink" title="提示镜像故障"></a>提示镜像故障</h4><p>这一步就是网络问题了，可以考虑直接先不用网络镜像</p>
+<p><img src="https://img.hackerbs.com/20240603161048.png" alt="20240603161048"></p>
+<h3 id="安装完毕"><a href="#安装完毕" class="headerlink" title="安装完毕"></a>安装完毕</h3><p>安装完毕，Continue重启</p>
+<p><img src="https://img.hackerbs.com/20240603161655.png" alt="20240603161655"></p>
+<h3 id="删除安装过程中不得不创建的用户"><a href="#删除安装过程中不得不创建的用户" class="headerlink" title="删除安装过程中不得不创建的用户"></a>删除安装过程中不得不创建的用户</h3><p>登陆</p>
+<p><img src="https://img.hackerbs.com/20240603161753.png" alt="20240603161753"></p>
+<p>使用<code>userdel -r 用户名</code>删除创建的用户</p>
+<p><img src="https://img.hackerbs.com/20240603161857.png" alt="20240603161857"></p>
+<h3 id="额外内容"><a href="#额外内容" class="headerlink" title="额外内容"></a>额外内容</h3><h4 id="手动配置网络"><a href="#手动配置网络" class="headerlink" title="手动配置网络"></a>手动配置网络</h4><p>使用<code>ip addr</code>查看网卡名称</p>
+<p>本次演示的只有一张网卡，是enp6s18，其中<code>state UP</code>表示该网卡已经插好网线</p>
+<p><img src="https://img.hackerbs.com/20240603162420.png" alt="20240603162420"></p>
+<p>使用<code>nano /etc/network/interfaces</code>编辑网络配置文件</p>
+<p>使用<code>nano /etc/resolv.conf</code>编辑DNS配置文件</p>
+<table>
+<thead>
+<tr>
+<th>配置项</th>
+<th>作用</th>
+<th>注意事项</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>auto enp6s18</td>
+<td>网卡开机自启</td>
+<td></td>
+</tr>
+<tr>
+<td>iface enp6s18 inet static</td>
+<td>指定配置哪张网卡</td>
+<td>static表示静态IP,dhcp则是动态</td>
+</tr>
+<tr>
+<td>address</td>
+<td>IP地址&#x2F;前缀</td>
+<td></td>
+</tr>
+<tr>
+<td>gateway</td>
+<td>网关地址</td>
+<td></td>
+</tr>
+<tr>
+<td>dns-search</td>
+<td>对应安装过程中的domain域名</td>
+<td></td>
+</tr>
+<tr>
+<td>nameserver</td>
+<td>DNS服务器</td>
+<td>一行一个，nameserver 119.29.29.29</td>
+</tr>
+</tbody></table>
+<p>网卡配置文件示例</p>
+<p><img src="https://img.hackerbs.com/20240603162336.png" alt="20240603162336"></p>
+<p>DNS配置文件示例</p>
+<p><img src="https://img.hackerbs.com/20240603163137.png" alt="20240603163137"></p>
+<p>编辑完成后使用<code>systemctl restart networking.service</code>重启网络</p>
+<p><img src="https://img.hackerbs.com/20240603163210.png" alt="20240603163210"></p>
+<h4 id="手动配置apt源"><a href="#手动配置apt源" class="headerlink" title="手动配置apt源"></a>手动配置apt源</h4><p><strong>如果安装的时候没有使用网络镜像，且需要配置apt源的话，进行该步骤，否则忽略</strong></p>
+<p>直接使用<code>rm -f /etc/apt/sources.list</code>删除源配置文件</p>
+<p>编辑<code>nano /etc/apt/sources.list</code>源配置文件，先手动添加第一行</p>
+<p><code>deb https://mirrors.ustc.edu.cn/debian/ bookworm main contrib non-free non-free-firmware</code></p>
+<p><img src="https://img.hackerbs.com/20240603163523.png" alt="20240603163523"></p>
+<p>编辑后使用<code>apt update</code>更新源</p>
+<p><img src="https://img.hackerbs.com/20240603163751.png" alt="20240603163751"></p>
+<h4 id="安装OpenSSH-server并配置root密码登陆"><a href="#安装OpenSSH-server并配置root密码登陆" class="headerlink" title="安装OpenSSH-server并配置root密码登陆"></a>安装OpenSSH-server并配置root密码登陆</h4><p>使用<code>apt install openssh-server -f</code>安装OpenSSH server</p>
+<p><img src="https://img.hackerbs.com/20240603163908.png" alt="20240603163908"></p>
+<p><code>nano /etc/ssh/sshd_config</code>编辑ssh配置文件，在原本的<code>#PermitRootLogin prohibit-password</code>下方添加<code>PermitRootLogin yes</code></p>
+<p>上方的<code>#Port 22</code>取消注释修改为其他端口即可实现修改ssh端口功能，如<code>Port 10022</code></p>
+<p><img src="https://img.hackerbs.com/20240603164013.png" alt="20240603164013"></p>
+<p>编辑后使用<code>systemctl restart ssh</code>重启ssh服务，之后便可使用ssh连接服务器了</p>
+<h4 id="配置完全apt国内镜像"><a href="#配置完全apt国内镜像" class="headerlink" title="配置完全apt国内镜像"></a>配置完全apt国内镜像</h4><p>继上文配置ssh后，便可使用ssh远程访问服务器，这样复制粘贴便方便多了</p>
+<p>在这里推荐snullp大佬开发的<a target="_blank" rel="noopener" href="https://mirrors.ustc.edu.cn/repogen/">配置生成器</a>，注意根据你的Debian版本选择不同的内容，本教程使用的是bookworm，apt完全配置内容如下，其他配置内容可以查看本站的apt等各种源列表（持续更新）</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">deb https://mirrors.ustc.edu.cn/debian/ bookworm main contrib non-free non-free-firmware</span><br><span class="line">deb-src https://mirrors.ustc.edu.cn/debian/ bookworm main contrib non-free non-free-firmware</span><br><span class="line"></span><br><span class="line">deb https://mirrors.ustc.edu.cn/debian/ bookworm-updates main contrib non-free non-free-firmware</span><br><span class="line">deb-src https://mirrors.ustc.edu.cn/debian/ bookworm-updates main contrib non-free non-free-firmware</span><br><span class="line"></span><br><span class="line">deb https://mirrors.ustc.edu.cn/debian/ bookworm-backports main contrib non-free non-free-firmware</span><br><span class="line">deb-src https://mirrors.ustc.edu.cn/debian/ bookworm-backports main contrib non-free non-free-firmware</span><br><span class="line"></span><br><span class="line">deb https://mirrors.ustc.edu.cn/debian-security/ bookworm-security main contrib non-free non-free-firmware</span><br><span class="line">deb-src https://mirrors.ustc.edu.cn/debian-security/ bookworm-security main contrib non-free non-free-firmware</span><br></pre></td></tr></table></figure>
+
+<p>同样的，还是编辑<code>/etc/apt/sources.list</code></p>
+<p><img src="https://img.hackerbs.com/20240603164707.png" alt="20240603164707"></p>
+<p>编辑后还是使用<code>apt update</code>更新源即可</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://hackerbs.com">hackerbs.com</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://hackerbs.com/Debian%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B.html">https://hackerbs.com/Debian%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B.html</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://hackerbs.com" target="_blank">hackerbs's Blog - 探索知识的宇宙</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="tags/Linux/">Linux</a><a class="post-meta__tags" href="tags/Debian/">Debian</a><a class="post-meta__tags" href="tags/Debian%E5%AE%89%E8%A3%85/">Debian安装</a><a class="post-meta__tags" href="tags/Linux%E5%AE%89%E8%A3%85/">Linux安装</a><a class="post-meta__tags" href="tags/Debian%E6%9C%8D%E5%8A%A1%E5%99%A8/">Debian服务器</a></div><div class="post-share"><div class="social-share" data-image="/images/avatar.svg" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="%E5%9B%BD%E5%86%85docker%20hub%E6%97%A0%E6%B3%95%E4%BD%BF%E7%94%A8%E7%9A%84%E8%A7%A3%E5%86%B3%E5%8A%9E%E6%B3%95.html" title="国内docker hub无法使用的解决办法"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">国内docker hub无法使用的解决办法</div></div><div class="info-2"><div class="info-item-1">首先你得有代理，比如v2ray，然后系统里有socks5，这个就不能放在网站上说明了，懂得都懂，需要技术支持的页面底部，联系我在QQ粒子｜服主社区 ①群的用户，直接群里@hackerbs即可 因为有些东西不能直接放到网站上讲，所以网站上的教程直接从假设你已经在你的Linux系统里有了v2ray，并在系统中有socks5，如果你不懂，那就按上面说的，联系我或者群里@我 如果你想google，想ChatGPT，但是不知道在哪儿买便宜好用的v2ray服务，一样，联系我 如果你真的很菜很菜，完全不懂Linux，但是又需要在Linux里使用v2ray，可以联系我，如果我空的时候，会友情免费帮你，或者根据你的经济情况有偿协助。  怕小白不懂，在此说的明白点：使用代理，也就是fan qiang，违法，不能明目张胆的说，懂嘛？  展开阅读 那么，直接从已经配置好socks5和安装好了docker开始 如果你还没安装docker，那么搜本站的apt等各种源列表（持续更新） 使用mkdir /etc/systemd/system/docker.service.d创建目录，然后使用vim /etc/s...</div></div></div></a><a class="pagination-related" href="Ubuntu%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B.html" title="Ubuntu安装教程"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">Ubuntu安装教程</div></div><div class="info-2"><div class="info-item-1">ubuntu-20.04.6-live-server-amd64安装教程该系统下载地址： 中科大镜像站下载 网盘ISO文件夹中下载 进入安装程序灰色&#x2F;绿色高亮就是选定状态，Enter就是确认 不动键盘的话，会自动选择第一个，手动回车进入第一个也可Install Ubuntu Server  选择安装语言通常来讲，选择English，因为命令行只支持英文，选择其他语言会导致命令行输出的中文无法显示，呈现方块状。  跳过更新直接安装因为安装的是20.04.6，所以会在此处提示有更新的版本，选择默认的Continue without updating即可  选择键盘直接使用默认的English，Enter下一步即可  配置网络如果是DHCP自动获取则直接Done下一步即可，否则参考配置静态IP  配置静态IP使用上箭头展开此处  选择Edit IPv4并使用Manual手动配置网络 Ubuntu的配置与其他Linux略有不同，如表所示    配置项 内容 说明    Subnet IP段&#x2F;前缀 这一项需要配置IP段如192.168.2.0段，并指定前缀，前缀可以用子...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="Debian%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E3%80%90%E6%8C%81%E7%BB%AD%E6%9B%B4%E6%96%B0%E3%80%91.html" title="Debian基础知识【持续更新】"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2023-03-01</div><div class="info-item-2">Debian基础知识【持续更新】</div></div><div class="info-2"><div class="info-item-1">本文将持续更新Debian系统的各类基础知识，欢迎您持续关注，有任何问题可以在本页末尾评论或通过展示的联系方式联系我根据红帽的公告，CentOS将不再适合作为生产环境的稳定系统使用，为此我个人建议您尝试著名且优秀的Debian系统  2020年12月08日，CentOS官方宣布了停止维护CentOS Linux 8的计划，并推出了CentOS Stream项目。具体信息，请阅读CentOS官方公告。其具体规划如下：  CentOS Linux 8作为RHEL 8的复刻版本，生命周期缩短，于2021年12月31日停止更新并停止维护（EOL）。 基于以上官方变更计划，CentOS Linux 8用户将无法获得包括问题修复和功能更新在内的任何软件维护和支持。CentOS官方建议停止维护后：对于开发或测试环境，可以将环境迁移至CentOS Stream版本； 对于生产环境或部署关键业务的系统，建议使用稳定的Red Hat Enterprise Linux。对此，用户需评估以下问题： CentOS Stream是一个滚动发行的版本，仅为RHEL前置测试版，运用于生产环境时，可能存在一定风险...</div></div></div></a><a class="pagination-related" href="%E5%B0%86%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%8F%AF%E6%89%A7%E8%A1%8C%E7%A8%8B%E5%BA%8F%E6%9E%84%E5%BB%BA%E4%B8%BAdeb%E5%8C%85.html" title="将二进制可执行程序构建为deb包"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2023-10-17</div><div class="info-item-2">将二进制可执行程序构建为deb包</div></div><div class="info-2"><div class="info-item-1">构建deb包所需依赖：apt install dh-make 本文使用本站aptdownloader包做为演示 第一步，创建项目目录，项目目录名称格式应为包名-版本号如aptdownloader-1.0.0 123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960616263646566676869707172737475767778798081828384858687888990919293949596979899100101102103104105106107108109110111112113114115116117118119120121122123124125126127128129130131132133134135136137138139140141# 我在我的/root/目录下创建了一个deb文件夹，也就是https://github.com/1949hacker/deb的仓库# 使用tree列出目录...</div></div></div></a><a class="pagination-related" href="Ubuntu%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B.html" title="Ubuntu安装教程"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2024-05-30</div><div class="info-item-2">Ubuntu安装教程</div></div><div class="info-2"><div class="info-item-1">ubuntu-20.04.6-live-server-amd64安装教程该系统下载地址： 中科大镜像站下载 网盘ISO文件夹中下载 进入安装程序灰色&#x2F;绿色高亮就是选定状态，Enter就是确认 不动键盘的话，会自动选择第一个，手动回车进入第一个也可Install Ubuntu Server  选择安装语言通常来讲，选择English，因为命令行只支持英文，选择其他语言会导致命令行输出的中文无法显示，呈现方块状。  跳过更新直接安装因为安装的是20.04.6，所以会在此处提示有更新的版本，选择默认的Continue without updating即可  选择键盘直接使用默认的English，Enter下一步即可  配置网络如果是DHCP自动获取则直接Done下一步即可，否则参考配置静态IP  配置静态IP使用上箭头展开此处  选择Edit IPv4并使用Manual手动配置网络 Ubuntu的配置与其他Linux略有不同，如表所示    配置项 内容 说明    Subnet IP段&#x2F;前缀 这一项需要配置IP段如192.168.2.0段，并指定前缀，前缀可以用子...</div></div></div></a><a class="pagination-related" href="Linux%E6%9F%A5%E8%AF%A2ssh%E6%97%A5%E5%BF%97%E5%88%A4%E6%96%AD%E6%98%AF%E5%90%A6%E8%A2%AB%E5%85%A5%E4%BE%B5%E5%8F%8A%E5%8A%A0%E5%BC%BAssh%E5%AE%89%E5%85%A8%E7%9A%84%E5%8A%9E%E6%B3%95.html" title="Linux查询ssh日志判断是否被入侵及加强ssh安全的办法"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2024-03-05</div><div class="info-item-2">Linux查询ssh日志判断是否被入侵及加强ssh安全的办法</div></div><div class="info-2"><div class="info-item-1">查询ssh登陆日志的办法journalctl _COMM=sshd可以查看sshd所有日志 1234567891011121314# 查询ssh登陆失败总次数journalctl _COMM=sshd | grep Failed |wc -l#查询ssh登陆成功总次数journalctl _COMM=sshd | grep Accepted |wc -l#查询被多少不同IP爆破了journalctl _COMM=sshd | grep &quot;Failed&quot; | awk &#x27;&#123;print $(NF-3)&#125;&#x27; | sort -u | wc -l# 列出爆破你的IPjournalctl _COMM=sshd | grep &quot;Failed&quot; | awk &#x27;&#123;print $(NF-3)&#125;&#x27; | sort -u# 列出成功登陆的IPjournalctl _COMM=sshd | grep -E &quot;Accepted&quot; | awk &#x27;&#123;matc...</div></div></div></a><a class="pagination-related" href="%E5%BC%82%E5%B8%B8%E5%AE%95%E6%9C%BABMC%E6%97%A5%E5%BF%97%E6%97%A0%E5%8F%82%E8%80%83%E4%BB%B7%E5%80%BC%E6%97%B6%E7%9A%84%E6%8E%92%E9%9A%9C%E6%80%9D%E8%B7%AF.html" title="异常宕机BMC日志无参考价值时的排障思路"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-09-10</div><div class="info-item-2">异常宕机BMC日志无参考价值时的排障思路</div></div><div class="info-2"><div class="info-item-1">巡检发现异常宕机，带外日志仅有一条热复位的记录BMC日志如下： SYS_Restart    系统启动/重新启动   开始热复位 - 触发 仅有一条热复位记录，无物理按键记录，无操作系统发起重启记录    排障思路 命令    排查启动日志 &#96;journalctl -b   排查内核缓冲区 dmesg --level=err,warn   排查是否有内核崩溃转储文件 ls -la /var/crash/   排查是否有硬件错误 &#96;journalctl -k   排查watchdog是否触发 &#96;journalctl -k   排查过热日志 &#96;journalctl -k   检查内存不足事件 &#96;journalctl -k   检查 CPU 或 I&#x2F;O 阻塞 sar -q -f /var/log/sa/sa10   检查内存错误计数 &#96;dmidecode -t memory   检查电源日志 &#96;journalctl -k   </div></div></div></a><a class="pagination-related" href="Linux%E6%8A%80%E5%B7%A7%E3%80%90%E6%8C%81%E7%BB%AD%E6%9B%B4%E6%96%B0%E3%80%91.html" title="Linux技巧【持续更新】"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2022-11-17</div><div class="info-item-2">Linux技巧【持续更新】</div></div><div class="info-2"><div class="info-item-1"> 若您有任何技术问题，可以通过本站展示的联系方式咨询我  Linux查看硬盘SN12# 将#替换为你对应的硬盘号 如sdalsblk --nodeps -no serial /dev/sd*  Linux解除文件、目录占用12345678# 使用该命令查看占用文件、文件夹的程序idfuser -cu /你要查询的文件或目录# 示例fuser -cu docker-application/# 我的输出结果/mnt/TEST/docker-application: 16676m(root) 16702m(root)# 其中16676m(root)和16702m(root)便是表明该目录由id为16676和16702的进程占用# 使用kill id杀死进程后便可删除或使用mount -f强制卸载  Linux使用iostat查看磁盘io信息123456789101112131415161718192021222324252627282930313233343536373839404142434445# 使用iostat可以查看简要的磁盘io信息iostat# 在此列出部分iostat参...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="images/avatar.svg" onerror="this.onerror=null;this.src='img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">hackerbs.com</div><div class="author-info-description">hackerbs's Blog - 探索知识的宇宙</div><div class="site-data"><a href="archives/"><div class="headline">文章</div><div class="length-num">43</div></a><a href="tags/"><div class="headline">标签</div><div class="length-num">133</div></a><a href="categories/"><div class="headline">分类</div><div class="length-num">15</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#debian-live-12-5-0-amd64-standard%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B"><span class="toc-number">1.</span> <span class="toc-text">debian-live-12.5.0-amd64-standard安装教程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%9B%E5%85%A5%E5%AE%89%E8%A3%85%E7%A8%8B%E5%BA%8F"><span class="toc-number">1.1.</span> <span class="toc-text">进入安装程序</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%89%E6%8B%A9%E8%AF%AD%E8%A8%80"><span class="toc-number">1.2.</span> <span class="toc-text">选择语言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%89%E6%8B%A9%E5%9C%B0%E5%8C%BA"><span class="toc-number">1.3.</span> <span class="toc-text">选择地区</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%AC%E5%9C%B0%E5%8C%96%E9%85%8D%E7%BD%AE"><span class="toc-number">1.4.</span> <span class="toc-text">本地化配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE%E9%94%AE%E7%9B%98"><span class="toc-number">1.5.</span> <span class="toc-text">配置键盘</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE%E7%BD%91%E7%BB%9C"><span class="toc-number">1.6.</span> <span class="toc-text">配置网络</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%89%8B%E5%8A%A8%E9%85%8D%E7%BD%AEIP"><span class="toc-number">1.6.1.</span> <span class="toc-text">手动配置IP</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A1%AB%E5%86%99%E4%B8%BB%E6%9C%BA%E5%90%8D"><span class="toc-number">1.7.</span> <span class="toc-text">填写主机名</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A1%AB%E5%86%99%E5%9F%9F%E5%90%8D"><span class="toc-number">1.8.</span> <span class="toc-text">填写域名</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%BE%E7%BD%AEroot%E7%94%A8%E6%88%B7%E5%AF%86%E7%A0%81"><span class="toc-number">1.9.</span> <span class="toc-text">设置root用户密码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E6%96%B0%E7%94%A8%E6%88%B7"><span class="toc-number">1.10.</span> <span class="toc-text">创建新用户</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A0%BC%E5%BC%8F%E5%8C%96%E7%A3%81%E7%9B%98"><span class="toc-number">1.11.</span> <span class="toc-text">格式化磁盘</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%89%E6%8B%A9%E5%88%86%E5%8C%BA%E6%96%B9%E5%BC%8F"><span class="toc-number">1.12.</span> <span class="toc-text">选择分区方式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A1%AE%E8%AE%A4%E6%98%AF%E5%90%A6%E5%88%86%E5%8C%BA"><span class="toc-number">1.13.</span> <span class="toc-text">确认是否分区</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AD%89%E5%BE%85%E7%B3%BB%E7%BB%9F%E5%AE%89%E8%A3%85"><span class="toc-number">1.14.</span> <span class="toc-text">等待系统安装</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%98%AF%E5%90%A6%E5%90%AF%E7%94%A8%E7%BD%91%E7%BB%9C%E9%95%9C%E5%83%8F"><span class="toc-number">1.15.</span> <span class="toc-text">是否启用网络镜像</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8F%90%E7%A4%BA%E9%95%9C%E5%83%8F%E6%95%85%E9%9A%9C"><span class="toc-number">1.15.1.</span> <span class="toc-text">提示镜像故障</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%89%E8%A3%85%E5%AE%8C%E6%AF%95"><span class="toc-number">1.16.</span> <span class="toc-text">安装完毕</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A0%E9%99%A4%E5%AE%89%E8%A3%85%E8%BF%87%E7%A8%8B%E4%B8%AD%E4%B8%8D%E5%BE%97%E4%B8%8D%E5%88%9B%E5%BB%BA%E7%9A%84%E7%94%A8%E6%88%B7"><span class="toc-number">1.17.</span> <span class="toc-text">删除安装过程中不得不创建的用户</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%A2%9D%E5%A4%96%E5%86%85%E5%AE%B9"><span class="toc-number">1.18.</span> <span class="toc-text">额外内容</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%89%8B%E5%8A%A8%E9%85%8D%E7%BD%AE%E7%BD%91%E7%BB%9C"><span class="toc-number">1.18.1.</span> <span class="toc-text">手动配置网络</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%89%8B%E5%8A%A8%E9%85%8D%E7%BD%AEapt%E6%BA%90"><span class="toc-number">1.18.2.</span> <span class="toc-text">手动配置apt源</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%89%E8%A3%85OpenSSH-server%E5%B9%B6%E9%85%8D%E7%BD%AEroot%E5%AF%86%E7%A0%81%E7%99%BB%E9%99%86"><span class="toc-number">1.18.3.</span> <span class="toc-text">安装OpenSSH-server并配置root密码登陆</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE%E5%AE%8C%E5%85%A8apt%E5%9B%BD%E5%86%85%E9%95%9C%E5%83%8F"><span class="toc-number">1.18.4.</span> <span class="toc-text">配置完全apt国内镜像</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="%E9%9A%8F%E7%AC%94%20-%20%E3%80%8A%E6%88%91%E5%A7%8B%E7%BB%88%E6%98%AF%E6%88%91%E3%80%8B.html" title="随笔 - 《我始终是我》">随笔 - 《我始终是我》</a><time datetime="2026-07-18T00:00:00.000Z" title="发表于 2026-07-18 08:00:00">2026-07-18</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="%E9%9A%8F%E7%AC%94%20-%20%E3%80%8A%E7%A0%B4%E5%B1%80%E7%9A%84%E7%89%A9%E7%90%86%E5%AD%A6%EF%BC%9A%E9%87%8D%E9%87%8F%E3%80%81%E6%9D%A0%E6%9D%86%E4%B8%8E%E6%B6%9F%E6%BC%AA%E3%80%8B.html" title="随笔 - 《破局的物理学：重量、杠杆与涟漪》">随笔 - 《破局的物理学：重量、杠杆与涟漪》</a><time datetime="2026-07-05T00:00:00.000Z" title="发表于 2026-07-05 08:00:00">2026-07-05</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="%E9%9A%8F%E7%AC%94%20-%20%E3%80%8A%E5%AD%98%E5%9C%A8%E7%9A%84%E7%97%95%E8%BF%B9%EF%BC%9A%E4%B8%8D%E5%9C%A8%E4%BA%8E%E7%9F%B3%E7%A2%91%EF%BC%8C%E8%80%8C%E4%BA%8E%E6%B6%9F%E6%BC%AA%E3%80%8B.html" title="随笔 - 《存在的痕迹：不在于石碑，而于涟漪》">随笔 - 《存在的痕迹：不在于石碑，而于涟漪》</a><time datetime="2025-10-17T08:15:00.000Z" title="发表于 2025-10-17 16:15:00">2025-10-17</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="IT%E5%9C%BA%E6%99%AF%E4%B8%93%E4%B8%9A%E6%9C%AF%E8%AF%AD%E8%A1%A8.html" title="IT场景专业术语表">IT场景专业术语表</a><time datetime="2025-10-17T05:45:45.000Z" title="发表于 2025-10-17 13:45:45">2025-10-17</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="%E5%85%B3%E4%BA%8E%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%A1%AC%E7%9B%98%E6%95%85%E9%9A%9C%E4%BD%86%E5%B8%A6%E5%A4%96%E6%B2%A1%E6%9C%89%E9%94%99%E8%AF%AF%E6%97%A5%E5%BF%97%E7%9A%84%E6%8E%92%E9%9A%9C%E4%B8%8E%E6%8A%A5%E4%BF%AE%E7%AC%94%E8%AE%B0.html" title="关于服务器硬盘故障但带外没有错误日志的排障与报修笔记">关于服务器硬盘故障但带外没有错误日志的排障与报修笔记</a><time datetime="2025-09-18T07:49:46.000Z" title="发表于 2025-09-18 15:49:46">2025-09-18</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By hackerbs.com</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.7.1.260810</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="js/utils.js?v=5.7.1.260810"></script><script src="js/main.js?v=5.7.1.260810"></script><div class="js-pjax"></div><script src="js/effects.js" defer></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

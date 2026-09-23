@@ -1,0 +1,564 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Linux技巧【持续更新】 | hackerbs's Blog - 探索知识的宇宙</title><meta name="author" content="hackerbs.com"><meta name="copyright" content="hackerbs.com"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="1e1e2e"><meta name="description" content="若您有任何技术问题，可以通过本站展示的联系方式咨询我  Linux查看硬盘SN12# 将#替换为你对应的硬盘号 如sdalsblk --nodeps -no serial &#x2F;dev&#x2F;sd*  Linux解除文件、目录占用12345678# 使用该命令查看占用文件、文件夹的程序idfuser -cu &#x2F;你要查询的文件或目录# 示例fuser -cu docker-application&#x2F;# 我的输">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux技巧【持续更新】">
+<meta property="og:url" content="https://hackerbs.com/Linux%E6%8A%80%E5%B7%A7%E3%80%90%E6%8C%81%E7%BB%AD%E6%9B%B4%E6%96%B0%E3%80%91.html">
+<meta property="og:site_name" content="hackerbs&#39;s Blog - 探索知识的宇宙">
+<meta property="og:description" content="若您有任何技术问题，可以通过本站展示的联系方式咨询我  Linux查看硬盘SN12# 将#替换为你对应的硬盘号 如sdalsblk --nodeps -no serial &#x2F;dev&#x2F;sd*  Linux解除文件、目录占用12345678# 使用该命令查看占用文件、文件夹的程序idfuser -cu &#x2F;你要查询的文件或目录# 示例fuser -cu docker-application&#x2F;# 我的输">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hackerbs.com/images/avatar.svg">
+<meta property="article:published_time" content="2022-11-17T08:15:48.000Z">
+<meta property="article:modified_time" content="2026-09-22T16:13:24.652Z">
+<meta property="article:author" content="hackerbs.com">
+<meta property="article:tag" content="Linux">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hackerbs.com/images/avatar.svg"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Linux技巧【持续更新】",
+  "url": "https://hackerbs.com/Linux%E6%8A%80%E5%B7%A7%E3%80%90%E6%8C%81%E7%BB%AD%E6%9B%B4%E6%96%B0%E3%80%91.html",
+  "image": "https://hackerbs.com/images/avatar.svg",
+  "datePublished": "2022-11-17T08:15:48.000Z",
+  "dateModified": "2026-09-22T16:13:24.652Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "hackerbs.com",
+      "url": "https://hackerbs.com"
+    }
+  ]
+}</script><link rel="shortcut icon" href="images/favicon.svg"><link rel="canonical" href="https://hackerbs.com/Linux%E6%8A%80%E5%B7%A7%E3%80%90%E6%8C%81%E7%BB%AD%E6%9B%B4%E6%96%B0%E3%80%91.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="css/index.css?v=5.7.1.260810"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.3.1/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        try {
+          const data = { value }
+
+          if (ttl != null) {
+            data.expiry = Date.now() + ttl * 86400000
+          }
+
+          localStorage.setItem(key, JSON.stringify(data))
+        } catch (e) {
+          console.error(e)
+        }
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return
+
+        try {
+          const data = JSON.parse(itemStr)
+
+          if (data.expiry && Date.now() > data.expiry) {
+            localStorage.removeItem(key)
+            return
+          }
+
+          return data.value
+        } catch {
+          localStorage.removeItem(key)
+        }
+      }
+    }
+
+    const scriptCache = new Map()
+    const cssCache = new Map()
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => {
+        if (scriptCache.has(url)) {
+          return scriptCache.get(url)
+        }
+
+        const promise = new Promise((resolve, reject) => {
+          const script = document.createElement('script')
+
+          script.src = url
+          script.async = true
+
+          for (const key in attr) {
+            script.setAttribute(key, attr[key])
+          }
+
+          script.onload = resolve
+          script.onerror = reject
+
+          document.head.appendChild(script)
+        })
+
+        scriptCache.set(url, promise)
+
+        return promise
+      },
+      getCSS: (url, id) => {
+        if (cssCache.has(url)) {
+          return cssCache.get(url)
+        }
+
+        const promise = new Promise((resolve, reject) => {
+          const link = document.createElement('link')
+
+          link.rel = 'stylesheet'
+          link.href = url
+
+          if (id) {
+            link.id = id
+          }
+
+          link.onload = resolve
+          link.onerror = reject
+
+          document.head.appendChild(link)
+        })
+
+        cssCache.set(url, promise)
+
+        return promise
+      },
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const metaThemeColor = document.querySelector('meta[name="theme-color"]')
+      const activateDarkMode = () => {
+        document.documentElement.dataset.theme = 'dark'
+        if (metaThemeColor !== null) {
+          metaThemeColor.setAttribute('content', '1e1e2e')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.dataset.theme = 'light'
+        if (metaThemeColor !== null) {
+          metaThemeColor.setAttribute('content', '1e1e2e')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Linux技巧【持续更新】',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/inter@5/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/space-grotesk@5/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/jetbrains-mono@5/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/fraunces@5/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.7.0/style.css"><link rel="stylesheet" href="css/beautify.css"><meta name="generator" content="Hexo 8.1.2"></head><body><div class="post" id="body-wrap"><header class="post-bg fixed" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="index.html"><span class="site-name">hackerbs's Blog - 探索知识的宇宙</span></a><a class="nav-page-title" href="index.html"><span class="site-name">Linux技巧【持续更新】</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"></div></nav><div id="post-info"><h1 class="post-title">Linux技巧【持续更新】</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2022-11-17T08:15:48.000Z" title="发表于 2022-11-17 16:15:48">2022-11-17</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-09-22T16:13:24.652Z" title="更新于 2026-09-23 00:13:24">2026-09-23</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="categories/%E7%9F%A5%E8%AF%86%E5%BA%93/">知识库</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="categories/%E7%9F%A5%E8%AF%86%E5%BA%93/%E7%B3%BB%E7%BB%9F/">系统</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><blockquote>
+<p>若您有任何技术问题，可以通过本站展示的联系方式咨询我</p>
+</blockquote>
+<h2 id="Linux查看硬盘SN"><a href="#Linux查看硬盘SN" class="headerlink" title="Linux查看硬盘SN"></a>Linux查看硬盘SN</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">将#替换为你对应的硬盘号 如sda</span></span><br><span class="line">lsblk --nodeps -no serial /dev/sd*</span><br></pre></td></tr></table></figure>
+
+<h2 id="Linux解除文件、目录占用"><a href="#Linux解除文件、目录占用" class="headerlink" title="Linux解除文件、目录占用"></a>Linux解除文件、目录占用</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">使用该命令查看占用文件、文件夹的程序<span class="built_in">id</span></span></span><br><span class="line">fuser -cu /你要查询的文件或目录</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">示例</span></span><br><span class="line">fuser -cu docker-application/</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">我的输出结果</span></span><br><span class="line">/mnt/TEST/docker-application: 16676m(root) 16702m(root)</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">其中16676m(root)和16702m(root)便是表明该目录由<span class="built_in">id</span>为16676和16702的进程占用</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">使用<span class="built_in">kill</span> <span class="built_in">id</span>杀死进程后便可删除或使用mount -f强制卸载</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="Linux使用iostat查看磁盘io信息"><a href="#Linux使用iostat查看磁盘io信息" class="headerlink" title="Linux使用iostat查看磁盘io信息"></a>Linux使用iostat查看磁盘io信息</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">使用iostat可以查看简要的磁盘io信息</span></span><br><span class="line">iostat</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">在此列出部分iostat参数:</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">-c 查看CPU信息</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">-d 仅显示磁盘信息,默认是显示CPU和磁盘信息</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">-x 显示详细信息</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">-k或-m分别是以KB/MB为显示单位</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">-p显示磁盘及其分区的信息</span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">演示实例</span></span><br><span class="line">iostat -x -m 1</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">输出结果为每1秒刷新一次以MB为单位的详细信息,一直刷新</span></span><br><span class="line">avg-cpu:  %user   %nice %system %iowait  %steal   %idle</span><br><span class="line">           1.12    1.12   20.66    5.81    0.00   71.29</span><br><span class="line"></span><br><span class="line">Device            r/s     rMB/s   rrqm/s  %rrqm r_await rareq-sz     w/s     wMB/s   wrqm/s  %wrqm w_await wareq-sz     d/s     dMB/s   drqm/s  %drqm d_await dareq-sz     f/s f_await  aqu-sz  %util</span><br><span class="line">dm-0             0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00    0.00    0.00   0.00</span><br><span class="line">dm-1             0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00    0.00    0.00   0.00</span><br><span class="line">dm-2             0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00    0.00    0.00   0.00</span><br><span class="line">dm-3             0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00    0.00    0.00   0.00</span><br><span class="line">dm-4             0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00    0.00    0.00   0.00</span><br><span class="line">md123            0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00    0.00    0.00   0.00</span><br><span class="line">md124            0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00    0.00    0.00   0.00</span><br><span class="line">md125            0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00    0.00    0.00   0.00</span><br><span class="line">md126            0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00    0.00    0.00   0.00</span><br><span class="line">md127            0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00    0.00    0.00   0.00</span><br><span class="line">nvme0n1          7.00      0.02     0.00   0.00    6.14     3.43  120.00      1.32     0.00   0.00    1.31    11.30    0.00      0.00     0.00   0.00    0.00     0.00    2.00    2.50    0.21   9.20</span><br><span class="line">sda              2.00      0.00     0.00   0.00   38.00     0.00  920.00     32.91     2.00   0.22    0.52    36.63    0.00      0.00     0.00   0.00    0.00     0.00    2.00   38.50    0.63  63.60</span><br><span class="line">sdb              3.00      0.00     0.00   0.00   35.33     1.33  964.00     34.25     3.00   0.31    0.37    36.38    0.00      0.00     0.00   0.00    0.00     0.00    2.00   38.00    0.54  61.20</span><br><span class="line">sdc              2.00      0.00     0.00   0.00   42.00     0.00  883.00     34.25     3.00   0.34    0.82    39.72    0.00      0.00     0.00   0.00    0.00     0.00    2.00   42.00    0.89  71.20</span><br><span class="line">sdd              2.00      0.00     0.00   0.00   39.50     0.00  956.00     34.21     2.00   0.21    0.36    36.65    0.00      0.00     0.00   0.00    0.00     0.00    2.00   39.00    0.50  59.20</span><br><span class="line">sde              3.00      0.00     0.00   0.00   36.00     1.33  780.00     34.26     1.00   0.13    0.43    44.98    0.00      0.00     0.00   0.00    0.00     0.00    2.00   44.50    0.53  61.20</span><br><span class="line">sdf              2.00      0.00     0.00   0.00   29.50     0.00  772.00     34.21     2.00   0.26    0.44    45.37    0.00      0.00     0.00   0.00    0.00     0.00    2.00   30.00    0.46  58.80</span><br><span class="line">sdg              3.00      0.00     0.00   0.00   22.00     1.33  773.00     34.21     2.00   0.26    0.43    45.31    0.00      0.00     0.00   0.00    0.00     0.00    2.00   33.00    0.46  58.00</span><br><span class="line">sdh              2.00      0.00     0.00   0.00   49.50     0.00  738.00     33.76     3.00   0.40    0.66    46.85    0.00      0.00     0.00   0.00    0.00     0.00    2.00   49.50    0.68  64.80</span><br><span class="line">sdi              3.00      0.00     0.00   0.00   31.33     1.33  680.00     34.21     2.00   0.29    0.86    51.52    0.00      0.00     0.00   0.00    0.00     0.00    2.00   47.00    0.77  66.80</span><br><span class="line">sdj              2.00      0.00     0.00   0.00   44.50     0.00  801.00     34.25     1.00   0.12    0.43    43.79    0.00      0.00     0.00   0.00    0.00     0.00    2.00   44.00    0.52  61.20</span><br><span class="line">sdk              2.00      0.00     0.00   0.00   49.00     0.00  675.00     33.88     3.00   0.44    1.00    51.39    0.00      0.00     0.00   0.00    0.00     0.00    2.00   49.00    0.87  71.20</span><br><span class="line">sdl              2.00      0.00     0.00   0.00   38.50     0.00  697.00     34.62     1.00   0.14    1.20    50.87    0.00      0.00     0.00   0.00    0.00     0.00    2.00   38.50    0.99  76.40</span><br><span class="line">sdm              0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00    0.00    0.00   0.00</span><br><span class="line">sr0              0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00      0.00     0.00   0.00    0.00     0.00    0.00    0.00    0.00   0.00</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">其中1代表刷新频率,1秒,3代表次数,刷新3次,如果不填写3,则为一直刷新</span></span><br><span class="line">iostat -x -m 1 3</span><br></pre></td></tr></table></figure>
+
+<h3 id="参数详解"><a href="#参数详解" class="headerlink" title="参数详解"></a>参数详解</h3><table>
+<thead>
+<tr>
+<th>参数</th>
+<th>释义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>-c</td>
+<td>显示CPU利用率报告</td>
+</tr>
+<tr>
+<td>–compact</td>
+<td>不要将“设备利用率报告”拆分为子报告，以便所有指标都显示在一行中</td>
+</tr>
+<tr>
+<td>-d</td>
+<td>显示设备利用率报告</td>
+</tr>
+<tr>
+<td>–dec&#x3D;{ 0 | 1 | 2 }</td>
+<td>指定要使用的小数位数（0到2，默认值为2）</td>
+</tr>
+<tr>
+<td>-f</td>
+<td>官方对该参数的解释略微复杂,烦请查阅<a target="_blank" rel="noopener" href="https://manpages.debian.org/testing/sysstat/iostat.1.en.html#f">官方文档</a></td>
+</tr>
+<tr>
+<td>-g</td>
+<td>将所有设备汇总显示,-g参数后面填group_name</td>
+</tr>
+<tr>
+<td>-H</td>
+<td>此选项必须与选项-g一起使用，并指示只显示组的全局统计信息，而不显示组中单个设备的统计信息</td>
+</tr>
+<tr>
+<td>-h</td>
+<td>该选项将输出结果分类显示,便于阅读</td>
+</tr>
+<tr>
+<td>–human</td>
+<td>以人类可读格式打印大小（例如1.0k、1.2M等）。使用此选项显示的单位将取代与度量相关的任何其他默认单位（例如千字节、扇区…）</td>
+</tr>
+<tr>
+<td>-j</td>
+<td>在参数后跟(ID&#x2F;LABEL&#x2F;PATH&#x2F;UUID)等,以替换原&#x2F;dev&#x2F;sd*的显示,<a target="_blank" rel="noopener" href="https://manpages.debian.org/testing/sysstat/iostat.1.en.html#j">官方文档</a></td>
+</tr>
+<tr>
+<td>-k</td>
+<td>以KB为单位进行显示</td>
+</tr>
+<tr>
+<td>-m</td>
+<td>以MB为单位进行显示</td>
+</tr>
+<tr>
+<td>-N</td>
+<td>显示任何设备映射器设备的注册设备映射器名称。用于查看LVM2统计信息</td>
+</tr>
+<tr>
+<td>-o JSON</td>
+<td>以json格式输出结果</td>
+</tr>
+<tr>
+<td>-p</td>
+<td>显示磁盘及其分区信息,可以在后跟指定磁盘以显示单个磁盘的分区信息</td>
+</tr>
+<tr>
+<td>–pretty</td>
+<td>将报告以更易于阅读的方式显示,同–human</td>
+</tr>
+<tr>
+<td>-s</td>
+<td>显示报告的短（窄）版本，该版本应适合80个字符宽的屏幕</td>
+</tr>
+<tr>
+<td>-t</td>
+<td>打印显示的每个报告的时间。时间戳格式可能取决于S_TIME_format环境变量的值</td>
+</tr>
+<tr>
+<td>-V</td>
+<td>打印iostat版本号</td>
+</tr>
+<tr>
+<td>-x</td>
+<td>显示扩展统计信息</td>
+</tr>
+<tr>
+<td>-y</td>
+<td>如果在给定的时间间隔内显示多个记录，则省略系统启动后的第一个统计报告</td>
+</tr>
+<tr>
+<td>-z</td>
+<td>告诉iostat忽略在采样期间没有活动的任何设备的输出</td>
+</tr>
+</tbody></table>
+<h3 id="输出结果参数解读"><a href="#输出结果参数解读" class="headerlink" title="输出结果参数解读"></a>输出结果参数解读</h3><table>
+<thead>
+<tr>
+<th>参数</th>
+<th>释义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>%user</td>
+<td>显示在用户级别（应用程序）执行时发生的 CPU 使用率百分比</td>
+</tr>
+<tr>
+<td>%nice</td>
+<td>显示在具有良好优先级的用户级别执行时发生的 CPU 使用率百分比</td>
+</tr>
+<tr>
+<td>%system</td>
+<td>显示在系统级别（内核）执行时发生的 CPU 使用率百分比</td>
+</tr>
+<tr>
+<td>%iowait</td>
+<td>显示系统有未完成的磁盘 I&#x2F;O 请求期间 CPU 或 CPU 空闲的时间百分比</td>
+</tr>
+<tr>
+<td>%steal</td>
+<td>显示虚拟机管理程序为另一个虚拟处理器提供服务时虚拟 CPU 或 CPU 非自愿等待所花费的时间百分比</td>
+</tr>
+<tr>
+<td>%idle</td>
+<td>显示 CPU 或 CPU 空闲且系统没有未完成的磁盘 I&#x2F;O 请求的时间百分比</td>
+</tr>
+<tr>
+<td>r&#x2F;s</td>
+<td>设备每秒完成的读取请求数（合并后）</td>
+</tr>
+<tr>
+<td>rMB&#x2F;s</td>
+<td>每秒读字节数,单位随参数-k&#x2F;-m分别对应KB和MB</td>
+</tr>
+<tr>
+<td>rrqm&#x2F;s</td>
+<td>每秒合并到设备队列的读取请求数</td>
+</tr>
+<tr>
+<td>%rrqm</td>
+<td>在发送到设备之前合并在一起的读取请求的百分比</td>
+</tr>
+<tr>
+<td>r_await</td>
+<td>平均每次设备读I&#x2F;O操作的等待时间 (毫秒)</td>
+</tr>
+<tr>
+<td>rareq-sz</td>
+<td>向设备发出的读取请求的平均大小（以KB为单位）</td>
+</tr>
+<tr>
+<td>w&#x2F;s</td>
+<td>设备每秒完成的写入请求数（合并后）</td>
+</tr>
+<tr>
+<td>wMB&#x2F;s</td>
+<td>每秒写字节数,单位随参数-k&#x2F;-m分别对应KB和MB</td>
+</tr>
+<tr>
+<td>wrqm&#x2F;s</td>
+<td>每秒合并到设备队列的写入请求数</td>
+</tr>
+<tr>
+<td>%wrqm</td>
+<td>在发送到设备之前合并在一起的写入请求的百分比</td>
+</tr>
+<tr>
+<td>w_await</td>
+<td>平均每次设备写I&#x2F;O操作的等待时间 (毫秒)</td>
+</tr>
+<tr>
+<td>wareq-sz</td>
+<td>向设备发出的写入请求的平均大小（以KB为单位）</td>
+</tr>
+<tr>
+<td>d&#x2F;s</td>
+<td>设备每秒完成的丢弃请求数（合并后）</td>
+</tr>
+<tr>
+<td>dMB&#x2F;s</td>
+<td>每秒为设备丢弃的扇区数,单位随参数-k&#x2F;-m分别对应KB和MB</td>
+</tr>
+<tr>
+<td>drqm&#x2F;s</td>
+<td>每秒排队到设备的合并丢弃请求数</td>
+</tr>
+<tr>
+<td>%drqm</td>
+<td>在发送到设备之前合并在一起的丢弃请求的百分比</td>
+</tr>
+<tr>
+<td>d_await</td>
+<td>向要服务的设备发出的丢弃请求的平均时间（以毫秒为单位）。这包括队列中的请求所花费的时间以及为它们提供服务所花费的</td>
+</tr>
+<tr>
+<td>dareq-sz</td>
+<td>向设备发出的丢弃请求的平均大小（以KB为单位）</td>
+</tr>
+<tr>
+<td>f&#x2F;s</td>
+<td>设备每秒完成的刷新请求数（合并后）。这对磁盘执行的刷新请求进行计数。不跟踪分区的刷新请求。在合并之前，刷新操作算作写入操作</td>
+</tr>
+<tr>
+<td>f_await</td>
+<td>向要服务的设备发出刷新请求的平均时间（以毫秒为单位）。块层合并刷新请求并且一次最多执行一个。因此刷新操作可能是两倍长：等待当前刷新请求，然后执行它，然后等待下一个</td>
+</tr>
+<tr>
+<td>aqu-sz</td>
+<td>向设备发出的请求的平均队列长度,在以前的版本中,此字段称为 avgqu-sz</td>
+</tr>
+<tr>
+<td>%util</td>
+<td>向设备发出 I&#x2F;O 请求所用时间的百分比（设备的带宽利用率）。对于串行服务请求的设备，当此值接近 100% 时，就会发生设备饱和。但对于并行处理请求的设备，例如 RAID 阵列和现代 SSD，这个数字并不反映它们的性能限制</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>%iowait的值过高,表示硬盘存在I&#x2F;O瓶颈<br>%idle值高,表示CPU较空闲<br>%idle值高但系统响应慢时,有可能是CPU等待分配内存,此时应加大内存容量<br>%idle值如果持续低于10,那么系统的CPU处理能力相对较低,表明系统中最需要解决的资源是CPU<br>%util 接近 100%，说明产生的I&#x2F;O请求太多，I&#x2F;O系统已经满负荷，该磁盘可能存在瓶颈</p>
+<p>该文章内容参考<a target="_blank" rel="noopener" href="https://manpages.debian.org/testing/sysstat/iostat.1.en.html">iostat官方文档https://manpages.debian.org/testing/sysstat/iostat.1.en.html</a></p>
+</blockquote>
+<h2 id="fio测试工具详细教程"><a href="#fio测试工具详细教程" class="headerlink" title="fio测试工具详细教程"></a>fio测试工具详细教程</h2><blockquote>
+<p>待完善,先临时记录一条</p>
+</blockquote>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">fio -name=stress_disk -filename=/mnt/DATA/test/a -size=30T -runtime=240h -bs=1m -direct=1 -rw=randrw -ioengine=libaio -numjobs=12 -group_reporting -iodepth=8 -rwmixwrite=50 -time_based -ramp_time=60s</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">其中name是本次测试任务的名称</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">filename则为指定测试目录和文件名</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">size则为指定测试文件大小,此处为30T,无论运行多久,该测试文件a都不会超过30T</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">runtime为指定运行时间,240h则为240小时,单位可以为秒s分m时h</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">bs为块大小,顺序读写通常为1m,4k则填写4k即可</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">direct有0和1选项,0为使用文件系统缓存,1则为直接操作磁盘</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">rw可选的参数有<span class="built_in">read</span>/write/rw/randread/randwrite/randrw,分别为读/写/读写/随机读/随机写/随机读写</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">ioengine IO测试引擎,在linux下选择libaio即可</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">numjobs线程数,一般设置为硬盘数量,根据实际需要自行调整</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">group_reporting合并报告,将性能测试结果合并汇报,显示所有硬盘性能测试的总结果</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">iodepth IO队列深度,指定IO队列深度,提高每次请求的IO数量</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">rwmixwrite/rwmixread 这两个参数都可以指定,按百分比指定,如rwmixwrite=30则表示写占比30%,只需使用其中一个即可,无需同时指定两个参数</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">time_based 设置即便fio写完了指定的size依旧不结束，直至runtime的时间</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">ramp_time=60s 设置fio执行任务时的预热时间，可以使性能测试结果更加精确可靠</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="Linux-NFS挂载及使用systemctl自动挂载"><a href="#Linux-NFS挂载及使用systemctl自动挂载" class="headerlink" title="Linux NFS挂载及使用systemctl自动挂载"></a>Linux NFS挂载及使用systemctl自动挂载</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">NFS挂载基础命令及其作用</span></span><br><span class="line">mount -t nfs -o vers=3,rw,hard,sync 10.0.0.100:/mnt/TEST/nfs /mnt/100nfs</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">mount linux挂载命令</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">-t nfs 指定挂载协议为nfs -o也就是options，选项的意思</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">vers=3 指定NFS版本，NFSv3</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">rw 读写</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">hard硬链接</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">补充：soft为软连接，二者的特点是硬链接保障数据安全但需要持续等待服务器响应，软连接的特点是快速响应但如果服务器断开则可能导致数据损坏或丢失</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">简单来说，硬链接适合网络环境较差或数据安全要求严格的场景，软连接适合网络稳定需要快速响应的场景</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">【技术是严谨的，如果我的解释有误烦请立刻指正，十分感谢！】</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash"><span class="built_in">sync</span>，同步写入，写入到磁盘，IO响应较慢但数据安全，async，异步写入，IO响应快，数据安全性低，类似RAID write back</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">参数指定完成后便是服务器路径和本地路径，格式为 服务器地址:路径 本地路径，如 example:/example /example</span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">使用systemctl管理nfs挂载</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">创建nfs.service文件【我的环境为Debian 11.6，该文件放在/usr/lib/systemd/system/下】</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">2024/1/13更新，因实际使用过程中遇到过网络并未第一时间连通导致的挂载失败，所以在mount操作前增加ping操作</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">原命令为：ExecStart=/usr/bin/mount -t nfs -o vers=3,rw,hard,<span class="built_in">sync</span> 10.0.0.100:/mnt/data /data</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">下列代码中10.0.0.100为我的nfs服务器地址，需要替换为你自己的，包括服务器的路径:/mnt/data/storage和挂载路径/mnt/nfs都需要替换为你自己的</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">如有问题可以通过文末的联系方式咨询我</span></span><br><span class="line">[Unit]</span><br><span class="line">Description=auto mount nfs</span><br><span class="line">After=network.target</span><br><span class="line"></span><br><span class="line">[Service]</span><br><span class="line">Type=simple</span><br><span class="line">ExecStart=/bin/bash -c &#x27;until ping -c1 10.0.0.100 &amp;&gt;/dev/null; do sleep 5; done &amp;&amp; /usr/bin/mount -t nfs -o vers=4,rw,hard,sync 10.0.0.100:/mnt/data/storage /mnt/nfs&#x27;</span><br><span class="line">Restart=no</span><br><span class="line"></span><br><span class="line">[Install]</span><br><span class="line">WantedBy=multi-user.target</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">挂载nfs</span></span><br><span class="line">systemctl start nfs.service</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">开机自动挂载</span></span><br><span class="line">systemctl enable nfs.service</span><br></pre></td></tr></table></figure>
+
+<h2 id="mdadm管理软RAID阵列"><a href="#mdadm管理软RAID阵列" class="headerlink" title="mdadm管理软RAID阵列"></a>mdadm管理软RAID阵列</h2><p>mdadm全称Multiple Disk and Device Administration（多磁盘和设备管理），是一个Linux软件RAID管理工具，可以使用它来创建各种级别的RAID阵列，包括RAID 0、RAID 1、RAID 5、RAID 6等。</p>
+<h3 id="使用mdadm创建RAID的一般步骤："><a href="#使用mdadm创建RAID的一般步骤：" class="headerlink" title="使用mdadm创建RAID的一般步骤："></a>使用mdadm创建RAID的一般步骤：</h3><ol>
+<li>安装mdadm软件</li>
+</ol>
+<p>在大多数Linux发行版中，mdadm已经预装了，如果没有预装，则可以使用<code>sudo apt install mdadm</code>命令进行安装</p>
+<ol>
+<li><p>准备好磁盘分区，推荐使用<code>parted</code>进行磁盘分区</p>
+</li>
+<li><p>创建RAID设备</p>
+</li>
+</ol>
+<p>使用mdadm命令创建RAID设备。例如，以下命令将使用指定的磁盘分区创建一个RAID5设备</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo mdadm --create /dev/md0 --level=5 --raid-devices=3 /dev/sda1 /dev/sdb1 /dev/sdc1</span><br></pre></td></tr></table></figure>
+
+<p>其中，&#x2F;dev&#x2F;md0是要创建的RAID设备的名称，自定义为md开头的设备即可，如<code>md233</code>等，–level&#x3D;5指定RAID级别为5（RAID 5），–raid-devices&#x3D;3指定有3个磁盘参与RAID，&#x2F;dev&#x2F;sda1、&#x2F;dev&#x2F;sdb1和&#x2F;dev&#x2F;sdc1是要组成RAID设备的分区。</p>
+<ol start="4">
+<li>格式化RAID设备</li>
+</ol>
+<p>创建RAID设备后，需要对其进行格式化，以便可以在其中存储数据。可以使用mkfs命令格式化RAID设备。例如，以下命令将对RAID设备进行ext4格式化：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo mkfs.ext4 /dev/md0</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>挂载RAID设备</li>
+</ol>
+<p>格式化RAID设备后，需要将其挂载到文件系统中，以便可以访问其中的数据。可以使用mount命令将RAID设备挂载到指定的挂载点。例如，以下命令将RAID设备挂载到&#x2F;mnt&#x2F;raid5目录：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo mount /dev/md0 /mnt/raid5</span><br></pre></td></tr></table></figure>
+
+<h3 id="使用mdadm删除RAID的一般步骤："><a href="#使用mdadm删除RAID的一般步骤：" class="headerlink" title="使用mdadm删除RAID的一般步骤："></a>使用mdadm删除RAID的一般步骤：</h3><ol>
+<li>卸载RAID设备</li>
+</ol>
+<p>在删除RAID设备之前，需要先将其从文件系统中卸载。可以使用以下命令卸载挂载在&#x2F;mnt&#x2F;raid0目录的RAID设备：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo umount /mnt/raid5</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>停用RAID设备</li>
+</ol>
+<p>在删除RAID设备之前，需要停用该设备。可以使用以下命令停用RAID设备：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo mdadm --stop /dev/md0</span><br></pre></td></tr></table></figure>
+
+<p>其中，&#x2F;dev&#x2F;md0是要停用的RAID设备的名称。</p>
+<ol start="3">
+<li>删除RAID设备</li>
+</ol>
+<p>在停用RAID设备之后，可以使用以下命令删除RAID设备：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo mdadm --remove /dev/md0</span><br></pre></td></tr></table></figure>
+
+<p>其中，&#x2F;dev&#x2F;md0是要删除的RAID设备的名称。</p>
+<ol start="4">
+<li>清除RAID设备元数据</li>
+</ol>
+<p>在删除RAID设备之后，需要清除RAID设备的元数据，以确保在以后不会误认为该设备是RAID设备。可以使用以下命令清除RAID设备的元数据：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo mdadm --zero-superblock /dev/sda1 /dev/sdb1 /dev/sdc1</span><br></pre></td></tr></table></figure>
+
+<p>其中，&#x2F;dev&#x2F;sda1、&#x2F;dev&#x2F;sdb1和&#x2F;dev&#x2F;sdc1是原始磁盘分区，是用来创建RAID设备的。使用该命令清除元数据可以确保将来使用这些分区时不会出现问题。</p>
+<p>以上就是删除mdadm创建的RAID设备的步骤。请注意，在删除RAID设备之前，务必备份其中的数据，以免误删除数据。</p>
+<h2 id="fstab自动挂载失败导致无法开机的解决办法"><a href="#fstab自动挂载失败导致无法开机的解决办法" class="headerlink" title="fstab自动挂载失败导致无法开机的解决办法"></a>fstab自动挂载失败导致无法开机的解决办法</h2><p>首先，fstab的挂载强烈建议使用UUID，可以通过<code>blkid</code>命令查询UUID，UUID是不会变的，但是你的sda可能变成sdb，尤其是在iscsi挂载时</p>
+<p>通常<code>fstab</code>的挂载命令中有一条<code>default</code>，改为<code>nofail</code>即可。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">原挂载方式</span></span><br><span class="line">/dev/sdc1 /mnt/data xfs default 0 0</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">修改为nofail，该命令的作用为在挂载时如果失败则不会阻止系统启动。使用UUID挂载</span></span><br><span class="line">UUID=&quot;4048c1b1-1bde-49ee-8d40-8d437ce32783&quot; /mnt/data xfs nofail 0 0</span><br></pre></td></tr></table></figure>
+
+<p><strong>注意！修改fstab后强烈建议使用<code>mount -a</code>来测试挂载是否正常</strong></p>
+<p><strong>使用<code>blkid</code>查询UUID时，如果你的设备过多，可以指定某个设备或其分区查询，这样还可避免粗心错误挂载了设备本身，例如<code>blkid /dev/sdc1</code>这样查询的便是sdc设备的sdc1分区</strong></p>
+<h2 id="Linux使用stress-ng让CPU始终维持在百分比占用的办法"><a href="#Linux使用stress-ng让CPU始终维持在百分比占用的办法" class="headerlink" title="Linux使用stress-ng让CPU始终维持在百分比占用的办法"></a>Linux使用stress-ng让CPU始终维持在百分比占用的办法</h2><p>首先，你需要安装stress-ng，同时，也推荐你使用dstat观察CPU占用率<br>这两个软件通过<code>apt install stress-ng dstat</code>即可安装</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">stress-ng --cpu &lt;线程数&gt; --cpu-method matrixprod --cpu-load &lt;百分比数字&gt; --matrix-size 400 --timeout 0 --metrics-brief</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">参数解析</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">--cpu &lt;线程数&gt;是使用多少个线程</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">--cpu-load &lt;百分比数字&gt;是占用率维持在多少</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">上面这个两个参数需要配合使用，假设你的CPU是4核8线程，想要达到整个CPU50%占用率</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">则需要设置为--cpu 8 --cpu-load 50或者是--cpu 4 --cpu-load 100，总占用率=线程数*百分比</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">--cpu-method matrixprod 这个选项指定了要使用的 CPU 负载类型，这里设置为 matrixprod，表示使用矩阵乘法来进行负载测试</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">--matrix-size 400 这个选项指定了矩阵乘法中的矩阵大小，这里设置为 400x400，表示要进行 400x400 的矩阵乘法计算</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">--<span class="built_in">timeout</span> 0表示一直运行，也可设置为秒s分m时h的自定义时间如120s，也可写为2m</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">--metrics-brief 这个选项指定了在结束测试后输出的统计信息，这里设置为 brief，表示只输出简要的统计信息 -- 如果只是单纯为了占用CPU，可以不用这个</span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">示例，56核112线程的CPU使其占用维持在64%</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">可以采用两个方案，控制满载的线程，或者直接设定总负载率</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">因为我需要其余线程用于测试，所以下面采用的是控制满载线程的方式，使剩余线程空闲</span></span><br><span class="line">stress-ng --cpu 72 --cpu-method matrixprod --cpu-load 100 --matrix-size 400 --timeout 0 --metrics-brief</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">补充，因为stress-ng需要使用内存，考虑到你可能需要限制占用的内存量，可以使用以下方式实现</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">指定--vm-bytes参数，该参数的作用是每个线程能使用的内存大小</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">--vm-bytes参数允许的范围是4KB-256TB，默认似乎是20MB</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">我修改后的测试代码如下：</span></span><br><span class="line">stress-ng --cpu 72 --cpu-method matrixprod --cpu-load 100 --vm-bytes 4K --matrix-size 400 --timeout 0 --metrics-brief</span><br></pre></td></tr></table></figure>
+
+<h2 id="Linux使用vsftp部署-FTP服务器的办法"><a href="#Linux使用vsftp部署-FTP服务器的办法" class="headerlink" title="Linux使用vsftp部署 FTP服务器的办法"></a>Linux使用vsftp部署 FTP服务器的办法</h2><hr>
+<h2 id="本站新发布了使用docker部署-vsftpd的方法，推荐使用docker部署，请查看文章《使用Docker部署vsftpd》"><a href="#本站新发布了使用docker部署-vsftpd的方法，推荐使用docker部署，请查看文章《使用Docker部署vsftpd》" class="headerlink" title="本站新发布了使用docker部署 vsftpd的方法，推荐使用docker部署，请查看文章《使用Docker部署vsftpd》"></a>本站新发布了使用docker部署 vsftpd的方法，推荐使用docker部署，请查看文章《使用Docker部署vsftpd》</h2><p>第一步，根据你的发行版使用<code>apt</code>或<code>yum</code>及其他命令，安装<code>vsftp</code>软件包</p>
+<p><img src="https://img.hackerbs.com/20230906162643.png" alt="20230906162643"></p>
+<p>第二步，编辑<code>vsftpd.conf</code>文件</p>
+<p><img src="https://img.hackerbs.com/20230906162829.png" alt="20230906162829"></p>
+<p>确认以下内容：</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>anonymous_enable&#x3D;NO</td>
+<td>禁止匿名访问</td>
+</tr>
+<tr>
+<td>local_enable&#x3D;YES</td>
+<td>允许本地用户登录</td>
+</tr>
+<tr>
+<td>write_enable&#x3D;YES</td>
+<td>允许用户上传文件</td>
+</tr>
+<tr>
+<td>chroot_local_user&#x3D;YES</td>
+<td>限制用户的根目录为其主目录</td>
+</tr>
+</tbody></table>
+<p>第三步，添加以下行以指定允许登录的用户列表，这里我们创建一个名为<code>test</code>的用户</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">userlist_enable=YES</span><br><span class="line">userlist_file=/etc/vsftpd.userlist</span><br><span class="line">userlist_deny=NO</span><br><span class="line">local_root=指定目录</span><br></pre></td></tr></table></figure>
+
+<p>编辑完成后保存退出</p>
+<p><img src="https://img.hackerbs.com/20230906171602.png" alt="20230906171602"></p>
+<p>第四步，创建指定用户，此处以<code>abc</code>用户作为演示</p>
+<p>使用<code>useradd abc</code>创建<code>abc</code>用户</p>
+<p><strong>各发行版创建过程并不一致，请以你的发行版为准！</strong></p>
+<p><img src="https://img.hackerbs.com/20230906171833.png" alt="20230906171833"></p>
+<p>使用<code>mkdir</code>命令，创建一个用于ftp的目录</p>
+<p>修改该目录所有者及所有组权限为<code>abc</code>，并赋予755权限</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">因vsftp安全策略原因，用户主目录，也就是/opt/ftp，将无法具备写权限，所以需要创建子目录用于ftp文件传输</span></span><br><span class="line">mkdir -p /opt/ftp/data</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">设置abc用户主目录为/opt/ftp/abc</span></span><br><span class="line">usermod -d /opt/ftp abc</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">移除abc用户主目录/opt/ftp的写权限，否则无法登录</span></span><br><span class="line">chmod a-w /opt/ftp</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">修改目录所有者及所有组</span></span><br><span class="line">chown -R abc:abc /opt/ftp/data</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">修改目录权限为755</span></span><br><span class="line">chmod -R 755 /opt/ftp/data</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">此处/opt/ftp则为上文中local_root=指定目录：local_root=/opt/ftp</span></span><br></pre></td></tr></table></figure>
+
+<p>根据上文的<code>userlist_file=/etc/vsftpd.userlist</code>，在<code>/etc</code>目录下创建<code>vsftpd.userlist</code>文件并编辑内容</p>
+<p><img src="https://img.hackerbs.com/20230906164114.png" alt="20230906164114"></p>
+<p>输入用户名<code>abc</code>退出保存即可，如需添加多个用户，每行一个即可</p>
+<p><img src="https://img.hackerbs.com/20230906171208.png" alt="20230906171208"></p>
+<p>第五步，重启<code>vsftp</code>服务</p>
+<p><code>systemctl restart vsftpd</code></p>
+<p><img src="https://img.hackerbs.com/20230906164916.png" alt="20230906164916"></p>
+<p>如果需要让该ftp用户<code>abc</code>无法登录到系统，仅访问ftp，则按照以下步骤设置</p>
+<p>首先，找到系统中的<code>/etc/base</code>或<code>/etc/shells</code>，通常系统中会同时存在这两个文件，需要分别查看这两个文件，选择有内容的那一个，如图，<code>/etc/bash</code>为空，则该文件无效</p>
+<p><img src="https://img.hackerbs.com/20230906183203.png" alt="20230906183203"></p>
+<p>编辑有文件的<code>/etc/shells</code>，在文件末尾添加<code>/bin/false</code>后保存退出</p>
+<p><img src="https://img.hackerbs.com/20230906183254.png" alt="20230906183254"></p>
+<p>随后使用<code>usermod -s /bin/false abc</code>即可使<code>abc</code>用户无法登录到系统，但可正常登录ftp，若ftp依旧无法登录，使用上文中的方式重启<code>vsftp</code>服务即可。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://hackerbs.com">hackerbs.com</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://hackerbs.com/Linux%E6%8A%80%E5%B7%A7%E3%80%90%E6%8C%81%E7%BB%AD%E6%9B%B4%E6%96%B0%E3%80%91.html">https://hackerbs.com/Linux%E6%8A%80%E5%B7%A7%E3%80%90%E6%8C%81%E7%BB%AD%E6%9B%B4%E6%96%B0%E3%80%91.html</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://hackerbs.com" target="_blank">hackerbs's Blog - 探索知识的宇宙</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="tags/Linux/">Linux</a></div><div class="post-share"><div class="social-share" data-image="/images/avatar.svg" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="51%E5%8D%95%E7%89%87%E6%9C%BA%E7%9A%84%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0.html" title="51单片机的学习笔记"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">51单片机的学习笔记</div></div><div class="info-2"><div class="info-item-1">51单片机的学习及其关联知识开始前的一段话： 求知欲是人类进步的源泉，每接触一项新的知识就像是一滴墨滴在了宣纸上，向着四周疯狂扩散，这种极度的求知欲深深地刺激着我，撕裂我的思维向四周辐射，贪婪地、疯狂地汲取着接触到的每一项知识，这种知识爆炸的感觉带给我成瘾的快感！ 对于单片机的起步，始于我小时候的梦想，我想有高度智能的科技、机械围绕着我的生活，我想拥有一个高度智能的工厂，想要无数无数乃至我甚至不知如何形容的科技，我痴迷着这些技术，我疯狂的汲取各种知识，每一次突破一个新的知识面就像是进入一个未知的宇宙！偶然间，我发现我我的梦想可以从两个两个方面入手：  软件层面的技术：编程，人工智能等 硬件层面的技术：机械，电路开发等  于是我有了方向，向着我想要的极力冲刺！ 我于2022.11.21日凌晨开始了51单片机的学习，从茫然无知，到那一滴墨滴在了宣纸上，围绕着单片机开始的知识爆炸让我无比亢奋！从一块小小的51单片机，知识开始爆炸开来，我从未接触过的领域，芯片，电路，逻辑……无数的知识冲刷着我的大脑，无法抑制的激动，发现未知的知识宇宙，我疯狂的汲取着无穷无尽的知识，感叹着人类智慧的结晶！...</div></div></div></a><a class="pagination-related" href="vscode%E7%BC%96%E5%86%99markdown%E7%9A%84%E6%8F%92%E4%BB%B6%E6%8E%A8%E8%8D%90.html" title="vscode编写markdown的插件推荐"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">vscode编写markdown的插件推荐</div></div><div class="info-2"><div class="info-item-1">使用 VScode 编写 Markdown 的插件推荐及其技巧Markdown 插件推荐 Markdown Preview Enhanced Markdown PDF LaTeX Workshop Paste Image Markdown All in One  Markdown 插件详细介绍Markdown Preview Enhanced该插件可以对 Markdown 源码进行实时渲染预览，通过配置插件的  Markdown-preview-enhanced: Automatically Show Preview Of Markdown Being Edited   Automatically show preview of markdown being edited.   可以实现点击 md 文件编辑的同时自动打开实时渲染界面  Markdown PDF该插件可以将 md 文件转换为pdf、html、png、jpeg四种格式，配合 vscode 快捷键Ctrl+Shift+P并输入&gt;export (pdf)后回车即可将当前打开的 md 文件转换为 PDF 格式，替换(...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="%E5%85%B3%E4%BA%8E%E7%A3%81%E7%9B%98%E6%AE%8B%E7%95%99lvm%E7%9A%84%E8%A7%A3%E5%86%B3%E5%8A%9E%E6%B3%95.html" title="关于磁盘残留lvm的解决办法"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2024-11-28</div><div class="info-item-2">关于磁盘残留lvm的解决办法</div></div><div class="info-2"><div class="info-item-1">很多时候从其他机器拿过来的盘通常是没有经过格式化的，这样就会出现一些残留的lvm信息，导致无法正常使用。 出现该残留lvm的原因是因为设备映射器device mapper正在管理该磁盘，所以wipefs -a -f和dd if&#x3D;&#x2F;dev&#x2F;zero of&#x3D;&#x2F;dev&#x2F;disk命令无法清除该lvm 123456789# lsblk显示如下nvme0n1					disk└storage-data			lvm# ls -l /dev/mapper查询device mapper管理的磁盘信息lrwxrwxrwx 1 root root 		7 Nov 28 18:04 storage-data -&gt;../dm-0#dmsetup remove删除dmsetup remove /dev/mapper/storage-data </div></div></div></a><a class="pagination-related" href="Debian%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E3%80%90%E6%8C%81%E7%BB%AD%E6%9B%B4%E6%96%B0%E3%80%91.html" title="Debian基础知识【持续更新】"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2023-03-01</div><div class="info-item-2">Debian基础知识【持续更新】</div></div><div class="info-2"><div class="info-item-1">本文将持续更新Debian系统的各类基础知识，欢迎您持续关注，有任何问题可以在本页末尾评论或通过展示的联系方式联系我根据红帽的公告，CentOS将不再适合作为生产环境的稳定系统使用，为此我个人建议您尝试著名且优秀的Debian系统  2020年12月08日，CentOS官方宣布了停止维护CentOS Linux 8的计划，并推出了CentOS Stream项目。具体信息，请阅读CentOS官方公告。其具体规划如下：  CentOS Linux 8作为RHEL 8的复刻版本，生命周期缩短，于2021年12月31日停止更新并停止维护（EOL）。 基于以上官方变更计划，CentOS Linux 8用户将无法获得包括问题修复和功能更新在内的任何软件维护和支持。CentOS官方建议停止维护后：对于开发或测试环境，可以将环境迁移至CentOS Stream版本； 对于生产环境或部署关键业务的系统，建议使用稳定的Red Hat Enterprise Linux。对此，用户需评估以下问题： CentOS Stream是一个滚动发行的版本，仅为RHEL前置测试版，运用于生产环境时，可能存在一定风险...</div></div></div></a><a class="pagination-related" href="Linux%E6%9F%A5%E8%AF%A2ssh%E6%97%A5%E5%BF%97%E5%88%A4%E6%96%AD%E6%98%AF%E5%90%A6%E8%A2%AB%E5%85%A5%E4%BE%B5%E5%8F%8A%E5%8A%A0%E5%BC%BAssh%E5%AE%89%E5%85%A8%E7%9A%84%E5%8A%9E%E6%B3%95.html" title="Linux查询ssh日志判断是否被入侵及加强ssh安全的办法"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2024-03-05</div><div class="info-item-2">Linux查询ssh日志判断是否被入侵及加强ssh安全的办法</div></div><div class="info-2"><div class="info-item-1">查询ssh登陆日志的办法journalctl _COMM=sshd可以查看sshd所有日志 1234567891011121314# 查询ssh登陆失败总次数journalctl _COMM=sshd | grep Failed |wc -l#查询ssh登陆成功总次数journalctl _COMM=sshd | grep Accepted |wc -l#查询被多少不同IP爆破了journalctl _COMM=sshd | grep &quot;Failed&quot; | awk &#x27;&#123;print $(NF-3)&#125;&#x27; | sort -u | wc -l# 列出爆破你的IPjournalctl _COMM=sshd | grep &quot;Failed&quot; | awk &#x27;&#123;print $(NF-3)&#125;&#x27; | sort -u# 列出成功登陆的IPjournalctl _COMM=sshd | grep -E &quot;Accepted&quot; | awk &#x27;&#123;matc...</div></div></div></a><a class="pagination-related" href="%E5%B0%86%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%8F%AF%E6%89%A7%E8%A1%8C%E7%A8%8B%E5%BA%8F%E6%9E%84%E5%BB%BA%E4%B8%BAdeb%E5%8C%85.html" title="将二进制可执行程序构建为deb包"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2023-10-17</div><div class="info-item-2">将二进制可执行程序构建为deb包</div></div><div class="info-2"><div class="info-item-1">构建deb包所需依赖：apt install dh-make 本文使用本站aptdownloader包做为演示 第一步，创建项目目录，项目目录名称格式应为包名-版本号如aptdownloader-1.0.0 123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960616263646566676869707172737475767778798081828384858687888990919293949596979899100101102103104105106107108109110111112113114115116117118119120121122123124125126127128129130131132133134135136137138139140141# 我在我的/root/目录下创建了一个deb文件夹，也就是https://github.com/1949hacker/deb的仓库# 使用tree列出目录...</div></div></div></a><a class="pagination-related" href="Debian%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B.html" title="Debian安装教程"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2024-06-03</div><div class="info-item-2">Debian安装教程</div></div><div class="info-2"><div class="info-item-1">debian-live-12.5.0-amd64-standard安装教程该系统下载地址： 中科大镜像站下载 网盘ISO文件夹中下载  nano打开文件便可直接编辑，保存则需要先使用Ctrl+o保存然后使用Ctrl+x退出  进入安装程序选择Start installer  选择语言这一步切记，只选择English，不要选择其他，否则在命令行模式会导致无法正常显示字体，出现方块状乱码  选择地区选择other -&gt; Asia -&gt; China    本地化配置这一步和上一步都相当于Windows的地区&#x2F;语言，跟着教程选择默认的即可，除了English、en_UF.UTF-8之外的任何，除非你是老手，否则新手一律选择默认，避免字体显示错误  配置键盘默认 American English  配置网络如果有DHCP，这一步会直接跳过，没有DHCP需要手动配置的参考下文手动配置IP  手动配置IP若没有DHCP或没有网线,这一步会提示网络连接失败 图中提示的内容大概意思是您的网络没有DHCP服务器或DHCP响应过慢  选择Continue，选择Configure ...</div></div></div></a><a class="pagination-related" href="Ubuntu%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B.html" title="Ubuntu安装教程"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2024-05-30</div><div class="info-item-2">Ubuntu安装教程</div></div><div class="info-2"><div class="info-item-1">ubuntu-20.04.6-live-server-amd64安装教程该系统下载地址： 中科大镜像站下载 网盘ISO文件夹中下载 进入安装程序灰色&#x2F;绿色高亮就是选定状态，Enter就是确认 不动键盘的话，会自动选择第一个，手动回车进入第一个也可Install Ubuntu Server  选择安装语言通常来讲，选择English，因为命令行只支持英文，选择其他语言会导致命令行输出的中文无法显示，呈现方块状。  跳过更新直接安装因为安装的是20.04.6，所以会在此处提示有更新的版本，选择默认的Continue without updating即可  选择键盘直接使用默认的English，Enter下一步即可  配置网络如果是DHCP自动获取则直接Done下一步即可，否则参考配置静态IP  配置静态IP使用上箭头展开此处  选择Edit IPv4并使用Manual手动配置网络 Ubuntu的配置与其他Linux略有不同，如表所示    配置项 内容 说明    Subnet IP段&#x2F;前缀 这一项需要配置IP段如192.168.2.0段，并指定前缀，前缀可以用子...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="images/avatar.svg" onerror="this.onerror=null;this.src='img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">hackerbs.com</div><div class="author-info-description">hackerbs's Blog - 探索知识的宇宙</div><div class="site-data"><a href="archives/"><div class="headline">文章</div><div class="length-num">43</div></a><a href="tags/"><div class="headline">标签</div><div class="length-num">133</div></a><a href="categories/"><div class="headline">分类</div><div class="length-num">15</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Linux%E6%9F%A5%E7%9C%8B%E7%A1%AC%E7%9B%98SN"><span class="toc-number">1.</span> <span class="toc-text">Linux查看硬盘SN</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Linux%E8%A7%A3%E9%99%A4%E6%96%87%E4%BB%B6%E3%80%81%E7%9B%AE%E5%BD%95%E5%8D%A0%E7%94%A8"><span class="toc-number">2.</span> <span class="toc-text">Linux解除文件、目录占用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Linux%E4%BD%BF%E7%94%A8iostat%E6%9F%A5%E7%9C%8B%E7%A3%81%E7%9B%98io%E4%BF%A1%E6%81%AF"><span class="toc-number">3.</span> <span class="toc-text">Linux使用iostat查看磁盘io信息</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%82%E6%95%B0%E8%AF%A6%E8%A7%A3"><span class="toc-number">3.1.</span> <span class="toc-text">参数详解</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BE%93%E5%87%BA%E7%BB%93%E6%9E%9C%E5%8F%82%E6%95%B0%E8%A7%A3%E8%AF%BB"><span class="toc-number">3.2.</span> <span class="toc-text">输出结果参数解读</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#fio%E6%B5%8B%E8%AF%95%E5%B7%A5%E5%85%B7%E8%AF%A6%E7%BB%86%E6%95%99%E7%A8%8B"><span class="toc-number">4.</span> <span class="toc-text">fio测试工具详细教程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Linux-NFS%E6%8C%82%E8%BD%BD%E5%8F%8A%E4%BD%BF%E7%94%A8systemctl%E8%87%AA%E5%8A%A8%E6%8C%82%E8%BD%BD"><span class="toc-number">5.</span> <span class="toc-text">Linux NFS挂载及使用systemctl自动挂载</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#mdadm%E7%AE%A1%E7%90%86%E8%BD%AFRAID%E9%98%B5%E5%88%97"><span class="toc-number">6.</span> <span class="toc-text">mdadm管理软RAID阵列</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8mdadm%E5%88%9B%E5%BB%BARAID%E7%9A%84%E4%B8%80%E8%88%AC%E6%AD%A5%E9%AA%A4%EF%BC%9A"><span class="toc-number">6.1.</span> <span class="toc-text">使用mdadm创建RAID的一般步骤：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8mdadm%E5%88%A0%E9%99%A4RAID%E7%9A%84%E4%B8%80%E8%88%AC%E6%AD%A5%E9%AA%A4%EF%BC%9A"><span class="toc-number">6.2.</span> <span class="toc-text">使用mdadm删除RAID的一般步骤：</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#fstab%E8%87%AA%E5%8A%A8%E6%8C%82%E8%BD%BD%E5%A4%B1%E8%B4%A5%E5%AF%BC%E8%87%B4%E6%97%A0%E6%B3%95%E5%BC%80%E6%9C%BA%E7%9A%84%E8%A7%A3%E5%86%B3%E5%8A%9E%E6%B3%95"><span class="toc-number">7.</span> <span class="toc-text">fstab自动挂载失败导致无法开机的解决办法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Linux%E4%BD%BF%E7%94%A8stress-ng%E8%AE%A9CPU%E5%A7%8B%E7%BB%88%E7%BB%B4%E6%8C%81%E5%9C%A8%E7%99%BE%E5%88%86%E6%AF%94%E5%8D%A0%E7%94%A8%E7%9A%84%E5%8A%9E%E6%B3%95"><span class="toc-number">8.</span> <span class="toc-text">Linux使用stress-ng让CPU始终维持在百分比占用的办法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Linux%E4%BD%BF%E7%94%A8vsftp%E9%83%A8%E7%BD%B2-FTP%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E5%8A%9E%E6%B3%95"><span class="toc-number">9.</span> <span class="toc-text">Linux使用vsftp部署 FTP服务器的办法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%AC%E7%AB%99%E6%96%B0%E5%8F%91%E5%B8%83%E4%BA%86%E4%BD%BF%E7%94%A8docker%E9%83%A8%E7%BD%B2-vsftpd%E7%9A%84%E6%96%B9%E6%B3%95%EF%BC%8C%E6%8E%A8%E8%8D%90%E4%BD%BF%E7%94%A8docker%E9%83%A8%E7%BD%B2%EF%BC%8C%E8%AF%B7%E6%9F%A5%E7%9C%8B%E6%96%87%E7%AB%A0%E3%80%8A%E4%BD%BF%E7%94%A8Docker%E9%83%A8%E7%BD%B2vsftpd%E3%80%8B"><span class="toc-number">10.</span> <span class="toc-text">本站新发布了使用docker部署 vsftpd的方法，推荐使用docker部署，请查看文章《使用Docker部署vsftpd》</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="%E9%9A%8F%E7%AC%94%20-%20%E3%80%8A%E6%88%91%E5%A7%8B%E7%BB%88%E6%98%AF%E6%88%91%E3%80%8B.html" title="随笔 - 《我始终是我》">随笔 - 《我始终是我》</a><time datetime="2026-07-18T00:00:00.000Z" title="发表于 2026-07-18 08:00:00">2026-07-18</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="%E9%9A%8F%E7%AC%94%20-%20%E3%80%8A%E7%A0%B4%E5%B1%80%E7%9A%84%E7%89%A9%E7%90%86%E5%AD%A6%EF%BC%9A%E9%87%8D%E9%87%8F%E3%80%81%E6%9D%A0%E6%9D%86%E4%B8%8E%E6%B6%9F%E6%BC%AA%E3%80%8B.html" title="随笔 - 《破局的物理学：重量、杠杆与涟漪》">随笔 - 《破局的物理学：重量、杠杆与涟漪》</a><time datetime="2026-07-05T00:00:00.000Z" title="发表于 2026-07-05 08:00:00">2026-07-05</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="%E9%9A%8F%E7%AC%94%20-%20%E3%80%8A%E5%AD%98%E5%9C%A8%E7%9A%84%E7%97%95%E8%BF%B9%EF%BC%9A%E4%B8%8D%E5%9C%A8%E4%BA%8E%E7%9F%B3%E7%A2%91%EF%BC%8C%E8%80%8C%E4%BA%8E%E6%B6%9F%E6%BC%AA%E3%80%8B.html" title="随笔 - 《存在的痕迹：不在于石碑，而于涟漪》">随笔 - 《存在的痕迹：不在于石碑，而于涟漪》</a><time datetime="2025-10-17T08:15:00.000Z" title="发表于 2025-10-17 16:15:00">2025-10-17</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="IT%E5%9C%BA%E6%99%AF%E4%B8%93%E4%B8%9A%E6%9C%AF%E8%AF%AD%E8%A1%A8.html" title="IT场景专业术语表">IT场景专业术语表</a><time datetime="2025-10-17T05:45:45.000Z" title="发表于 2025-10-17 13:45:45">2025-10-17</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="%E5%85%B3%E4%BA%8E%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%A1%AC%E7%9B%98%E6%95%85%E9%9A%9C%E4%BD%86%E5%B8%A6%E5%A4%96%E6%B2%A1%E6%9C%89%E9%94%99%E8%AF%AF%E6%97%A5%E5%BF%97%E7%9A%84%E6%8E%92%E9%9A%9C%E4%B8%8E%E6%8A%A5%E4%BF%AE%E7%AC%94%E8%AE%B0.html" title="关于服务器硬盘故障但带外没有错误日志的排障与报修笔记">关于服务器硬盘故障但带外没有错误日志的排障与报修笔记</a><time datetime="2025-09-18T07:49:46.000Z" title="发表于 2025-09-18 15:49:46">2025-09-18</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By hackerbs.com</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.7.1.260810</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="js/utils.js?v=5.7.1.260810"></script><script src="js/main.js?v=5.7.1.260810"></script><div class="js-pjax"></div><script src="js/effects.js" defer></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

@@ -1,0 +1,341 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>hackerbs's Blog - 探索知识的宇宙 - 技术随笔 · 探索知识的宇宙</title><meta name="author" content="hackerbs.com"><meta name="copyright" content="hackerbs.com"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="1e1e2e"><meta name="description" content="hackerbs&#39;s Blog - 探索知识的宇宙">
+<meta property="og:type" content="website">
+<meta property="og:title" content="hackerbs&#39;s Blog - 探索知识的宇宙">
+<meta property="og:url" content="https://hackerbs.com/index.html">
+<meta property="og:site_name" content="hackerbs&#39;s Blog - 探索知识的宇宙">
+<meta property="og:description" content="hackerbs&#39;s Blog - 探索知识的宇宙">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hackerbs.com/images/avatar.svg">
+<meta property="article:author" content="hackerbs.com">
+<meta property="article:tag" content="hackerbs,hacker,brainstorm,头脑风暴,Linux,Debian">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hackerbs.com/images/avatar.svg"><script type="application/ld+json"></script><link rel="shortcut icon" href="images/favicon.svg"><link rel="canonical" href="https://hackerbs.com/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="css/index.css?v=5.7.1.260810"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.3.1/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        try {
+          const data = { value }
+
+          if (ttl != null) {
+            data.expiry = Date.now() + ttl * 86400000
+          }
+
+          localStorage.setItem(key, JSON.stringify(data))
+        } catch (e) {
+          console.error(e)
+        }
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return
+
+        try {
+          const data = JSON.parse(itemStr)
+
+          if (data.expiry && Date.now() > data.expiry) {
+            localStorage.removeItem(key)
+            return
+          }
+
+          return data.value
+        } catch {
+          localStorage.removeItem(key)
+        }
+      }
+    }
+
+    const scriptCache = new Map()
+    const cssCache = new Map()
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => {
+        if (scriptCache.has(url)) {
+          return scriptCache.get(url)
+        }
+
+        const promise = new Promise((resolve, reject) => {
+          const script = document.createElement('script')
+
+          script.src = url
+          script.async = true
+
+          for (const key in attr) {
+            script.setAttribute(key, attr[key])
+          }
+
+          script.onload = resolve
+          script.onerror = reject
+
+          document.head.appendChild(script)
+        })
+
+        scriptCache.set(url, promise)
+
+        return promise
+      },
+      getCSS: (url, id) => {
+        if (cssCache.has(url)) {
+          return cssCache.get(url)
+        }
+
+        const promise = new Promise((resolve, reject) => {
+          const link = document.createElement('link')
+
+          link.rel = 'stylesheet'
+          link.href = url
+
+          if (id) {
+            link.id = id
+          }
+
+          link.onload = resolve
+          link.onerror = reject
+
+          document.head.appendChild(link)
+        })
+
+        cssCache.set(url, promise)
+
+        return promise
+      },
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const metaThemeColor = document.querySelector('meta[name="theme-color"]')
+      const activateDarkMode = () => {
+        document.documentElement.dataset.theme = 'dark'
+        if (metaThemeColor !== null) {
+          metaThemeColor.setAttribute('content', '1e1e2e')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.dataset.theme = 'light'
+        if (metaThemeColor !== null) {
+          metaThemeColor.setAttribute('content', '1e1e2e')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'hackerbs\'s Blog - 探索知识的宇宙',
+  isHighlightShrink: false,
+  isToc: false,
+  pageType: 'home'
+}</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/inter@5/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/space-grotesk@5/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/jetbrains-mono@5/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/fraunces@5/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.7.0/style.css"><link rel="stylesheet" href="css/beautify.css"><meta name="generator" content="Hexo 8.1.2"></head><body><div class="page" id="body-wrap"><header class="full_page fixed" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="index.html"><span class="site-name">hackerbs's Blog - 探索知识的宇宙</span></a></span><div id="menus"></div></nav><div id="site-info"><h1 id="site-title">hackerbs's Blog - 探索知识的宇宙</h1><div id="site-subtitle"><span id="subtitle"></span></div></div><div id="scroll-down"><i class="fas fa-angle-down scroll-down-effects"></i></div></header><main class="layout" id="content-inner"><section class="hub-topics"><div class="hub-head"><span class="k">BROWSE</span><h2>按主题浏览</h2><p>共 82 篇文章 · 技术为主，偶有随笔</p></div><div class="topic-grid"><a class="topic" href="categories/知识库/"><span class="t-name">知识库</span><span class="t-count">39</span></a><a class="topic" href="categories/容器/"><span class="t-name">容器</span><span class="t-count">5</span></a><a class="topic" href="categories/系统/"><span class="t-name">系统</span><span class="t-count">5</span></a><a class="topic" href="categories/虚拟化/"><span class="t-name">虚拟化</span><span class="t-count">5</span></a><a class="topic" href="categories/存储/"><span class="t-name">存储</span><span class="t-count">4</span></a><a class="topic" href="categories/文学/"><span class="t-name">文学</span><span class="t-count">4</span></a><a class="topic" href="categories/硬件/"><span class="t-name">硬件</span><span class="t-count">3</span></a><a class="topic" href="categories/基础/"><span class="t-name">基础</span><span class="t-count">3</span></a><a class="topic" href="categories/工具/"><span class="t-name">工具</span><span class="t-count">3</span></a><a class="topic" href="categories/发布/"><span class="t-name">发布</span><span class="t-count">3</span></a><a class="topic" href="categories/嵌入式/"><span class="t-name">嵌入式</span><span class="t-count">2</span></a><a class="topic" href="categories/安全/"><span class="t-name">安全</span><span class="t-count">2</span></a><a class="topic" href="categories/运维/"><span class="t-name">运维</span><span class="t-count">2</span></a><a class="topic" href="categories/自动化/"><span class="t-name">自动化</span><span class="t-count">1</span></a><a class="topic" href="categories/网络/"><span class="t-name">网络</span><span class="t-count">1</span></a></div></section><div class="recent-posts nc" id="recent-posts"><div class="recent-post-items"><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="%E9%9A%8F%E7%AC%94%20-%20%E3%80%8A%E6%88%91%E5%A7%8B%E7%BB%88%E6%98%AF%E6%88%91%E3%80%8B.html" title="随笔 - 《我始终是我》">随笔 - 《我始终是我》</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2026-07-18T00:00:00.000Z" title="发表于 2026-07-18 08:00:00">2026-07-18</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="categories/%E6%96%87%E5%AD%A6/">文学</a></span></div><div class="content">《我始终是我》 上一篇文章里，我讲了一套很冷的东西。重量、杠杆、交易、破圈——听起来像一台精密运转的机器。有人可能会觉得，这个人是不是太理性了，是不是把一切都算得太清楚了，是不是已经把自己活成了一个算法。 不是。 所以这篇文章，我想讲讲框架之下的那个人。  我确实热衷于拆解世界。GPU 集群怎么互联、IPO 招股书里的商业模式怎么运转、社会资源怎么流动、人脉的本质是什么——我看到任何复杂的东西，第一反应都是：它的底层逻辑是什么？它为什么会是这个样子？既然它是人制造出来的，那我就应该能理解它。 这是我的乐趣所在。我不满足于”它很厉害”这种模糊的评价，我要知道它厉害在哪，为什么能成立，以及这个逻辑能不能被我用在自己身上。 但这种拆解世界的冲动，并没有把我变成一个冷血的人。 我会在网络上刷到一个陌生人受苦的视频，沉默很久。我会因为路边一朵桂花被雨打落满地，站在那儿看半天，然后写”百年古树千年朽木，十里繁荣万里荒芜”。我会在看到国际新闻里某些无力改变的事情时，心里堵着，说不出来。 我没有关掉我的感性。我只是给它画了一条边界。  这条边界是：我的情绪和共情能力，只分配给那些我力所能及的事情...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="%E9%9A%8F%E7%AC%94%20-%20%E3%80%8A%E7%A0%B4%E5%B1%80%E7%9A%84%E7%89%A9%E7%90%86%E5%AD%A6%EF%BC%9A%E9%87%8D%E9%87%8F%E3%80%81%E6%9D%A0%E6%9D%86%E4%B8%8E%E6%B6%9F%E6%BC%AA%E3%80%8B.html" title="随笔 - 《破局的物理学：重量、杠杆与涟漪》">随笔 - 《破局的物理学：重量、杠杆与涟漪》</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2026-07-05T00:00:00.000Z" title="发表于 2026-07-05 08:00:00">2026-07-05</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="categories/%E6%96%87%E5%AD%A6/">文学</a></span></div><div class="content">《破局的物理学：重量、杠杆与涟漪》 成年人的世界里，一切关系本质上都是交易。 这话不好听。但它让我站起来了。  很长一段时间我活在一种撕裂里。一边是浮尘落尽后的清醒——知道那些百年基业、名门望族，拉长到千年尺度不过朽木一堆；一边是眼睁睁看着别人在往上走，自己却连”破圈”的踏板都摸不到。 我试过焦虑，没用。我试过混圈子，更没用。没有东西能给别人的人，站在谁身边都是空气。 后来我停止向外找答案，开始向内搭模型。我反复问自己一个问题：我能提供什么？不能提供任何东西的人，凭什么让别人把资源给你？ 答案在物理里。  重量重量是你的硬通货。你的技能、你的成果、你用时间验证过的不可替代性。 这玩意骗不了人。你有没有重量，上手一试就知道。你可以吹一万个字，但一个项目砸下来，重量为零的人瞬间透明。 怎么积累重量？四个字：努力、沉淀、勤奋、不急躁。 这四个字单独看像鸡汤，但真正做过事的人知道它的真正含义——把眼前每一件小事做到超出预期。不是为老板，不是为领导，是为自己。因为每一件被做到极致的事，都会变成你的履历上一条无法被抹去的刻度。重量是堆出来的。跳槽堆不出来，混日子堆不出来。 没有重量的人，所有...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="%E9%9A%8F%E7%AC%94%20-%20%E3%80%8A%E5%AD%98%E5%9C%A8%E7%9A%84%E7%97%95%E8%BF%B9%EF%BC%9A%E4%B8%8D%E5%9C%A8%E4%BA%8E%E7%9F%B3%E7%A2%91%EF%BC%8C%E8%80%8C%E4%BA%8E%E6%B6%9F%E6%BC%AA%E3%80%8B.html" title="随笔 - 《存在的痕迹：不在于石碑，而于涟漪》">随笔 - 《存在的痕迹：不在于石碑，而于涟漪》</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2025-10-17T08:15:00.000Z" title="发表于 2025-10-17 16:15:00">2025-10-17</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="categories/%E6%96%87%E5%AD%A6/">文学</a></span></div><div class="content">观此视频有感 人为什么有虚岁 因为妈妈比其他人 单独的拥有了你一年 《存在的痕迹：不在于石碑，而于涟漪》 小时候我就在想——人生的价值是什么？是钱吗？是权吗？是骄奢淫逸吗？ 那些生不带来、死不带去的东西罢了。 人生没多长，人生不应该只是一场体验，人生应该留下些什么，人生应该有价值。 钱、权，这些终将在你死去的那一刻消散。或许你为家人带来了财富，让他们享了福，我不能说这没有价值，但这还不够，远远不够。五十年、百年之后，他们也会逝去，你的存在，也将被慢慢淡忘。 如果这世间没有了你存在的痕迹，那么，你在这个世界上真的活过吗？ 年幼的我，怀揣着科研的梦想，认为知识是宝贵的财富。我曾以为，一切都是虚妄，唯有将知识——这人类的瑰宝——传承下去，让若干年、数十年之后，还有人使用这些知识，那便是人生价值的体现。 后来，时间冲刷着一切。麻木、迷茫，混杂着泥沙一团糟的日子，似乎，好像也就这样活一辈子了。 苦难是什么？是肉体上的饥寒交迫吗？确实，那也是苦难。可最痛苦的折磨是什么呢？是当我遇见像那个视频里一样的事情时，什么都做不了——没有能力伸出援手，没有能力改变任何，只能眼睁睁地看着一切发生。那种精神...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="IT%E5%9C%BA%E6%99%AF%E4%B8%93%E4%B8%9A%E6%9C%AF%E8%AF%AD%E8%A1%A8.html" title="IT场景专业术语表">IT场景专业术语表</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2025-10-17T05:45:45.000Z" title="发表于 2025-10-17 13:45:45">2025-10-17</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="categories/%E7%9F%A5%E8%AF%86%E5%BA%93/">知识库</a><i class="fas fa-angle-right article-meta-link"></i><i class="fas fa-inbox"></i><a class="article-meta__categories" href="categories/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%9F%BA%E7%A1%80/">基础</a></span></div><div class="content">用于各IT场景的专业术语的中英文对照工单场景   英文 英文全称 中文 释义    TC Ticket Created 新建工单 工单已在系统中被成功创建，并进入待处理队列   PR Pending Report 等待报告 工单处理因等待（用户、第三方或系统提供的）额外信息、日志或报告而暂时挂起   SM Self-Maintenance 自行维护 问题由用户自行解决或无需运维团队介入（如过保服务器），随后工单可被关闭   R Resolved 已解决 问题已被运维团队成功修复，该工单处理完毕   IW In Warranty 在保内 表示设备或服务处于保修期内，维修通常由供应商免费提供   OOW Out of Warranty 已过保 表示设备或服务已超出保修期，维修通常需要付费   TPM Third-Party Maintenance 第三方维保 表示设备由原厂之外的第三方服务商提供维护支持   日常运维场景   英文 英文全称 中文 释义    Ops Task Status Board Ops(Operations ) 运维任务状态看板 一个实时展示运维任务进度和状态...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="%E5%85%B3%E4%BA%8E%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%A1%AC%E7%9B%98%E6%95%85%E9%9A%9C%E4%BD%86%E5%B8%A6%E5%A4%96%E6%B2%A1%E6%9C%89%E9%94%99%E8%AF%AF%E6%97%A5%E5%BF%97%E7%9A%84%E6%8E%92%E9%9A%9C%E4%B8%8E%E6%8A%A5%E4%BF%AE%E7%AC%94%E8%AE%B0.html" title="关于服务器硬盘故障但带外没有错误日志的排障与报修笔记">关于服务器硬盘故障但带外没有错误日志的排障与报修笔记</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2025-09-18T07:49:46.000Z" title="发表于 2025-09-18 15:49:46">2025-09-18</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="categories/%E7%9F%A5%E8%AF%86%E5%BA%93/">知识库</a><i class="fas fa-angle-right article-meta-link"></i><i class="fas fa-inbox"></i><a class="article-meta__categories" href="categories/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%AD%98%E5%82%A8/">存储</a></span></div><div class="content">情况说明收到系统发出IO占用率和IO延迟的告警，登录带外排查无任何错误日志，随后进入操作系统使用脚本批量排查smartctl日志，发现存在错误计数，因smartctl并非厂家带外的告警日志，所以特此向Inspur、H3C、Lenovo、DELL进行了咨询，其中提到了一些日志参数的告警，目前已收到H3C、Inspur的回复 厂商对日志中以下内容的告警表示认可并作为报修依据    硬盘类型 参数 翻译 说明 来源    SSD ID 5 Reallocated_Sector_Ct 重分配扇区计数 因坏块被重新分配的扇区数量，值越高健康状况越差 新华三   SSD ID 197 Current_Pending_Sector 当前待处理扇区计数 有潜在读写错误、待重新映射的扇区数量(&gt;100更换) 浪潮&#x2F;新华三   SSD ID 187 Reported_Uncorrect 已报告的不可纠正错误 硬盘向主机报告的读&#x2F;写过程中发生的不可恢复错误次数(&gt;10更换) 浪潮   HDD Total uncorrected errors 总无法纠正错误 所有无法纠正...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="DELL%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%A1%AC%E7%9B%98IO%E5%91%8A%E8%AD%A6%E6%8E%92%E9%9A%9C%E6%80%9D%E8%B7%AF.html" title="DELL服务器硬盘IO告警排障思路">DELL服务器硬盘IO告警排障思路</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2025-09-17T03:04:28.000Z" title="发表于 2025-09-17 11:04:28">2025-09-17</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="categories/%E7%9F%A5%E8%AF%86%E5%BA%93/">知识库</a><i class="fas fa-angle-right article-meta-link"></i><i class="fas fa-inbox"></i><a class="article-meta__categories" href="categories/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%AD%98%E5%82%A8/">存储</a></span></div><div class="content">系统报IO告警，在带外无异常的情况下，在操作系统中进行排障故障现象监测平台报障IO占用率和延迟过高 初步排障登录带外观察是否有故障日志，无论是否有故障日志，均需要进一步进行二次核对 JBOD直通无RAID排障使用smartctl命令观察磁盘健康状态，网络上有大量教程，不再赘述 如果磁盘本身无故障，观察输出结果中的199  UltraDMA CRC Error Count这一行是否有记录，这是硬件通信错误的日志，如果有记录到纠正次数，那就说明发生了硬件连接的问题，如硬盘背板故障，连接线故障，接口松动等 批量排障命令参考 for i in {a..z}; do [ -b &quot;/dev/sd$i&quot; ] &amp;&amp; echo &quot;sd$i:&quot; &amp;&amp; sudo smartctl -a &quot;/dev/sd$i&quot; | grep &quot;199&quot;; done RAID阵列模式排障做了阵列的磁盘无法直接使用smartctl进行排障，需要改为smartctl -a -d megaraid,3 /dev/sd...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%A8%B3%E5%AE%9A%E6%80%A7%E5%8F%8A%E5%9F%BA%E5%87%86%E6%B5%8B%E8%AF%95%E6%96%B9%E6%B3%95.html" title="服务器稳定性及基准测试方法">服务器稳定性及基准测试方法</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2025-09-11T07:40:24.000Z" title="发表于 2025-09-11 15:40:24">2025-09-11</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="categories/%E7%9F%A5%E8%AF%86%E5%BA%93/">知识库</a><i class="fas fa-angle-right article-meta-link"></i><i class="fas fa-inbox"></i><a class="article-meta__categories" href="categories/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%BF%90%E7%BB%B4/">运维</a></span></div><div class="content"> 重要更新: 2025-11-4  硬盘测试开发了全自动测试工具，见下方硬盘测试部分  测试项测试前准备CPU调优BIOS关闭超线程方法：BIOS里找CPU或者Socket Configuration，进入其中，找Processor Configuration，进入其中关闭超线程即可超线程在BIOS的写法通常有：  SMT Logical Processor(LP) Hyper-Threading  理由：超线程的作用是让 CPU 能在一个线程等待（例如等待内存I&#x2F;O）时，利用空闲执行单元去执行另一个线程。所以对于CPU性能测试的浮点运算、以及CPU满载的业务场景，超线程导致的线程切换，反而会：  增加上下文切换与调度开销(Scheduler Overhead)  操作系统调度器看到两个逻辑核心，调度两个重量级任务上去，但实际上底层的物理核根本没法承担   导致缓存污染(Cache Pollution)  不同线程使用的数据不同，缓存反而会互相驱逐对方数据 这个问题与下文中根据L3缓存设计NB大小尤其相关    BIOS关闭C-State方法：BIOS里找CPU或者So...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="%E5%BC%82%E5%B8%B8%E5%AE%95%E6%9C%BABMC%E6%97%A5%E5%BF%97%E6%97%A0%E5%8F%82%E8%80%83%E4%BB%B7%E5%80%BC%E6%97%B6%E7%9A%84%E6%8E%92%E9%9A%9C%E6%80%9D%E8%B7%AF.html" title="异常宕机BMC日志无参考价值时的排障思路">异常宕机BMC日志无参考价值时的排障思路</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2025-09-10T10:35:21.000Z" title="发表于 2025-09-10 18:35:21">2025-09-10</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="categories/%E7%9F%A5%E8%AF%86%E5%BA%93/">知识库</a><i class="fas fa-angle-right article-meta-link"></i><i class="fas fa-inbox"></i><a class="article-meta__categories" href="categories/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%BF%90%E7%BB%B4/">运维</a></span></div><div class="content">巡检发现异常宕机，带外日志仅有一条热复位的记录BMC日志如下： SYS_Restart    系统启动/重新启动   开始热复位 - 触发 仅有一条热复位记录，无物理按键记录，无操作系统发起重启记录    排障思路 命令    排查启动日志 &#96;journalctl -b   排查内核缓冲区 dmesg --level=err,warn   排查是否有内核崩溃转储文件 ls -la /var/crash/   排查是否有硬件错误 &#96;journalctl -k   排查watchdog是否触发 &#96;journalctl -k   排查过热日志 &#96;journalctl -k   检查内存不足事件 &#96;journalctl -k   检查 CPU 或 I&#x2F;O 阻塞 sar -q -f /var/log/sa/sa10   检查内存错误计数 &#96;dmidecode -t memory   检查电源日志 &#96;journalctl -k   </div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="%E8%AE%B0%E5%BD%95%E4%B8%80%E6%AC%A1%E5%88%86%E6%9E%90%5B%E6%9C%8D%E5%8A%A1%E5%99%A8SSD%E6%8A%A5%E6%95%85%E9%9A%9C%E9%9A%8F%E5%90%8E%E8%87%AA%E8%A1%8C%E6%81%A2%E5%A4%8D%E6%AD%A3%E5%B8%B8%E7%8E%B0%E8%B1%A1%5D.html" title="记录一次分析[服务器SSD报故障随后自行恢复正常现象]">记录一次分析[服务器SSD报故障随后自行恢复正常现象]</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2025-09-09T09:36:21.000Z" title="发表于 2025-09-09 17:36:21">2025-09-09</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="categories/%E7%9F%A5%E8%AF%86%E5%BA%93/">知识库</a><i class="fas fa-angle-right article-meta-link"></i><i class="fas fa-inbox"></i><a class="article-meta__categories" href="categories/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%AD%98%E5%82%A8/">存储</a></span></div><div class="content">日常巡检时发现带外出现INTEL SSD故障告警，随后又自行恢复，间隔约30分钟，无人工介入。 smartctl -a /dev/sda    故障原因推测 排障思路    硬盘背板接触问题 检查smartctl中ID 199 UltraDMA CRC Error Count的值，是否存在CRC校验错误   NAND闪存寿命是否不足 检查smartctl中ID 233 Media Wearout Indicator的值   是否存在坏扇区 检查smartctl中ID 5 Reallocated sector ct的值   硬盘备用空间是否不足 检查smartctl中ID 232 Available Reservd space的值   实例： 123Media Wearout Indicator: 当前值0 临界值100 - 健康Reallocated Sector Count: 当前值0 临界值75 - 健康Available Reservd Spare: 当前值0 临界值100 - 健康 </div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="%E5%85%B3%E4%BA%8EDELL%20PowerEdge%E6%8A%A5%E9%94%99Correctable%20memory%20error%20logging%20disabled%20for%20a%20memory%20device%E7%9A%84%E8%AF%B4%E6%98%8E.html" title="关于DELL PowerEdge报错Correctable memory error logging disabled for a memory device的说明">关于DELL PowerEdge报错Correctable memory error logging disabled for a memory device的说明</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2025-09-04T08:16:54.000Z" title="发表于 2025-09-04 16:16:54">2025-09-04</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="categories/%E7%9F%A5%E8%AF%86%E5%BA%93/">知识库</a><i class="fas fa-angle-right article-meta-link"></i><i class="fas fa-inbox"></i><a class="article-meta__categories" href="categories/%E7%9F%A5%E8%AF%86%E5%BA%93/%E7%A1%AC%E4%BB%B6/">硬件</a></span></div><div class="content">关于DELL PowerEdge R740XD iDRAC报内存设备的可纠正内存错误日志记录已禁用问题的说明及解答 巡检发现：iDRAC报错Correctable memory error logging disabled for a memory  致电800-858-0613核实BIOS固件版本低于2.10，固件过旧，属于遗留问题 关于该报错的解释为：BIOS关闭了对于ECC纠错记录的保存，仅仅是没有记录进行了ECC纠错，实际上并不影响使用，可能存在的风险为：无法知晓ECC进行了多少次纠错。 2025-9-4已致电DELL800-858-0613核实，该信息可信 </div></div></div></div><nav id="pagination"><div class="pagination"><span class="page-number current">1</span><a class="page-number" href="page/2/#content-inner">2</a><span class="space">&hellip;</span><a class="page-number" href="page/5/#content-inner">5</a><a class="extend next" rel="next" href="page/2/#content-inner"><i class="fas fa-chevron-right fa-fw"></i></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="images/avatar.svg" onerror="this.onerror=null;this.src='img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">hackerbs.com</div><div class="author-info-description">hackerbs's Blog - 探索知识的宇宙</div><div class="site-data"><a href="archives/"><div class="headline">文章</div><div class="length-num">43</div></a><a href="tags/"><div class="headline">标签</div><div class="length-num">133</div></a><a href="categories/"><div class="headline">分类</div><div class="length-num">15</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="%E9%9A%8F%E7%AC%94%20-%20%E3%80%8A%E6%88%91%E5%A7%8B%E7%BB%88%E6%98%AF%E6%88%91%E3%80%8B.html" title="随笔 - 《我始终是我》">随笔 - 《我始终是我》</a><time datetime="2026-07-18T00:00:00.000Z" title="发表于 2026-07-18 08:00:00">2026-07-18</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="%E9%9A%8F%E7%AC%94%20-%20%E3%80%8A%E7%A0%B4%E5%B1%80%E7%9A%84%E7%89%A9%E7%90%86%E5%AD%A6%EF%BC%9A%E9%87%8D%E9%87%8F%E3%80%81%E6%9D%A0%E6%9D%86%E4%B8%8E%E6%B6%9F%E6%BC%AA%E3%80%8B.html" title="随笔 - 《破局的物理学：重量、杠杆与涟漪》">随笔 - 《破局的物理学：重量、杠杆与涟漪》</a><time datetime="2026-07-05T00:00:00.000Z" title="发表于 2026-07-05 08:00:00">2026-07-05</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="%E9%9A%8F%E7%AC%94%20-%20%E3%80%8A%E5%AD%98%E5%9C%A8%E7%9A%84%E7%97%95%E8%BF%B9%EF%BC%9A%E4%B8%8D%E5%9C%A8%E4%BA%8E%E7%9F%B3%E7%A2%91%EF%BC%8C%E8%80%8C%E4%BA%8E%E6%B6%9F%E6%BC%AA%E3%80%8B.html" title="随笔 - 《存在的痕迹：不在于石碑，而于涟漪》">随笔 - 《存在的痕迹：不在于石碑，而于涟漪》</a><time datetime="2025-10-17T08:15:00.000Z" title="发表于 2025-10-17 16:15:00">2025-10-17</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="IT%E5%9C%BA%E6%99%AF%E4%B8%93%E4%B8%9A%E6%9C%AF%E8%AF%AD%E8%A1%A8.html" title="IT场景专业术语表">IT场景专业术语表</a><time datetime="2025-10-17T05:45:45.000Z" title="发表于 2025-10-17 13:45:45">2025-10-17</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="%E5%85%B3%E4%BA%8E%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%A1%AC%E7%9B%98%E6%95%85%E9%9A%9C%E4%BD%86%E5%B8%A6%E5%A4%96%E6%B2%A1%E6%9C%89%E9%94%99%E8%AF%AF%E6%97%A5%E5%BF%97%E7%9A%84%E6%8E%92%E9%9A%9C%E4%B8%8E%E6%8A%A5%E4%BF%AE%E7%AC%94%E8%AE%B0.html" title="关于服务器硬盘故障但带外没有错误日志的排障与报修笔记">关于服务器硬盘故障但带外没有错误日志的排障与报修笔记</a><time datetime="2025-09-18T07:49:46.000Z" title="发表于 2025-09-18 15:49:46">2025-09-18</time></div></div></div></div><div class="card-widget card-categories"><div class="item-headline"><i class="fas fa-folder-open"></i><span>分类</span><a class="card-more-btn" href="../categories/" title="查看更多">
+      <i class="fas fa-angle-right"></i></a></div>
+          <ul class="card-category-list" id="aside-cat-list">
+            <li class="card-category-list-item "><a class="card-category-list-link" href="../categories/%E6%96%87%E5%AD%A6/"><span class="card-category-list-name">文学</span><span class="card-category-list-count">4</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="../categories/%E7%9F%A5%E8%AF%86%E5%BA%93/"><span class="card-category-list-name">知识库</span><span class="card-category-list-count">39</span></a><ul class="card-category-list child"><li class="card-category-list-item "><a class="card-category-list-link" href="../categories/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%8F%91%E5%B8%83/"><span class="card-category-list-name">发布</span><span class="card-category-list-count">3</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="../categories/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%9F%BA%E7%A1%80/"><span class="card-category-list-name">基础</span><span class="card-category-list-count">3</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="../categories/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%AD%98%E5%82%A8/"><span class="card-category-list-name">存储</span><span class="card-category-list-count">4</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="../categories/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%AE%89%E5%85%A8/"><span class="card-category-list-name">安全</span><span class="card-category-list-count">2</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="../categories/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%AE%B9%E5%99%A8/"><span class="card-category-list-name">容器</span><span class="card-category-list-count">5</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="../categories/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%B5%8C%E5%85%A5%E5%BC%8F/"><span class="card-category-list-name">嵌入式</span><span class="card-category-list-count">2</span></a></li></ul></li>
+          </ul></div><div class="card-widget card-tags"><div class="item-headline"><i class="fas fa-tags"></i><span>标签</span></div><div class="card-tag-cloud"><a href="../tags/%E5%9F%BA%E7%A1%80/" style="font-size: 1.1em; color: #999">基础</a> <a href="../tags/VMware/" style="font-size: 1.1em; color: #999">VMware</a> <a href="../tags/%E9%98%B5%E5%88%97/" style="font-size: 1.1em; color: #999">阵列</a> <a href="../tags/%E8%87%AA%E6%88%91%E8%AE%A4%E7%9F%A5/" style="font-size: 1.23em; color: #999ea6">自我认知</a> <a href="../tags/Promox-VE/" style="font-size: 1.1em; color: #999">Promox-VE</a> <a href="../tags/%E4%BA%BA%E8%84%89/" style="font-size: 1.1em; color: #999">人脉</a> <a href="../tags/%E6%97%A5%E5%BF%97/" style="font-size: 1.1em; color: #999">日志</a> <a href="../tags/%E4%BA%91%E8%AE%A1%E7%AE%97/" style="font-size: 1.1em; color: #999">云计算</a> <a href="../tags/ECC/" style="font-size: 1.1em; color: #999">ECC</a> <a href="../tags/NAS/" style="font-size: 1.23em; color: #999ea6">NAS</a> <a href="../tags/Docker/" style="font-size: 1.37em; color: #99a4b2">Docker</a> <a href="../tags/lvm/" style="font-size: 1.1em; color: #999">lvm</a> <a href="../tags/%E7%9B%B8%E5%8F%98%E7%A1%85%E8%84%82/" style="font-size: 1.1em; color: #999">相变硅脂</a> <a href="../tags/docker-hub/" style="font-size: 1.1em; color: #999">docker hub</a> <a href="../tags/Ubuntu%E6%9C%8D%E5%8A%A1%E5%99%A8/" style="font-size: 1.1em; color: #999">Ubuntu服务器</a> <a href="../tags/iDRAC/" style="font-size: 1.1em; color: #999">iDRAC</a> <a href="../tags/%E8%8B%B1%E8%AF%AD/" style="font-size: 1.1em; color: #999">英语</a> <a href="../tags/Linux%E5%AE%89%E8%A3%85/" style="font-size: 1.23em; color: #999ea6">Linux安装</a> <a href="../tags/debian/" style="font-size: 1.1em; color: #999">debian</a> <a href="../tags/RAID/" style="font-size: 1.23em; color: #999ea6">RAID</a> <a href="../tags/%E7%99%BE%E7%A7%91/" style="font-size: 1.5em; color: #99a9bf">百科</a> <a href="../tags/%E5%B8%A6%E5%A4%96/" style="font-size: 1.37em; color: #99a4b2">带外</a> <a href="../tags/Debian%E6%9C%8D%E5%8A%A1%E5%99%A8/" style="font-size: 1.1em; color: #999">Debian服务器</a> <a href="../tags/docker-pull/" style="font-size: 1.1em; color: #999">docker pull</a> <a href="../tags/DDNS/" style="font-size: 1.1em; color: #999">DDNS</a> <a href="../tags/qemu/" style="font-size: 1.1em; color: #999">qemu</a> <a href="../tags/GEO/" style="font-size: 1.1em; color: #999">GEO</a> <a href="../tags/nextcloud/" style="font-size: 1.1em; color: #999">nextcloud</a> <a href="../tags/%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%8E%8B%E6%B5%8B/" style="font-size: 1.1em; color: #999">服务器压测</a> <a href="../tags/%E6%96%87%E5%AD%A6/" style="font-size: 1.23em; color: #999ea6">文学</a> <a href="../tags/C-C-fio-%E8%84%9A%E6%9C%AC/" style="font-size: 1.1em; color: #999">C++ - C - fio - 脚本</a> <a href="../tags/%E5%B1%80%E5%9F%9F%E7%BD%91/" style="font-size: 1.1em; color: #999">局域网</a> <a href="../tags/Ubuntu/" style="font-size: 1.1em; color: #999">Ubuntu</a> <a href="../tags/markdown/" style="font-size: 1.1em; color: #999">markdown</a> <a href="../tags/Python/" style="font-size: 1.1em; color: #999">Python</a> <a href="../tags/ssh%E7%88%86%E7%A0%B4/" style="font-size: 1.1em; color: #999">ssh爆破</a> <a href="../tags/%E7%A1%AC%E7%9B%98/" style="font-size: 1.5em; color: #99a9bf">硬盘</a> <a href="../tags/%E7%90%86%E6%80%A7%E4%B8%8E%E6%84%9F%E6%80%A7/" style="font-size: 1.1em; color: #999">理性与感性</a> <a href="../tags/%E8%AE%A1%E7%AE%97%E8%B5%84%E6%BA%90%E6%9C%AC%E5%9C%B0%E5%8C%96/" style="font-size: 1.1em; color: #999">计算资源本地化</a> <a href="../tags/UEFI/" style="font-size: 1.1em; color: #999">UEFI</a></div></div><div class="card-widget card-archives">
+    <div class="item-headline"><i class="fas fa-archive"></i><span>归档</span><a class="card-more-btn" href="/"
+            title="查看更多">
+            <i class="fas fa-angle-right"></i>
+          </a></div>
+  
+    <ul class="card-archive-list">
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="2026/07/">
+            <span class="card-archive-list-date">
+              七月 2026
+            </span>
+            <span class="card-archive-list-count">2</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="2025/10/">
+            <span class="card-archive-list-date">
+              十月 2025
+            </span>
+            <span class="card-archive-list-count">2</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="2025/09/">
+            <span class="card-archive-list-date">
+              九月 2025
+            </span>
+            <span class="card-archive-list-count">7</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="2025/03/">
+            <span class="card-archive-list-date">
+              三月 2025
+            </span>
+            <span class="card-archive-list-count">1</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="2025/02/">
+            <span class="card-archive-list-date">
+              二月 2025
+            </span>
+            <span class="card-archive-list-count">1</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="2024/11/">
+            <span class="card-archive-list-date">
+              十一月 2024
+            </span>
+            <span class="card-archive-list-count">2</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="2024/09/">
+            <span class="card-archive-list-date">
+              九月 2024
+            </span>
+            <span class="card-archive-list-count">1</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="2024/06/">
+            <span class="card-archive-list-date">
+              六月 2024
+            </span>
+            <span class="card-archive-list-count">6</span>
+          </a>
+        </li>
+      
+    </ul>
+  </div><div class="card-widget card-webinfo"><div class="item-headline"><i class="fas fa-chart-line"></i><span>网站信息</span></div><div class="webinfo"><div class="webinfo-item"><div class="item-name">文章数目 :</div><div class="item-count">43</div></div><div class="webinfo-item"><div class="item-name">本站访客数 :</div><div class="item-count" id="busuanzi_value_site_uv"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">本站总浏览量 :</div><div class="item-count" id="busuanzi_value_site_pv"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">最后更新时间 :</div><div class="item-count" id="last-push-date" data-lastPushDate="2026-09-23T05:15:50.163Z"><i class="fa-solid fa-spinner fa-spin"></i></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By hackerbs.com</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.2</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.7.1.260810</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="js/utils.js?v=5.7.1.260810"></script><script src="js/main.js?v=5.7.1.260810"></script><div class="js-pjax"><script>window.typedJSFn = {
+  _seq: 0,
+  init: str => {
+    window.typed = new Typed('#subtitle', Object.assign({
+      strings: str,
+      startDelay: 300,
+      typeSpeed: 150,
+      loop: true,
+      backSpeed: 50,
+    }, null))
+  },
+  run: subtitleType => {
+    const seq = ++window.typedJSFn._seq
+    const invoke = () => {
+      if (seq === window.typedJSFn._seq) subtitleType()
+    }
+
+    if (false) {
+      if (typeof Typed === 'function') invoke()
+      else btf.getScript('https://cdn.jsdelivr.net/npm/typed.js@3.0.0/dist/typed.umd.min.js').then(invoke)
+    } else {
+      invoke()
+    }
+  },
+  fetchSubtitle: (fetcher, parser) => {
+    const seq = window.typedJSFn._seq
+    Promise.resolve()
+      .then(fetcher)
+      .then(parser)
+      .then(({ content, extra = [] }) => {
+        if (seq !== window.typedJSFn._seq) return
+        typedJSFn.processSubtitle(content, extra)
+      })
+      .catch(err => {
+        if (seq !== window.typedJSFn._seq) return
+        console.error('Failed to get the subtitle API:', err)
+        typedJSFn.processSubtitle([])
+      })
+  },
+  processSubtitle: (content, extraContents = []) => {
+    if (false) {
+      const sub = [].slice()
+
+      if (extraContents.length > 0) {
+        sub.unshift(...extraContents)
+      }
+
+      if (typeof content === 'string') {
+        sub.unshift(content)
+      } else if (Array.isArray(content)) {
+        sub.unshift(...content)
+      }
+
+      sub.length > 0 && typedJSFn.init(sub)
+    } else {
+      document.getElementById('subtitle').textContent = typeof content === 'string' ? content :
+        (Array.isArray(content) && content.length > 0 ? content[0] : '')
+    }
+  }
+}
+btf.addGlobalFn('pjaxSendOnce', () => {
+  window.typedJSFn._seq++
+  typed && typed.destroy()
+  window.typed = null
+}, 'typedDestroy')
+</script></div><script src="js/effects.js" defer></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
