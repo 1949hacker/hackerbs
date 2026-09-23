@@ -4,12 +4,12 @@
 
 # Site
 title: Hexo
-subtitle: ''
-description: ''
+subtitle: '探索知识的宇宙'
+description: '技术笔记与随笔'
 keywords:
-author: John Doe
+author: Labib
 language: en
-timezone: ''
+timezone: 'Asia/Shanghai'
 
 # URL
 ## Set your site url here. For example, if you use GitHub Page, set url as 'https://username.github.io/project'
@@ -102,4 +102,5 @@ theme: landscape
 ## Docs: https://hexo.io/docs/one-command-deployment
 deploy:
   type: ''
+
 
