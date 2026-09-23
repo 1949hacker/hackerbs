@@ -3,18 +3,18 @@
 ## Source: https://github.com/hexojs/hexo/
 
 # Site
-title: "hackerbs's Blog - 探索知识的宇宙"
-subtitle: '技术随笔 · 探索知识的宇宙'
-description: "hackerbs's Blog - 探索知识的宇宙"
-keywords: hackerbs,hacker,brainstorm,头脑风暴,Linux,Debian
-author: hackerbs.com
-language: zh-CN
-timezone: 'Asia/Singapore'
+title: Hexo
+subtitle: ''
+description: ''
+keywords:
+author: John Doe
+language: en
+timezone: ''
 
 # URL
 ## Set your site url here. For example, if you use GitHub Page, set url as 'https://username.github.io/project'
 url: https://hackerbs.com
-permalink: :title.html
+permalink: :year/:month/:day/:title/
 permalink_defaults:
 pretty_urls:
   trailing_index: true # Set to false to remove trailing 'index.html' from permalinks
@@ -43,15 +43,14 @@ render_drafts: false
 post_asset_folder: false
 relative_link: false
 future: true
+syntax_highlighter: highlight.js
 highlight:
-  enable: true
   line_number: true
   auto_detect: false
   tab_replace: ''
   wrap: true
   hljs: false
 prismjs:
-  enable: false
   preprocess: true
   line_number: true
   tab_replace: ''
@@ -97,56 +96,10 @@ ignore:
 # Extensions
 ## Plugins: https://hexo.io/plugins/
 ## Themes: https://hexo.io/themes/
-theme: butterfly
+theme: landscape
 
 # Deployment
 ## Docs: https://hexo.io/docs/one-command-deployment
 deploy:
   type: ''
-
-search:
-  path: search.xml
-  field: post
-  content: true
-
-sitemap:
-  path: sitemap.xml
-baidusitemap:
-  path: baidusitemap.xml
-
-waline:
-  enable: true
-  visitor: true
-  serverURL: https://waline.hackerbs.com
-  placeholder: "欢迎评论！"
-  pageSize: 10
-  lang: zh-cn
-  admin: false
-  requiredFields: []
-  theme: waline-theme-onepiece
-  emojiCDN: ''
-  emojiMaps: {}
-  emojiExt: '.png'
-  emojiSize: 32
-  CDN: ''
-  dark: true
-  # darkHeader: false
-  # locale: auto
-  # emojiPath: ''
-  # emojiCDN: ''
-  # highlight: false
-  # autoRefresh: false
-
-symbols_count_time:
-  symbols: true
-  time: true
-  total_symbols: true
-  total_time: true
-  exclude_codeblock: false
-  awl: 4
-  wpm: 275
-  suffix: "mins."
-
-
-
 

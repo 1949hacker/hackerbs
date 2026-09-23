@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>关于服务器硬盘故障但带外没有错误日志的排障与报修笔记 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="情况说明收到系统发出IO占用率和IO延迟的告警，登录带外排查无任何错误日志，随后进入操作系统使用脚本批量排查smartctl日志，发现存在错误计数，因smartctl并非厂家带外的告警日志，所以特此向Inspur、H3C、Lenovo、DELL进行了咨询，其中提到了一些日志参数的告警，目前已收到H3C、Inspur的回复 厂商对日志中以下内容的告警表示认可并作为报修依据    硬盘类型 参数 翻译">
+<meta property="og:type" content="article">
+<meta property="og:title" content="关于服务器硬盘故障但带外没有错误日志的排障与报修笔记">
+<meta property="og:url" content="https://hackerbs.com/2025/09/18/%E5%85%B3%E4%BA%8E%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%A1%AC%E7%9B%98%E6%95%85%E9%9A%9C%E4%BD%86%E5%B8%A6%E5%A4%96%E6%B2%A1%E6%9C%89%E9%94%99%E8%AF%AF%E6%97%A5%E5%BF%97%E7%9A%84%E6%8E%92%E9%9A%9C%E4%B8%8E%E6%8A%A5%E4%BF%AE%E7%AC%94%E8%AE%B0/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="情况说明收到系统发出IO占用率和IO延迟的告警，登录带外排查无任何错误日志，随后进入操作系统使用脚本批量排查smartctl日志，发现存在错误计数，因smartctl并非厂家带外的告警日志，所以特此向Inspur、H3C、Lenovo、DELL进行了咨询，其中提到了一些日志参数的告警，目前已收到H3C、Inspur的回复 厂商对日志中以下内容的告警表示认可并作为报修依据    硬盘类型 参数 翻译">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://img.hackerbs.com/20250918173418.png">
+<meta property="og:image" content="https://img.hackerbs.com/%E4%BC%81%E4%B8%9A%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_1760520869936.png">
+<meta property="article:published_time" content="2025-09-18T07:49:46.000Z">
+<meta property="article:modified_time" content="2026-09-23T10:48:28.253Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="DELL">
+<meta property="article:tag" content="华三">
+<meta property="article:tag" content="带外">
+<meta property="article:tag" content="排障">
+<meta property="article:tag" content="故障">
+<meta property="article:tag" content="日志">
+<meta property="article:tag" content="服务器">
+<meta property="article:tag" content="浪潮">
+<meta property="article:tag" content="硬盘">
+<meta property="article:tag" content="联想">
+<meta property="article:tag" content="超聚变">
+<meta property="article:tag" content="运维">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img.hackerbs.com/20250918173418.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
+
+<meta name="generator" content="Hexo 8.1.2"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://hackerbs.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-关于服务器硬盘故障但带外没有错误日志的排障与报修笔记" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2025/09/18/%E5%85%B3%E4%BA%8E%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%A1%AC%E7%9B%98%E6%95%85%E9%9A%9C%E4%BD%86%E5%B8%A6%E5%A4%96%E6%B2%A1%E6%9C%89%E9%94%99%E8%AF%AF%E6%97%A5%E5%BF%97%E7%9A%84%E6%8E%92%E9%9A%9C%E4%B8%8E%E6%8A%A5%E4%BF%AE%E7%AC%94%E8%AE%B0/" class="article-date">
+  <time class="dt-published" datetime="2025-09-18T07:49:46.000Z" itemprop="datePublished">2025-09-18</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E7%9F%A5%E8%AF%86%E5%BA%93/">知识库</a>►<a class="article-category-link" href="/categories/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%AD%98%E5%82%A8/">存储</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      关于服务器硬盘故障但带外没有错误日志的排障与报修笔记
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="情况说明"><a href="#情况说明" class="headerlink" title="情况说明"></a>情况说明</h2><p>收到系统发出IO占用率和IO延迟的告警，登录带外排查无任何错误日志，随后进入操作系统使用脚本批量排查smartctl日志，发现存在错误计数，因smartctl并非厂家带外的告警日志，所以特此向Inspur、H3C、Lenovo、DELL进行了咨询，其中提到了一些日志参数的告警，目前已收到H3C、Inspur的回复</p>
+<p><strong>厂商对日志中以下内容的告警表示认可并作为报修依据</strong></p>
+<table>
+<thead>
+<tr>
+<th>硬盘类型</th>
+<th>参数</th>
+<th>翻译</th>
+<th>说明</th>
+<th>来源</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>SSD</td>
+<td>ID 5 Reallocated_Sector_Ct</td>
+<td>重分配扇区计数</td>
+<td>因坏块被重新分配的扇区数量，值越高健康状况越差</td>
+<td>新华三</td>
+</tr>
+<tr>
+<td>SSD</td>
+<td>ID 197 Current_Pending_Sector</td>
+<td>当前待处理扇区计数</td>
+<td>有潜在读写错误、待重新映射的扇区数量(&gt;100更换)</td>
+<td>浪潮&#x2F;新华三</td>
+</tr>
+<tr>
+<td>SSD</td>
+<td>ID 187 Reported_Uncorrect</td>
+<td>已报告的不可纠正错误</td>
+<td>硬盘向主机报告的读&#x2F;写过程中发生的不可恢复错误次数(&gt;10更换)</td>
+<td>浪潮</td>
+</tr>
+<tr>
+<td>HDD</td>
+<td>Total uncorrected errors</td>
+<td>总无法纠正错误</td>
+<td>所有无法纠正的读&#x2F;写错误之和</td>
+<td>浪潮&#x2F;新华三</td>
+</tr>
+<tr>
+<td>HDD</td>
+<td>Verify total uncorrected errors</td>
+<td>校验无法纠正错误</td>
+<td>硬盘控制器自检时无法通过ECC纠正的错误总数，高值表示可靠性下降</td>
+<td>新华三</td>
+</tr>
+<tr>
+<td>HDD</td>
+<td>Read total uncorrected errors</td>
+<td>读无法纠正错误</td>
+<td>读取&#x2F;写入IO时无法通过ECC纠正的错误总数，高值表示可靠性下降</td>
+<td>新华三</td>
+</tr>
+<tr>
+<td>HDD</td>
+<td>Elements in grown defect list</td>
+<td>已增长缺陷列表中的元素</td>
+<td>硬盘运行中登记的坏块数量，用于追踪坏块增长</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/icenowy">@Icenowy</a>于清华TUNA协会技术群组内回复</td>
+</tr>
+</tbody></table>
+<p><strong>以下是辅助日志，作为协助排障参考，不作为直接依据</strong></p>
+<table>
+<thead>
+<tr>
+<th>硬盘类型</th>
+<th>参数</th>
+<th>翻译</th>
+<th>说明</th>
+<th>来源</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>SSD</td>
+<td>Reallocated Sector Count</td>
+<td>重分配扇区计数</td>
+<td>记录因物理损坏被替换到备用扇区的次数，数值增加说明介质退化(&gt;500为不可靠)</td>
+<td>浪潮</td>
+</tr>
+<tr>
+<td>SSD</td>
+<td>CRC Error Count</td>
+<td>CRC 错误计数</td>
+<td>记录主机与硬盘之间传输数据时发生的 CRC 校验错误次数，常见原因包括数据线接触不良、电磁干扰或接口问题，单盘较多则可能为该盘本体故障，多个硬盘则进一步筛查是否位于同一个硬盘背板或同一个SAS端口</td>
+<td>浪潮</td>
+</tr>
+<tr>
+<td>HDD</td>
+<td>Non-medium error count</td>
+<td>非介质故障</td>
+<td>与上方SSD的是一样的意思</td>
+<td>浪潮</td>
+</tr>
+</tbody></table>
+<hr>
+<p>清华大学TUNA协会技术群组</p>
+<p>感谢<a target="_blank" rel="noopener" href="https://github.com/icenowy">@Icenowy</a>于<em>清华TUNA协会技术群组</em>内回复提出参考<code>Elements in grown defect list</code>参数的值，该值是HDD独有的指标，记录的是在使用过长中新发现的物理坏块数，数值持续增长则意味着该硬盘可靠性正在下降</p>
+<h2 id="排查过程"><a href="#排查过程" class="headerlink" title="排查过程"></a>排查过程</h2><h3 id="对于JBOD模式的硬盘"><a href="#对于JBOD模式的硬盘" class="headerlink" title="对于JBOD模式的硬盘"></a>对于JBOD模式的硬盘</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">使用smartctl直接查询即可</span></span><br><span class="line">smartctl -a /dev/sdX</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">可以增加grep快速筛选想要查询的参数，在替换双引号中的即可</span></span><br><span class="line">smartctl -a /dev/sdX | grep -E &quot;Elements in grown defect list&quot;</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">配合<span class="keyword">for</span>迅速遍历磁盘，&#123;a..z&#125;则是遍历sda到sdz的所有盘</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">如果盘很多那可以直接写为&#123;a..zz&#125;，则是遍历sda到sdzz共702个盘</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">[ -b <span class="string">&quot;/dev/sd<span class="variable">$i</span>&quot;</span> ] <span class="built_in">test</span>命令的简写，判断该设备是不是一个硬盘</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash"><span class="built_in">echo</span> <span class="string">&quot;sd<span class="variable">$i</span>&quot;</span>是在输出日志前输出盘号，避免不知道是哪个盘的报错</span></span><br><span class="line">for i in &#123;a..z&#125;; do [ -b &quot;/dev/sd$i&quot; ] &amp;&amp; echo &quot;sd$i:&quot; &amp;&amp; sudo smartctl -a &quot;/dev/sd$i&quot; | grep &quot;Elements in grown defect list&quot;; done</span><br></pre></td></tr></table></figure>
+
+<h3 id="对于LSI-MegaRAID控制器，RAID模式的硬盘"><a href="#对于LSI-MegaRAID控制器，RAID模式的硬盘" class="headerlink" title="对于LSI MegaRAID控制器，RAID模式的硬盘"></a>对于LSI MegaRAID控制器，RAID模式的硬盘</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">由于硬盘由阵列卡接管，所以需要调用MegaRAID驱动程序才可访问</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">/dev/sdX输入你挂载到系统的阵列，例如通常/dev/sda是RAID1系统盘</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">其中megaraid,后面的数字对应该硬盘是该阵列中的第几个盘，从编号0开始是第一个</span></span><br><span class="line">smartctl -a -d megaraid,0 /dev/sdX</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">同样的grep筛选</span></span><br><span class="line">smartctl -a -d megaraid,0 /dev/sdX | grep -E &quot;Non-medium error count&quot;</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">遍历快速排查所有盘</span></span><br><span class="line">for raid in &#123;a..z&#125;;do [ -b &quot;/dev/sd$raid&quot; ] &amp;&amp; for disk in &#123;0..20&#125;;do echo -e &quot;\033[36;1m阵列 sd$raid 中硬盘 $disk 日志: &quot; &amp;&amp; smartctl -a -d megaraid,$disk /dev/sd$raid | grep -E &quot;Non-medium error count&quot;;done;done</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">上方命令为单行，方便复制粘贴执行，以下是拆解后可读的版本</span></span><br><span class="line">for raid in &#123;a..z&#125;; do # 遍历sda到sdz的设备</span><br><span class="line">    [ -b &quot;/dev/sd$raid&quot; ] &amp;&amp; # 判断是不是硬盘，不是就跳过</span><br><span class="line">    for disk in &#123;0..20&#125;; do # 预设是0到20共21个硬盘，可以自行设置</span><br><span class="line">        echo -e &quot;\033[36;1m阵列 sd$raid 中硬盘 $disk 日志: &quot; # 打印个开头，不然不知道是哪个设备的日志</span><br><span class="line">        smartctl -a -d megaraid,$disk /dev/sd$raid | grep -E &quot;Non-medium error count&quot; # 根据你的需要调整grep筛选的内容</span><br><span class="line">    done</span><br><span class="line">done</span><br></pre></td></tr></table></figure>
+<h2 id="进阶脚本"><a href="#进阶脚本" class="headerlink" title="进阶脚本"></a>进阶脚本</h2><p><strong>该脚本会在当前目录输出<code>smartctl</code>的日志源码到<code>disk_error_$(date +%Y%m%d_%H%M%S).log</code>文件</strong></p>
+<p>推荐使用此单行模式，复制粘贴直接用，不需要创建shell文件</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">log_file=&quot;disk_error_$(date +%Y%m%d_%H%M%S).log&quot;; for raid in &#123;a..d&#125;; do [ -b &quot;/dev/sd$raid&quot; ] &amp;&amp; for disk in &#123;0..23&#125;; do smartctl -d megaraid,$disk /dev/sd$raid -i &gt;/dev/null 2&gt;&amp;1 &amp;&amp; output=$(smartctl -a -d megaraid,$disk /dev/sd$raid) &amp;&amp; serial=$(echo &quot;$output&quot; | grep &quot;Serial number:&quot; | awk &#x27;&#123;print $3&#125;&#x27;) &amp;&amp; if echo &quot;$output&quot; | grep -q &quot;SSD&quot;; then reallocated_sectors=$(echo &quot;$output&quot; | grep &quot;Reallocated_Sector_Ct&quot; | awk &#x27;&#123;print $10&#125;&#x27;); reallocated_sectors=$&#123;reallocated_sectors:-0&#125;; current_pending=$(echo &quot;$output&quot; | grep &quot;Current_Pending_Sector&quot; | awk &#x27;&#123;print $10&#125;&#x27;); current_pending=$&#123;current_pending:-0&#125;; reported_uncorrect=$(echo &quot;$output&quot; | grep &quot;Reported_Uncorrect&quot; | awk &#x27;&#123;print $10&#125;&#x27;); reported_uncorrect=$&#123;reported_uncorrect:-0&#125;; offline_uncorrect=$(echo &quot;$output&quot; | grep &quot;Offline_Uncorrectable&quot; | awk &#x27;&#123;print $10&#125;&#x27;); offline_uncorrect=$&#123;offline_uncorrect:-0&#125;; crc_errors=$(echo &quot;$output&quot; | grep &quot;CRC_Error_Count&quot; | awk &#x27;&#123;print $10&#125;&#x27;); crc_errors=$&#123;crc_errors:-0&#125;; [ &quot;$reallocated_sectors&quot; -gt 0 ] || [ &quot;$current_pending&quot; -gt 0 ] || [ &quot;$reported_uncorrect&quot; -gt 0 ] || [ &quot;$offline_uncorrect&quot; -gt 0 ] || [ &quot;$crc_errors&quot; -gt 0 ] &amp;&amp; echo &quot;$output&quot; &gt;&gt; &quot;$log_file&quot; &amp;&amp; echo -e &quot;\033[36;1mRAID \033[32;1msd$raid \033[36;1m中的 SSD 磁盘 \033[32;1m#$disk \033[36;1m(SN:\033[33;1m $serial) 检测到异常：\033[0m\n\033[36;1m05 重分配扇区计数(Reallocated Sector Count)：\033[31;1m$reallocated_sectors\033[0m\n\033[36;1m197 当前待处理扇区(Current Pending Sector Count)：\033[31;1m$current_pending\033[0m\n\033[36;1m已报告的不可纠正错误(Reported Uncorrectable Errors)：\033[31;1m$reported_uncorrect\033[0m\n\033[36;1m离线不可纠正错误(Offline Uncorrectable)：\033[31;1m$offline_uncorrect\033[0m\n\033[36;1m接口CRC错误计数(CRC Error Count)：\033[31;1m$crc_errors\033[0m\n&quot;; else read_uncorrected=$(echo &quot;$output&quot; | grep -A 10 &quot;Error counter log:&quot; | grep &quot;^read:&quot; | awk &#x27;&#123;print $NF&#125;&#x27;); read_uncorrected=$&#123;read_uncorrected:-0&#125;; verify_uncorrected=$(echo &quot;$output&quot; | grep -A 10 &quot;Error counter log:&quot; | grep &quot;^verify:&quot; | awk &#x27;&#123;print $NF&#125;&#x27;); verify_uncorrected=$&#123;verify_uncorrected:-0&#125;; total_uncorrected=$(echo &quot;$output&quot; | grep &quot;Total uncorrected errors&quot; | awk &#x27;&#123;print $NF&#125;&#x27;); total_uncorrected=$&#123;total_uncorrected:-0&#125;; grown_defect_list=$(echo &quot;$output&quot; | grep &quot;Elements in grown defect list&quot; | awk &#x27;&#123;print $NF&#125;&#x27;); grown_defect_list=$&#123;grown_defect_list:-0&#125;; non_medium=$(echo &quot;$output&quot; | grep &quot;Non-medium error count:&quot; | awk &#x27;&#123;print $NF&#125;&#x27;); non_medium=$&#123;non_medium:-0&#125;; [ &quot;$read_uncorrected&quot; -gt 0 ] || [ &quot;$verify_uncorrected&quot; -gt 0 ] || [ &quot;$total_uncorrected&quot; -gt 0 ] || [ &quot;$grown_defect_list&quot; -gt 0 ] || [ &quot;$non_medium&quot; -gt 0 ] &amp;&amp; echo &quot;$output&quot; &gt;&gt; &quot;$log_file&quot; &amp;&amp; echo -e &quot;\033[36;1mRAID \033[32;1msd$raid \033[36;1m中的 HDD 磁盘 \033[32;1m#$disk \033[36;1m(SN:\033[33;1m $serial) 检测到异常：\033[0m\n\033[36;1m读无法纠正错误(Read total uncorrected errors)：\033[31;1m$read_uncorrected\033[0m\n\033[36;1m校验无法纠正错误(Verify total uncorrected errors)：\033[31;1m$verify_uncorrected\033[0m\n\033[36;1m总无法纠正错误(Total uncorrected errors)：\033[31;1m$total_uncorrected\033[0m\n\033[36;1m已增长缺陷列表元素(Elements in grown defect list)：\033[31;1m$grown_defect_list\033[0m\n\033[36;1m非介质错误(Non-medium error count)：\033[31;1m$non_medium\033[0m\n&quot;; fi; done; done</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">!/bin/bash</span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">日志文件以日期时间命名</span></span><br><span class="line">log_file=&quot;disk_error_$(date +%Y%m%d_%H%M%S).log&quot;</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">遍历可能的RAID设备（sda, sdb, sdc, sdd）</span></span><br><span class="line">for raid in &#123;a..d&#125;; do</span><br><span class="line">    if [ -b &quot;/dev/sd$raid&quot; ]; then</span><br><span class="line">        for disk in &#123;0..23&#125;; do</span><br><span class="line">            if smartctl -d megaraid,$disk /dev/sd$raid -i &gt;/dev/null 2&gt;&amp;1; then</span><br><span class="line">                output=$(smartctl -a -d megaraid,$disk /dev/sd$raid)</span><br><span class="line"></span><br><span class="line">                serial=$(echo &quot;$output&quot; | grep &quot;Serial number:&quot; | awk &#x27;&#123;print $3&#125;&#x27;)</span><br><span class="line"></span><br><span class="line">                if echo &quot;$output&quot; | grep -q &quot;SSD&quot;; then</span><br><span class="line">                    # ================= SSD =================</span><br><span class="line">                    reallocated_sectors=$(echo &quot;$output&quot; | grep &quot;Reallocated_Sector_Ct&quot; | awk &#x27;&#123;print $10&#125;&#x27;)</span><br><span class="line">                    reallocated_sectors=$&#123;reallocated_sectors:-0&#125;</span><br><span class="line"></span><br><span class="line">                    current_pending=$(echo &quot;$output&quot; | grep &quot;Current_Pending_Sector&quot; | awk &#x27;&#123;print $10&#125;&#x27;)</span><br><span class="line">                    current_pending=$&#123;current_pending:-0&#125;</span><br><span class="line"></span><br><span class="line">                    reported_uncorrect=$(echo &quot;$output&quot; | grep &quot;Reported_Uncorrect&quot; | awk &#x27;&#123;print $10&#125;&#x27;)</span><br><span class="line">                    reported_uncorrect=$&#123;reported_uncorrect:-0&#125;</span><br><span class="line"></span><br><span class="line">                    offline_uncorrect=$(echo &quot;$output&quot; | grep &quot;Offline_Uncorrectable&quot; | awk &#x27;&#123;print $10&#125;&#x27;)</span><br><span class="line">                    offline_uncorrect=$&#123;offline_uncorrect:-0&#125;</span><br><span class="line"></span><br><span class="line">                    crc_errors=$(echo &quot;$output&quot; | grep &quot;CRC_Error_Count&quot; | awk &#x27;&#123;print $10&#125;&#x27;)</span><br><span class="line">                    crc_errors=$&#123;crc_errors:-0&#125;</span><br><span class="line"></span><br><span class="line">                    if [ &quot;$reallocated_sectors&quot; -gt 0 ] || [ &quot;$current_pending&quot; -gt 0 ] || \</span><br><span class="line">                       [ &quot;$reported_uncorrect&quot; -gt 0 ] || [ &quot;$offline_uncorrect&quot; -gt 0 ] || [ &quot;$crc_errors&quot; -gt 0 ]; then</span><br><span class="line">                        echo &quot;$output&quot; &gt;&gt; &quot;$log_file&quot;</span><br><span class="line">                        echo -e &quot;\033[36;1mRAID \033[32;1msd$raid \033[36;1m中的 SSD 磁盘 \033[32;1m#$disk \033[36;1m(SN:\033[33;1m $serial) 检测到异常：\033[0m\n&quot;</span><br><span class="line">                        echo -e &quot;\033[36;1m05 重分配扇区计数(Reallocated Sector Count)：\033[31;1m$reallocated_sectors\033[0m&quot;</span><br><span class="line">                        echo -e &quot;\033[36;1m197 当前待处理扇区(Current Pending Sector Count)：\033[31;1m$current_pending\033[0m&quot;</span><br><span class="line">                        echo -e &quot;\033[36;1m已报告的不可纠正错误(Reported Uncorrectable Errors)：\033[31;1m$reported_uncorrect\033[0m&quot;</span><br><span class="line">                        echo -e &quot;\033[36;1m离线不可纠正错误(Offline Uncorrectable)：\033[31;1m$offline_uncorrect\033[0m&quot;</span><br><span class="line">                        echo -e &quot;\033[36;1m接口CRC错误计数(CRC Error Count)：\033[31;1m$crc_errors\033[0m\n&quot;</span><br><span class="line">                    fi</span><br><span class="line">                else</span><br><span class="line">                    # ================= HDD =================</span><br><span class="line">                    read_uncorrected=$(echo &quot;$output&quot; | grep -A 10 &quot;Error counter log:&quot; | grep &quot;^read:&quot; | awk &#x27;&#123;print $NF&#125;&#x27;)</span><br><span class="line">                    read_uncorrected=$&#123;read_uncorrected:-0&#125;</span><br><span class="line"></span><br><span class="line">                    verify_uncorrected=$(echo &quot;$output&quot; | grep -A 10 &quot;Error counter log:&quot; | grep &quot;^verify:&quot; | awk &#x27;&#123;print $NF&#125;&#x27;)</span><br><span class="line">                    verify_uncorrected=$&#123;verify_uncorrected:-0&#125;</span><br><span class="line"></span><br><span class="line">                    total_uncorrected=$(echo &quot;$output&quot; | grep &quot;Total uncorrected errors&quot; | awk &#x27;&#123;print $NF&#125;&#x27;)</span><br><span class="line">                    total_uncorrected=$&#123;total_uncorrected:-0&#125;</span><br><span class="line"></span><br><span class="line">                    grown_defect_list=$(echo &quot;$output&quot; | grep &quot;Elements in grown defect list&quot; | awk &#x27;&#123;print $NF&#125;&#x27;)</span><br><span class="line">                    grown_defect_list=$&#123;grown_defect_list:-0&#125;</span><br><span class="line"></span><br><span class="line">                    non_medium=$(echo &quot;$output&quot; | grep &quot;Non-medium error count:&quot; | awk &#x27;&#123;print $NF&#125;&#x27;)</span><br><span class="line">                    non_medium=$&#123;non_medium:-0&#125;</span><br><span class="line"></span><br><span class="line">                    if [ &quot;$read_uncorrected&quot; -gt 0 ] || [ &quot;$verify_uncorrected&quot; -gt 0 ] || \</span><br><span class="line">                       [ &quot;$total_uncorrected&quot; -gt 0 ] || [ &quot;$grown_defect_list&quot; -gt 0 ] || [ &quot;$non_medium&quot; -gt 0 ]; then</span><br><span class="line">                        echo &quot;$output&quot; &gt;&gt; &quot;$log_file&quot;</span><br><span class="line">                        echo -e &quot;\033[36;1mRAID \033[32;1msd$raid \033[36;1m中的 HDD 磁盘 \033[32;1m#$disk \033[36;1m(SN:\033[33;1m $serial) 检测到异常：\033[0m\n&quot;</span><br><span class="line">                        echo -e &quot;\033[36;1m读无法纠正错误(Read total uncorrected errors)：\033[31;1m$read_uncorrected\033[0m&quot;</span><br><span class="line">                        echo -e &quot;\033[36;1m校验无法纠正错误(Verify total uncorrected errors)：\033[31;1m$verify_uncorrected\033[0m&quot;</span><br><span class="line">                        echo -e &quot;\033[36;1m总无法纠正错误(Total uncorrected errors)：\033[31;1m$total_uncorrected\033[0m&quot;</span><br><span class="line">                        echo -e &quot;\033[36;1m已增长缺陷列表元素(Elements in grown defect list)：\033[31;1m$grown_defect_list\033[0m&quot;</span><br><span class="line">                        echo -e &quot;\033[36;1m非介质错误(Non-medium error count)：\033[31;1m$non_medium\033[0m\n&quot;</span><br><span class="line">                    fi</span><br><span class="line">                fi</span><br><span class="line">            fi</span><br><span class="line">        done</span><br><span class="line">    fi</span><br><span class="line">done</span><br></pre></td></tr></table></figure>
+
+<p>输出效果如下</p>
+<p><img src="https://img.hackerbs.com/20250918173418.png" alt="20250918173418"></p>
+<h2 id="关于DELL-TSR日志-iDRAC-没有硬盘故障告警的报修办法"><a href="#关于DELL-TSR日志-iDRAC-没有硬盘故障告警的报修办法" class="headerlink" title="关于DELL TSR日志(iDRAC)没有硬盘故障告警的报修办法"></a>关于DELL TSR日志(iDRAC)没有硬盘故障告警的报修办法</h2><p>DELL通常只认可其自身硬件的告警日志。<br>在硬盘出现非致命故障，无法直观的在操作系统看到硬盘离线或RAID降级，同时TSR日志中没有记录到硬盘故障，iDRAC网页也没有显示硬盘故障时。<br>DELL通常不会认可运维工程师提供的smartctl日志和其他非DELL硬件报告的日志，<br>且有时smartctl也并不能很好的定位故障。</p>
+<p>为此和DELL进行漫长的沟通后，最终定下来以下排障方式：</p>
+<p><img src="https://img.hackerbs.com/%E4%BC%81%E4%B8%9A%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_1760520869936.png" alt="DELL承认的额外日志"></p>
+<ul>
+<li>带外由故障日志时：提供TSR日志报修</li>
+<li>带外没有故障日志时：提供TSR日志+perccli64 &#x2F;call show alilog的日志用于报修</li>
+</ul>
+<p>此外还可通过分析上文提到的smartctl日志和以下日志用于综合定位问题：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ls -l /sys/class/block &gt; /tmp/lsblock.txt</span><br><span class="line">perccli64 /call show alilog &gt; /tmp/target.txt</span><br><span class="line">perccli64 /call/eall/sall show all &gt; /tmp/slot.txt</span><br></pre></td></tr></table></figure>
+
+<p>以下是本次案例的记录，可以作为排障及报修的参考</p>
+<p>情况说明：<br>本次是日常巡检时运维平台报障IO延迟大于100ms<br>随后排查了带外，没有告警，继续排查smartctl，定位slot8存在无法纠正的错误记录1次。<br>随后向DELL提出报修，并上传TSR日志，但因为没有记录告警，所以DELL并不认可，要求进一步调查故障。<br>排障过程中针对<code>smartctl -a -d megaraid</code>输出的<code>Error counter log</code>，也就是上文解释的smartctl日志；<br>其中有巨量的<code>Errors Corrected by ECC</code>的<code>fast纠正</code>错误计数，达到了<code>1737961798</code>次，<br>针对该项报错，DELL不参考，并且未对此进行分析，所以只能自行分析。<br>结合硬盘运行时间约5.8年，且几乎从未停机；而这份报错是由RAID卡报告给smartctl，<br>所以在计数准确性上无法验证，同时鉴于运行了很长时间，计数的累计也是可能的因素；<br>此处有个疑点：该天文数字般的ECC纠错计数是否可能是整个RAID5阵列的纠错被记录到了其中？<br>再加上硬盘存在故障长期未发现，导致了频繁的纠错？<br>以上两个疑问仅为猜测，不过该ECC纠错确实会导致IO延迟增加。<br>在进一步的排查中发现slot9才是故障盘，且其中的<code>Errors Corrected by ECC</code>的<code>fast纠正</code>为0，<br>反而是<code>delayed纠正</code>为<code>8396</code>次，因此进一步核实这块盘才是真正的故障盘。<br>因为<code>fast</code>纠正是常规现象，<code>delayed</code>纠正才是有可能存在问题的，<code>delayed</code>纠正是无法快速纠错时进行的深度纠错</p>
+<p>见此处说明</p>
+<p>接下来讲如何通过分析<code>perccli64 /call show alilog</code>定位到了真正故障的硬盘<br>首先，<code>perccli64</code>，顾名思义，这是DELL PERC官方的工具，用于操作DELL RAID卡。<br>因为日志内容较多，所以选择使用<code>perccli64 /call show alilog &gt; /tmp/target.txt</code>查询适配器日志并输出到文件。<br>随后使用vscode浏览发现，在35200行日志中，光是PD02和PD09的timeout就出现了11938行，<br>因此该日志足以说明<code>slot2</code>和<code>slot9</code>这两个硬盘出现了故障，<br>并进一步结合<code>smartctl</code>日志交叉验证了这两块盘存在故障，也就是上文说的<code>delayed</code>的错误计数。<br>随后同时将<code>TSR日志</code>和<code>perccli64</code>的<code>alilog</code>适配器日志提交给DELL，DELL认可并以此作为依据成功报修。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">PD02的<span class="built_in">timeout</span></span></span><br><span class="line">24368: YY-MM-DD HH:MM:SS WARNING:Command timeout on PD 02(e0x20/s2) Path 5000c500cdda6095, CDB: 2a 00 0f 1a ee 00 00 00 80 00</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">PD09的<span class="built_in">timeout</span></span></span><br><span class="line">2413: YY-MM-DD HH:MM:SS WARNING:Command timeout on PD 09(e0x20/s9) Path 5000c500cdd04681, CDB: 4d 00 4e 00 00 00 00 00 04 00</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">同时在这份日志顶部部分也输出了RAID控制器和磁盘的详情</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">Device Information部分的Slot Number也对应了PD02 PD09</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="2025-10-16最新消息：DELL高级工程师驳回了维修请求"><a href="#2025-10-16最新消息：DELL高级工程师驳回了维修请求" class="headerlink" title="2025-10-16最新消息：DELL高级工程师驳回了维修请求"></a>2025-10-16最新消息：DELL高级工程师驳回了维修请求</h3><p>然后给出了下面两篇文章</p>
+<p><a target="_blank" rel="noopener" href="https://www.dell.com/support/kbdoc/zh-cn/000147878/poweredge-%E6%9F%90%E4%BA%9B%E4%BC%81%E4%B8%9A%E7%A1%AC%E7%9B%98%E9%A9%B1%E5%8A%A8%E5%99%A8%E4%B8%8A%E8%AF%BB%E5%8F%96%E5%92%8C%E9%AA%8C%E8%AF%81-ecc-%E9%94%99%E8%AF%AF%E7%9A%84-smart-%E9%94%99%E8%AF%AF%E7%8E%87%E8%BE%83%E9%AB%98">PowerEdge：某些企业硬盘驱动器上读取和验证 ECC 错误的 SMART 错误率较高</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.dell.com/support/kbdoc/zh-cn/000168487/scaleio-%E7%A1%AC%E4%BB%B6%E6%84%9F%E7%9F%A5%E5%8A%9F%E8%83%BD%E5%A1%AB%E5%86%99-perc-%E6%9C%AF%E8%AF%AD?lang=zh">ScaleIO 硬件感知功能填写 PERC 术语</a></p>
+<p>故障盘PD 02&#x2F;09</p>
+<p>slot2、9: TOSHIBA AL14SXB30ENY</p>
+<p>slot3-8、10-13: Seagate ST300MP0026</p>
+<p>结合上面两篇文章和硬盘情况来看，确实，iDRAC没有报故障，同时smartctl和perccli64调查出所谓的”故障”，恰好是两块TOSHIBA的硬盘。<br>TOSHIBA的其他硬盘确实也被记录到了文章中，提到了会在<code>perccli64</code>中误报<code>timeout</code>，<br>结合<code>smartctl</code>记录的ECC纠错数量为天文数字，侧面反映了DELL所说的<code>smartctl</code>ECC纠错计数不可靠也是事实。<br><strong>目前看来，维修诉求被DELL工程师驳回也属于合理范围</strong><br><strong>且故障仅仅体现在运维监测平台告警IO延迟达到128ms，持续时间不足1分钟，随后恢复</strong><br><strong>故本次报障取消</strong></p>
+<p>补充：</p>
+<p>该问题提交给了DELL客户经理</p>
+<blockquote>
+<p>您好，我这边有台XXX PowerEdge XXX，在我们运维监控平台发现告警 IO延迟过高，触发时值: XXXms。<br>针对该告警我们筛查了TSR日志，并未发现告警记录；<br>进一步筛查了smartctl日志，发现PD 02&#x2F;09存在 perccli64告警 Command timeout on PD 02&#x2F;09；<br>且smartctl记录到ECC delayed纠正8XXX次。</p>
+<p>目前工程师回复提到了smartctl日志错误率，对于某些企业的硬盘仅供参考，实际现象：<br>其他Seagate硬盘存在1X亿次ECC fast纠错计数，故我们忽略该告警。<br>故障的PD02&#x2F;09为TOSHIBA，存在8XXX次 ECC delayed纠错计数，不过尚未出现无法纠错和扇区故障记录，我们暂时忽略。</p>
+<p>工程师回复提到了perccli64日志告警timeout，文章解释为：<br>某个供应商的固态硬盘 （SSD） 不支持其中一个命令 （cdb&#x3D; 4d 00 51 00 00 00 00 00 00 04 00）<br>复查后发现，PD 02&#x2F;09恰好是TOSHIBA的硬盘，且在文章中也有提到TOSHIBA的某个型号SSD不支持该命令，且其他Seagate硬盘均为记录该错误。<br>故我们根据文章内容，忽略该告警。</p>
+<p>鉴于本次排障报修涉及的日志和排障过程较为繁琐，目前理清楚前因后果之后，XXX要求我询问下您，看看这次的报障是驳回继续观察，还是说直接安排更换？</p>
+</blockquote>
+<p>目前尚未收到回复…</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://hackerbs.com/2025/09/18/%E5%85%B3%E4%BA%8E%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%A1%AC%E7%9B%98%E6%95%85%E9%9A%9C%E4%BD%86%E5%B8%A6%E5%A4%96%E6%B2%A1%E6%9C%89%E9%94%99%E8%AF%AF%E6%97%A5%E5%BF%97%E7%9A%84%E6%8E%92%E9%9A%9C%E4%B8%8E%E6%8A%A5%E4%BF%AE%E7%AC%94%E8%AE%B0/" data-id="cuidIITwQFR64JI2buRxqNsFh" data-title="关于服务器硬盘故障但带外没有错误日志的排障与报修笔记" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/DELL/" rel="tag">DELL</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%8D%8E%E4%B8%89/" rel="tag">华三</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%B8%A6%E5%A4%96/" rel="tag">带外</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%8E%92%E9%9A%9C/" rel="tag">排障</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%95%85%E9%9A%9C/" rel="tag">故障</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%97%A5%E5%BF%97/" rel="tag">日志</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8/" rel="tag">服务器</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%B5%AA%E6%BD%AE/" rel="tag">浪潮</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%A1%AC%E7%9B%98/" rel="tag">硬盘</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%81%94%E6%83%B3/" rel="tag">联想</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%B6%85%E8%81%9A%E5%8F%98/" rel="tag">超聚变</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%BF%90%E7%BB%B4/" rel="tag">运维</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2025/10/17/IT%E5%9C%BA%E6%99%AF%E4%B8%93%E4%B8%9A%E6%9C%AF%E8%AF%AD%E8%A1%A8/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          IT场景专业术语表
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2025/09/17/DELL%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%A1%AC%E7%9B%98IO%E5%91%8A%E8%AD%A6%E6%8E%92%E9%9A%9C%E6%80%9D%E8%B7%AF/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">DELL服务器硬盘IO告警排障思路</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%96%87%E5%AD%A6/">文学</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%9F%A5%E8%AF%86%E5%BA%93/">知识库</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%8F%91%E5%B8%83/">发布</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%9F%BA%E7%A1%80/">基础</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%AD%98%E5%82%A8/">存储</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%AE%89%E5%85%A8/">安全</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%AE%B9%E5%99%A8/">容器</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%B5%8C%E5%85%A5%E5%BC%8F/">嵌入式</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%9F%A5%E8%AF%86%E5%BA%93/%E5%B7%A5%E5%85%B7/">工具</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%9F%A5%E8%AF%86%E5%BA%93/%E7%A1%AC%E4%BB%B6/">硬件</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%9F%A5%E8%AF%86%E5%BA%93/%E7%B3%BB%E7%BB%9F/">系统</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%9F%A5%E8%AF%86%E5%BA%93/%E7%BD%91%E7%BB%9C/">网络</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%87%AA%E5%8A%A8%E5%8C%96/">自动化</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%99%9A%E6%8B%9F%E5%8C%96/">虚拟化</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%9F%A5%E8%AF%86%E5%BA%93/%E8%BF%90%E7%BB%B4/">运维</a></li></ul></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/51%E5%8D%95%E7%89%87%E6%9C%BA/" rel="tag">51单片机</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ARM/" rel="tag">ARM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/BBU/" rel="tag">BBU</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/BMC/" rel="tag">BMC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C-C-fio-%E8%84%9A%E6%9C%AC/" rel="tag">C++ - C - fio - 脚本</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CPU/" rel="tag">CPU</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Clash/" rel="tag">Clash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DDNS/" rel="tag">DDNS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DELL/" rel="tag">DELL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Debian/" rel="tag">Debian</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Debian%E5%AE%89%E8%A3%85/" rel="tag">Debian安装</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Debian%E6%9C%8D%E5%8A%A1%E5%99%A8/" rel="tag">Debian服务器</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ECC/" rel="tag">ECC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GEO/" rel="tag">GEO</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GFWList/" rel="tag">GFWList</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GPG-key/" rel="tag">GPG key</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/IO%E5%91%8A%E8%AD%A6/" rel="tag">IO告警</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/IT%E4%B8%93%E4%B8%9A%E6%9C%AF%E8%AF%AD/" rel="tag">IT专业术语</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/IT%E6%8A%80%E6%9C%AF/" rel="tag">IT技术</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/IT%E7%9F%A5%E8%AF%86/" rel="tag">IT知识</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Inspur/" rel="tag">Inspur</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux%E5%AE%89%E8%A3%85/" rel="tag">Linux安装</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/NAS/" rel="tag">NAS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/" rel="tag">Nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PERC/" rel="tag">PERC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Promox-VE/" rel="tag">Promox-VE</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Proxmox-VE/" rel="tag">Proxmox-VE</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/" rel="tag">Python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RAID/" rel="tag">RAID</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Shell/" rel="tag">Shell</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Stress-NG/" rel="tag">Stress-NG</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SylixOS/" rel="tag">SylixOS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Sysbench/" rel="tag">Sysbench</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/UEFI/" rel="tag">UEFI</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Ubuntu/" rel="tag">Ubuntu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Ubuntu%E5%AE%89%E8%A3%85/" rel="tag">Ubuntu安装</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Ubuntu%E6%9C%8D%E5%8A%A1%E5%99%A8/" rel="tag">Ubuntu服务器</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/VMware/" rel="tag">VMware</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/apt/" rel="tag">apt</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/aptdownloader/" rel="tag">aptdownloader</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/apt%E5%8C%85%E4%B8%8B%E8%BD%BD%E5%B7%A5%E5%85%B7/" rel="tag">apt包下载工具</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/apt%E6%BA%90/" rel="tag">apt源</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/armv8/" rel="tag">armv8</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/config-json/" rel="tag">config.json</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/deb/" rel="tag">deb</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/debian/" rel="tag">debian</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/dmsetup/" rel="tag">dmsetup</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/" rel="tag">docker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker-compose/" rel="tag">docker compose</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker-hub/" rel="tag">docker hub</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker-pull/" rel="tag">docker pull</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker-%E4%BB%A3%E7%90%86/" rel="tag">docker 代理</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker%E6%BA%90/" rel="tag">docker源</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/fio/" rel="tag">fio</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iDRAC/" rel="tag">iDRAC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lvm/" rel="tag">lvm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mariadb/" rel="tag">mariadb</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/markdown/" rel="tag">markdown</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/nextcloud/" rel="tag">nextcloud</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/python/" rel="tag">python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/qemu/" rel="tag">qemu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/redis/" rel="tag">redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ssh/" rel="tag">ssh</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ssh%E7%88%86%E7%A0%B4/" rel="tag">ssh爆破</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/v2ray/" rel="tag">v2ray</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/v2ray%E5%AE%A2%E6%88%B7%E7%AB%AF/" rel="tag">v2ray客户端</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vscode/" rel="tag">vscode</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vsftpd/" rel="tag">vsftpd</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/wireguard/" rel="tag">wireguard</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/yumdownloader/" rel="tag">yumdownloader</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/zfs/" rel="tag">zfs</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E3%80%8A%E5%AD%98%E5%9C%A8%E7%9A%84%E7%97%95%E8%BF%B9%EF%BC%9A%E4%B8%8D%E5%9C%A8%E4%BA%8E%E7%9F%B3%E7%A2%91%EF%BC%8C%E8%80%8C%E4%BA%8E%E6%B6%9F%E6%BC%AA%E3%80%8B/" rel="tag">《存在的痕迹：不在于石碑，而于涟漪》</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E3%80%8A%E6%B5%AE%E5%B0%98%E8%90%BD%E5%B0%BD%E7%B9%81%E5%8D%8E%E6%A2%A6%E3%80%8B/" rel="tag">《浮尘落尽繁华梦》</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%B8%AD%E8%8B%B1%E5%AF%B9%E7%85%A7/" rel="tag">中英对照</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BA%91%E8%AE%A1%E7%AE%97/" rel="tag">云计算</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BA%BA%E7%94%9F%E4%BB%B7%E5%80%BC/" rel="tag">人生价值</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BA%BA%E8%84%89/" rel="tag">人脉</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BB%A3%E7%90%86/" rel="tag">代理</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%86%85%E5%AD%98/" rel="tag">内存</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%88%86%E6%B5%81/" rel="tag">分流</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8D%8E%E4%B8%89/" rel="tag">华三</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86/" rel="tag">反向代理</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8F%AF%E4%BF%A1%E4%BB%BBapt%E6%BA%90/" rel="tag">可信任apt源</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%93%B2%E5%AD%A6/" rel="tag">哲学</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%9F%BA%E5%87%86%E6%B5%8B%E8%AF%95/" rel="tag">基准测试</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%9F%BA%E7%A1%80/" rel="tag">基础</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AD%98%E5%82%A8/" rel="tag">存储</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AE%95%E6%9C%BA/" rel="tag">宕机</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%B1%80%E5%9F%9F%E7%BD%91/" rel="tag">局域网</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/" rel="tag">嵌入式开发</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%B8%A6%E5%A4%96/" rel="tag">带外</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BC%82%E5%9C%B0%E7%BB%84%E7%BD%91/" rel="tag">异地组网</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BF%83%E6%80%81/" rel="tag">心态</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%80%9D%E6%83%B3/" rel="tag">思想</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%88%91%E5%A7%8B%E7%BB%88%E6%98%AF%E6%88%91/" rel="tag">我始终是我</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%89%B9%E9%87%8F/" rel="tag">批量</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%8E%92%E9%9A%9C/" rel="tag">排障</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%85%E9%9A%9C/" rel="tag">故障</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%96%87%E5%AD%A6/" rel="tag">文学</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%97%A5%E5%BF%97/" rel="tag">日志</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8/" rel="tag">服务器</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%8E%8B%E6%B5%8B/" rel="tag">服务器压测</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9E%84%E5%BB%BAdeb%E5%8C%85/" rel="tag">构建deb包</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B5%AA%E6%BD%AE/" rel="tag">浪潮</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%90%86%E6%80%A7%E4%B8%8E%E6%84%9F%E6%80%A7/" rel="tag">理性与感性</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%99%BE%E7%A7%91/" rel="tag">百科</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%9B%B8%E5%8F%98/" rel="tag">相变</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%9B%B8%E5%8F%98%E7%A1%85%E8%84%82/" rel="tag">相变硅脂</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%9F%A5%E8%AF%86%E5%BA%93/" rel="tag">知识库</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A0%B4%E5%B1%80%E7%9A%84%E7%89%A9%E7%90%86%E5%AD%A6/" rel="tag">破局的物理学</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A1%AC%E7%9B%98/" rel="tag">硬盘</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A3%81%E7%9B%98/" rel="tag">磁盘</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A3%81%E7%9B%98%E9%98%B5%E5%88%97/" rel="tag">磁盘阵列</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BD%91%E7%BB%9C/" rel="tag">网络</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/" rel="tag">网络安全</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%81%94%E6%83%B3/" rel="tag">联想</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%87%AA%E6%88%91%E8%AE%A4%E7%9F%A5/" rel="tag">自我认知</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%8B%B1%E6%96%87%E7%BC%A9%E5%86%99/" rel="tag">英文缩写</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%8B%B1%E8%AF%AD/" rel="tag">英语</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%99%9A%E6%8B%9F%E5%8C%96/" rel="tag">虚拟化</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%99%9A%E6%8B%9F%E6%9C%BA/" rel="tag">虚拟机</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%99%9A%E6%8B%9F%E7%BD%91%E5%8D%A1/" rel="tag">虚拟网卡</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%A7%A3%E5%86%B3%E5%8A%9E%E6%B3%95/" rel="tag">解决办法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%A1%E7%AE%97%E8%B5%84%E6%BA%90%E6%9C%AC%E5%9C%B0%E5%8C%96/" rel="tag">计算资源本地化</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%B6%85%E8%81%9A%E5%8F%98/" rel="tag">超聚变</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%BF%90%E7%BB%B4/" rel="tag">运维</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%87%8D%E9%87%8F%E4%B8%8E%E6%9D%A0%E6%9D%86/" rel="tag">重量与杠杆</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%98%B5%E5%88%97/" rel="tag">阵列</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%98%B5%E5%88%97%E5%8D%A1/" rel="tag">阵列卡</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9A%8F%E6%89%8B%E8%AE%B0/" rel="tag">随手记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9A%8F%E7%AC%94/" rel="tag">随笔</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/51%E5%8D%95%E7%89%87%E6%9C%BA/" style="font-size: 12.5px;">51单片机</a> <a href="/tags/ARM/" style="font-size: 10px;">ARM</a> <a href="/tags/BBU/" style="font-size: 10px;">BBU</a> <a href="/tags/BMC/" style="font-size: 12.5px;">BMC</a> <a href="/tags/C-C-fio-%E8%84%9A%E6%9C%AC/" style="font-size: 10px;">C++ - C - fio - 脚本</a> <a href="/tags/CPU/" style="font-size: 10px;">CPU</a> <a href="/tags/Clash/" style="font-size: 10px;">Clash</a> <a href="/tags/DDNS/" style="font-size: 10px;">DDNS</a> <a href="/tags/DELL/" style="font-size: 17.5px;">DELL</a> <a href="/tags/Debian/" style="font-size: 15px;">Debian</a> <a href="/tags/Debian%E5%AE%89%E8%A3%85/" style="font-size: 10px;">Debian安装</a> <a href="/tags/Debian%E6%9C%8D%E5%8A%A1%E5%99%A8/" style="font-size: 10px;">Debian服务器</a> <a href="/tags/Docker/" style="font-size: 15px;">Docker</a> <a href="/tags/ECC/" style="font-size: 10px;">ECC</a> <a href="/tags/GEO/" style="font-size: 10px;">GEO</a> <a href="/tags/GFWList/" style="font-size: 10px;">GFWList</a> <a href="/tags/GPG-key/" style="font-size: 10px;">GPG key</a> <a href="/tags/IO%E5%91%8A%E8%AD%A6/" style="font-size: 10px;">IO告警</a> <a href="/tags/IT%E4%B8%93%E4%B8%9A%E6%9C%AF%E8%AF%AD/" style="font-size: 10px;">IT专业术语</a> <a href="/tags/IT%E6%8A%80%E6%9C%AF/" style="font-size: 10px;">IT技术</a> <a href="/tags/IT%E7%9F%A5%E8%AF%86/" style="font-size: 17.5px;">IT知识</a> <a href="/tags/Inspur/" style="font-size: 10px;">Inspur</a> <a href="/tags/Linux/" style="font-size: 20px;">Linux</a> <a href="/tags/Linux%E5%AE%89%E8%A3%85/" style="font-size: 12.5px;">Linux安装</a> <a href="/tags/NAS/" style="font-size: 12.5px;">NAS</a> <a href="/tags/Nginx/" style="font-size: 10px;">Nginx</a> <a href="/tags/PERC/" style="font-size: 10px;">PERC</a> <a href="/tags/Promox-VE/" style="font-size: 10px;">Promox-VE</a> <a href="/tags/Proxmox-VE/" style="font-size: 17.5px;">Proxmox-VE</a> <a href="/tags/Python/" style="font-size: 10px;">Python</a> <a href="/tags/RAID/" style="font-size: 12.5px;">RAID</a> <a href="/tags/Shell/" style="font-size: 10px;">Shell</a> <a href="/tags/Stress-NG/" style="font-size: 10px;">Stress-NG</a> <a href="/tags/SylixOS/" style="font-size: 10px;">SylixOS</a> <a href="/tags/Sysbench/" style="font-size: 10px;">Sysbench</a> <a href="/tags/UEFI/" style="font-size: 10px;">UEFI</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Ubuntu%E5%AE%89%E8%A3%85/" style="font-size: 10px;">Ubuntu安装</a> <a href="/tags/Ubuntu%E6%9C%8D%E5%8A%A1%E5%99%A8/" style="font-size: 10px;">Ubuntu服务器</a> <a href="/tags/VMware/" style="font-size: 10px;">VMware</a> <a href="/tags/apt/" style="font-size: 12.5px;">apt</a> <a href="/tags/aptdownloader/" style="font-size: 10px;">aptdownloader</a> <a href="/tags/apt%E5%8C%85%E4%B8%8B%E8%BD%BD%E5%B7%A5%E5%85%B7/" style="font-size: 10px;">apt包下载工具</a> <a href="/tags/apt%E6%BA%90/" style="font-size: 15px;">apt源</a> <a href="/tags/armv8/" style="font-size: 10px;">armv8</a> <a href="/tags/config-json/" style="font-size: 10px;">config.json</a> <a href="/tags/deb/" style="font-size: 12.5px;">deb</a> <a href="/tags/debian/" style="font-size: 10px;">debian</a> <a href="/tags/dmsetup/" style="font-size: 10px;">dmsetup</a> <a href="/tags/docker/" style="font-size: 12.5px;">docker</a> <a href="/tags/docker-compose/" style="font-size: 10px;">docker compose</a> <a href="/tags/docker-hub/" style="font-size: 10px;">docker hub</a> <a href="/tags/docker-pull/" style="font-size: 10px;">docker pull</a> <a href="/tags/docker-%E4%BB%A3%E7%90%86/" style="font-size: 10px;">docker 代理</a> <a href="/tags/docker%E6%BA%90/" style="font-size: 10px;">docker源</a> <a href="/tags/fio/" style="font-size: 10px;">fio</a> <a href="/tags/iDRAC/" style="font-size: 10px;">iDRAC</a> <a href="/tags/lvm/" style="font-size: 10px;">lvm</a> <a href="/tags/mariadb/" style="font-size: 10px;">mariadb</a> <a href="/tags/markdown/" style="font-size: 10px;">markdown</a> <a href="/tags/nextcloud/" style="font-size: 10px;">nextcloud</a> <a href="/tags/python/" style="font-size: 10px;">python</a> <a href="/tags/qemu/" style="font-size: 10px;">qemu</a> <a href="/tags/redis/" style="font-size: 10px;">redis</a> <a href="/tags/ssh/" style="font-size: 10px;">ssh</a> <a href="/tags/ssh%E7%88%86%E7%A0%B4/" style="font-size: 10px;">ssh爆破</a> <a href="/tags/v2ray/" style="font-size: 10px;">v2ray</a> <a href="/tags/v2ray%E5%AE%A2%E6%88%B7%E7%AB%AF/" style="font-size: 10px;">v2ray客户端</a> <a href="/tags/vscode/" style="font-size: 10px;">vscode</a> <a href="/tags/vsftpd/" style="font-size: 12.5px;">vsftpd</a> <a href="/tags/wireguard/" style="font-size: 10px;">wireguard</a> <a href="/tags/yumdownloader/" style="font-size: 10px;">yumdownloader</a> <a href="/tags/zfs/" style="font-size: 10px;">zfs</a> <a href="/tags/%E3%80%8A%E5%AD%98%E5%9C%A8%E7%9A%84%E7%97%95%E8%BF%B9%EF%BC%9A%E4%B8%8D%E5%9C%A8%E4%BA%8E%E7%9F%B3%E7%A2%91%EF%BC%8C%E8%80%8C%E4%BA%8E%E6%B6%9F%E6%BC%AA%E3%80%8B/" style="font-size: 10px;">《存在的痕迹：不在于石碑，而于涟漪》</a> <a href="/tags/%E3%80%8A%E6%B5%AE%E5%B0%98%E8%90%BD%E5%B0%BD%E7%B9%81%E5%8D%8E%E6%A2%A6%E3%80%8B/" style="font-size: 10px;">《浮尘落尽繁华梦》</a> <a href="/tags/%E4%B8%AD%E8%8B%B1%E5%AF%B9%E7%85%A7/" style="font-size: 10px;">中英对照</a> <a href="/tags/%E4%BA%91%E8%AE%A1%E7%AE%97/" style="font-size: 10px;">云计算</a> <a href="/tags/%E4%BA%BA%E7%94%9F%E4%BB%B7%E5%80%BC/" style="font-size: 15px;">人生价值</a> <a href="/tags/%E4%BA%BA%E8%84%89/" style="font-size: 10px;">人脉</a> <a href="/tags/%E4%BB%A3%E7%90%86/" style="font-size: 10px;">代理</a> <a href="/tags/%E5%86%85%E5%AD%98/" style="font-size: 12.5px;">内存</a> <a href="/tags/%E5%88%86%E6%B5%81/" style="font-size: 10px;">分流</a> <a href="/tags/%E5%8D%8E%E4%B8%89/" style="font-size: 10px;">华三</a> <a href="/tags/%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86/" style="font-size: 10px;">反向代理</a> <a href="/tags/%E5%8F%AF%E4%BF%A1%E4%BB%BBapt%E6%BA%90/" style="font-size: 10px;">可信任apt源</a> <a href="/tags/%E5%93%B2%E5%AD%A6/" style="font-size: 10px;">哲学</a> <a href="/tags/%E5%9F%BA%E5%87%86%E6%B5%8B%E8%AF%95/" style="font-size: 10px;">基准测试</a> <a href="/tags/%E5%9F%BA%E7%A1%80/" style="font-size: 10px;">基础</a> <a href="/tags/%E5%AD%98%E5%82%A8/" style="font-size: 12.5px;">存储</a> <a href="/tags/%E5%AE%95%E6%9C%BA/" style="font-size: 10px;">宕机</a> <a href="/tags/%E5%B1%80%E5%9F%9F%E7%BD%91/" style="font-size: 10px;">局域网</a> <a href="/tags/%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/" style="font-size: 12.5px;">嵌入式开发</a> <a href="/tags/%E5%B8%A6%E5%A4%96/" style="font-size: 15px;">带外</a> <a href="/tags/%E5%BC%82%E5%9C%B0%E7%BB%84%E7%BD%91/" style="font-size: 10px;">异地组网</a> <a href="/tags/%E5%BF%83%E6%80%81/" style="font-size: 10px;">心态</a> <a href="/tags/%E6%80%9D%E6%83%B3/" style="font-size: 12.5px;">思想</a> <a href="/tags/%E6%88%91%E5%A7%8B%E7%BB%88%E6%98%AF%E6%88%91/" style="font-size: 10px;">我始终是我</a> <a href="/tags/%E6%89%B9%E9%87%8F/" style="font-size: 10px;">批量</a> <a href="/tags/%E6%8E%92%E9%9A%9C/" style="font-size: 15px;">排障</a> <a href="/tags/%E6%95%85%E9%9A%9C/" style="font-size: 10px;">故障</a> <a href="/tags/%E6%96%87%E5%AD%A6/" style="font-size: 12.5px;">文学</a> <a href="/tags/%E6%97%A5%E5%BF%97/" style="font-size: 10px;">日志</a> <a href="/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8/" style="font-size: 12.5px;">服务器</a> <a href="/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%8E%8B%E6%B5%8B/" style="font-size: 10px;">服务器压测</a> <a href="/tags/%E6%9E%84%E5%BB%BAdeb%E5%8C%85/" style="font-size: 10px;">构建deb包</a> <a href="/tags/%E6%B5%AA%E6%BD%AE/" style="font-size: 12.5px;">浪潮</a> <a href="/tags/%E7%90%86%E6%80%A7%E4%B8%8E%E6%84%9F%E6%80%A7/" style="font-size: 10px;">理性与感性</a> <a href="/tags/%E7%99%BE%E7%A7%91/" style="font-size: 17.5px;">百科</a> <a href="/tags/%E7%9B%B8%E5%8F%98/" style="font-size: 10px;">相变</a> <a href="/tags/%E7%9B%B8%E5%8F%98%E7%A1%85%E8%84%82/" style="font-size: 10px;">相变硅脂</a> <a href="/tags/%E7%9F%A5%E8%AF%86%E5%BA%93/" style="font-size: 10px;">知识库</a> <a href="/tags/%E7%A0%B4%E5%B1%80%E7%9A%84%E7%89%A9%E7%90%86%E5%AD%A6/" style="font-size: 10px;">破局的物理学</a> <a href="/tags/%E7%A1%AC%E7%9B%98/" style="font-size: 17.5px;">硬盘</a> <a href="/tags/%E7%A3%81%E7%9B%98/" style="font-size: 10px;">磁盘</a> <a href="/tags/%E7%A3%81%E7%9B%98%E9%98%B5%E5%88%97/" style="font-size: 10px;">磁盘阵列</a> <a href="/tags/%E7%BD%91%E7%BB%9C/" style="font-size: 10px;">网络</a> <a href="/tags/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/" style="font-size: 10px;">网络安全</a> <a href="/tags/%E8%81%94%E6%83%B3/" style="font-size: 10px;">联想</a> <a href="/tags/%E8%87%AA%E6%88%91%E8%AE%A4%E7%9F%A5/" style="font-size: 12.5px;">自我认知</a> <a href="/tags/%E8%8B%B1%E6%96%87%E7%BC%A9%E5%86%99/" style="font-size: 10px;">英文缩写</a> <a href="/tags/%E8%8B%B1%E8%AF%AD/" style="font-size: 10px;">英语</a> <a href="/tags/%E8%99%9A%E6%8B%9F%E5%8C%96/" style="font-size: 10px;">虚拟化</a> <a href="/tags/%E8%99%9A%E6%8B%9F%E6%9C%BA/" style="font-size: 12.5px;">虚拟机</a> <a href="/tags/%E8%99%9A%E6%8B%9F%E7%BD%91%E5%8D%A1/" style="font-size: 10px;">虚拟网卡</a> <a href="/tags/%E8%A7%A3%E5%86%B3%E5%8A%9E%E6%B3%95/" style="font-size: 10px;">解决办法</a> <a href="/tags/%E8%AE%A1%E7%AE%97%E8%B5%84%E6%BA%90%E6%9C%AC%E5%9C%B0%E5%8C%96/" style="font-size: 10px;">计算资源本地化</a> <a href="/tags/%E8%B6%85%E8%81%9A%E5%8F%98/" style="font-size: 10px;">超聚变</a> <a href="/tags/%E8%BF%90%E7%BB%B4/" style="font-size: 10px;">运维</a> <a href="/tags/%E9%87%8D%E9%87%8F%E4%B8%8E%E6%9D%A0%E6%9D%86/" style="font-size: 10px;">重量与杠杆</a> <a href="/tags/%E9%98%B5%E5%88%97/" style="font-size: 10px;">阵列</a> <a href="/tags/%E9%98%B5%E5%88%97%E5%8D%A1/" style="font-size: 10px;">阵列卡</a> <a href="/tags/%E9%9A%8F%E6%89%8B%E8%AE%B0/" style="font-size: 10px;">随手记</a> <a href="/tags/%E9%9A%8F%E7%AC%94/" style="font-size: 17.5px;">随笔</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/07/">July 2026</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/10/">October 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/09/">September 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/03/">March 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/02/">February 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">November 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/09/">September 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/06/">June 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/05/">May 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/04/">April 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/03/">March 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/02/">February 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/01/">January 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">October 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/09/">September 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/03/">March 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/02/">February 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/01/">January 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">November 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">October 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2026/07/18/%E9%9A%8F%E7%AC%94%20-%20%E3%80%8A%E6%88%91%E5%A7%8B%E7%BB%88%E6%98%AF%E6%88%91%E3%80%8B/">随笔 - 《我始终是我》</a>
+          </li>
+        
+          <li>
+            <a href="/2026/07/05/%E9%9A%8F%E7%AC%94%20-%20%E3%80%8A%E7%A0%B4%E5%B1%80%E7%9A%84%E7%89%A9%E7%90%86%E5%AD%A6%EF%BC%9A%E9%87%8D%E9%87%8F%E3%80%81%E6%9D%A0%E6%9D%86%E4%B8%8E%E6%B6%9F%E6%BC%AA%E3%80%8B/">随笔 - 《破局的物理学：重量、杠杆与涟漪》</a>
+          </li>
+        
+          <li>
+            <a href="/2025/10/17/%E9%9A%8F%E7%AC%94%20-%20%E3%80%8A%E5%AD%98%E5%9C%A8%E7%9A%84%E7%97%95%E8%BF%B9%EF%BC%9A%E4%B8%8D%E5%9C%A8%E4%BA%8E%E7%9F%B3%E7%A2%91%EF%BC%8C%E8%80%8C%E4%BA%8E%E6%B6%9F%E6%BC%AA%E3%80%8B/">随笔 - 《存在的痕迹：不在于石碑，而于涟漪》</a>
+          </li>
+        
+          <li>
+            <a href="/2025/10/17/IT%E5%9C%BA%E6%99%AF%E4%B8%93%E4%B8%9A%E6%9C%AF%E8%AF%AD%E8%A1%A8/">IT场景专业术语表</a>
+          </li>
+        
+          <li>
+            <a href="/2025/09/18/%E5%85%B3%E4%BA%8E%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%A1%AC%E7%9B%98%E6%95%85%E9%9A%9C%E4%BD%86%E5%B8%A6%E5%A4%96%E6%B2%A1%E6%9C%89%E9%94%99%E8%AF%AF%E6%97%A5%E5%BF%97%E7%9A%84%E6%8E%92%E9%9A%9C%E4%B8%8E%E6%8A%A5%E4%BF%AE%E7%AC%94%E8%AE%B0/">关于服务器硬盘故障但带外没有错误日志的排障与报修笔记</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2026 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>
