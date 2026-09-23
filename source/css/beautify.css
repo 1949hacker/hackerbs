@@ -1,86 +1,35 @@
-﻿/* =====================================================================
-   设计系统 v7：目录式首页 + 左目录轨 + 右侧页边注 + 阅读模式
-   配色：Catppuccin / Rosé Pine / GitHub Primer / Nord
-   ★ 全部文字色经程序实测 >= 7:1（WCAG AAA），深色模式避开纯白/纯黑
-     （依据：深色模式因 halation 需 7:1~15:1，但纯白纯黑反而刺眼）
+/* =====================================================================
+   配色 v8 —— 单套暖色系（取消多套切换）
+   参考：pidan.dev 的赤陶强调色 + 暖褐 / 暖纸底色
+     技术页 = 暖褐黑深色（#1F1B17）   随笔页 = 暖纸白浅色（#FAF9F7）
+   ★ 全部文字色经程序实测 >= 7:1（WCAG AAA），深色避开纯黑、浅色避开纯白
+   ★ 布局规则未改动，仅替换配色令牌
    ===================================================================== */
 
-/* ---------- Catppuccin Mocha（默认 · 深色技术页） ---------- */
+/* ---------- 暖褐黑（技术页 · 默认） ---------- */
 :root{
-  --bg:#1e1e2e; --bg-2:#181825; --surface:#181825; --surface-2:#313244;
-  --text:#dbe0f3; --text-2:#c9d0e8; --muted:#a6adc8;
-  --rule:#313244; --rule-2:#45475a;
-  --accent:#8ab4f8; --accent-ink:#11111b; --structure:#cba6f7; --note:#f9e2af;
-  --grid:rgba(219,224,243,.032); --glow1:rgba(138,180,248,.13); --glow2:rgba(203,166,247,.13);
-  --code-bg:#181825; --code-gutter:#a6adc8; --code-key:#cba6f7; --code-str:#a6e3a1; --code-num:#fab387; --code-comment:#9ea3ba;
+  --bg:#1F1B17; --bg-2:#191512; --surface:#2B2520; --surface-2:#332C26;
+  --text:#EDE4D9; --text-2:#C9C0B6; --muted:#aca59d;
+  --rule:#3A332C; --rule-2:#4A4239;
+  --accent:#E89576; --accent-ink:#1F1B17; --structure:#DCAE95; --note:#E8C57A;
+  --grid:rgba(232,149,118,.030); --glow1:rgba(232,149,118,.10); --glow2:rgba(220,174,149,.08);
+  --code-bg:#15110E; --code-gutter:#a49d97; --code-key:#D49060; --code-str:#96BE80;
+  --code-num:#74BFB0; --code-comment:#a49d94;
   --font-display:"Space Grotesk","Inter","Microsoft YaHei",system-ui,sans-serif;
   --font-body:"Inter","Segoe UI","Microsoft YaHei",system-ui,-apple-system,sans-serif;
   --font-serif:"Fraunces","LXGW WenKai","KaiTi","Songti SC",Georgia,serif;
   --font-mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
   --measure:44rem; --p:0%;
 }
-/* ---------- Catppuccin Latte（随笔 · 浅色） ---------- */
+/* ---------- 暖纸白（随笔 · 浅色） ---------- */
 html[data-mood="essay"]{
-  --bg:#eff1f5; --bg-2:#e6e9ef; --surface:#e9ecf2; --surface-2:#dfe3ea;
-  --text:#33374d; --text-2:#454a63; --muted:#464b66;
-  --rule:#ccd0da; --rule-2:#bcc0cc;
-  --accent:#0a3fb9; --accent-ink:#ffffff; --structure:#6327c4; --note:#8f5e00;
-  --grid:rgba(51,55,77,.035); --glow1:rgba(10,63,185,.07); --glow2:rgba(99,39,196,.07);
-  --code-bg:#e9ecf2; --code-gutter:#464b66; --code-key:#5f25bc; --code-str:#165a16; --code-num:#a04a00; --code-comment:#464b66;
-}
-/* ---------- Rosé Pine Moon（深色） ---------- */
-html[data-palette="rose-pine"]{
-  --bg:#232136; --bg-2:#1f1d2e; --surface:#2a273f; --surface-2:#393552;
-  --text:#e4e2f2; --text-2:#d3cee9; --muted:#bdb7dc;
-  --rule:#393552; --rule-2:#44415a;
-  --accent:#c9aeea; --accent-ink:#232136; --structure:#9ccfd8; --note:#f6c177;
-  --grid:rgba(228,226,242,.035); --glow1:rgba(201,174,234,.14); --glow2:rgba(156,207,216,.12);
-  --code-bg:#2a273f; --code-gutter:#bdb7dc; --code-key:#c9aeea; --code-str:#9ccfd8; --code-num:#f6c177; --code-comment:#b8b1d4;
-}
-/* ---------- Rosé Pine Dawn（浅色） ---------- */
-html[data-palette="rose-pine"][data-mood="essay"]{
-  --bg:#faf4ed; --bg-2:#f2e9e1; --surface:#f7f1e8; --surface-2:#f2e9e1;
-  --text:#3f3a5c; --text-2:#4f4a72; --muted:#4c4766;
-  --rule:#ece5db; --rule-2:#e0d8cd;
-  --accent:#12566b; --accent-ink:#faf4ed; --structure:#54406e; --note:#8a5a00;
-  --grid:rgba(63,58,92,.035); --glow1:rgba(18,86,107,.08); --glow2:rgba(84,64,110,.08);
-  --code-bg:#f7f1e8; --code-gutter:#4c4766; --code-key:#54406e; --code-str:#12566b; --code-num:#8a4b00; --code-comment:#4c4766;
-}
-/* ---------- GitHub Primer Dark ---------- */
-html[data-palette="github"]{
-  --bg:#0d1117; --bg-2:#010409; --surface:#161b22; --surface-2:#21262d;
-  --text:#e6edf3; --text-2:#cfd6de; --muted:#a8b2bb;
-  --rule:#30363d; --rule-2:#3d444d;
-  --accent:#58a6ff; --accent-ink:#0d1117; --structure:#bc8cff; --note:#d29922;
-  --grid:rgba(230,237,243,.03); --glow1:rgba(88,166,255,.13); --glow2:rgba(188,140,255,.11);
-  --code-bg:#161b22; --code-gutter:#a8b2bb; --code-key:#ff8078; --code-str:#a5d6ff; --code-num:#79c0ff; --code-comment:#a8b2bb;
-}
-/* ---------- GitHub Primer Light ---------- */
-html[data-palette="github"][data-mood="essay"]{
-  --bg:#ffffff; --bg-2:#f6f8fa; --surface:#f6f8fa; --surface-2:#eaeef2;
-  --text:#1f2328; --text-2:#3d454e; --muted:#4a525c;
-  --rule:#d0d7de; --rule-2:#afb8c1;
-  --accent:#0b4f9e; --accent-ink:#ffffff; --structure:#5436b5; --note:#9a6700;
-  --grid:rgba(31,35,40,.03); --glow1:rgba(11,79,158,.06); --glow2:rgba(84,54,181,.06);
-  --code-bg:#f6f8fa; --code-gutter:#4a525c; --code-key:#a40e26; --code-str:#0a3069; --code-num:#0550ae; --code-comment:#4a525c;
-}
-/* ---------- Nord Polar Night（深色） ---------- */
-html[data-palette="nord"]{
-  --bg:#2e3440; --bg-2:#292e39; --surface:#3b4252; --surface-2:#434c5e;
-  --text:#eceff4; --text-2:#dde3ea; --muted:#b9c3d1;
-  --rule:#3b4252; --rule-2:#4c566a;
-  --accent:#9fd0dd; --accent-ink:#2e3440; --structure:#d7b9d6; --note:#ebcb8b;
-  --grid:rgba(236,239,244,.03); --glow1:rgba(159,208,221,.13); --glow2:rgba(215,185,214,.11);
-  --code-bg:#2e3440; --code-gutter:#b9c3d1; --code-key:#9fd0dd; --code-str:#b4caa1; --code-num:#ebcb8b; --code-comment:#b9c3d1;
-}
-/* ---------- Nord Snow Storm（浅色） ---------- */
-html[data-palette="nord"][data-mood="essay"]{
-  --bg:#eceff4; --bg-2:#e5e9f0; --surface:#e5e9f0; --surface-2:#d8dee9;
-  --text:#2e3440; --text-2:#3b4252; --muted:#444f61;
-  --rule:#d8dee9; --rule-2:#c3ccd9;
-  --accent:#1a4d75; --accent-ink:#eceff4; --structure:#5c3570; --note:#8a4b00;
-  --grid:rgba(46,52,64,.03); --glow1:rgba(26,77,117,.08); --glow2:rgba(92,53,112,.08);
-  --code-bg:#e5e9f0; --code-gutter:#444f61; --code-key:#1a4d75; --code-str:#265626; --code-num:#8a4b00; --code-comment:#414c5d;
+  --bg:#FAF9F7; --bg-2:#F4F1EC; --surface:#FFFFFF; --surface-2:#F0EBE3;
+  --text:#2D2B28; --text-2:#4A453F; --muted:#5a554f;
+  --rule:#E5E0D8; --rule-2:#D5CEC4;
+  --accent:#8b3f20; --accent-ink:#FFFFFF; --structure:#843f5c; --note:#774d00;
+  --grid:rgba(163,74,38,.030); --glow1:rgba(163,74,38,.05); --glow2:rgba(132,63,92,.05);
+  --code-bg:#F0EBE3; --code-gutter:#524d48; --code-key:#793e22; --code-str:#335627;
+  --code-num:#19574d; --code-comment:#524d48;
 }
 
 /* ---------- 基底 + 分层背景（不用纯黑） ---------- */
@@ -182,7 +131,7 @@ a{ color:var(--accent); }
 #article-container table th,#article-container table td{ border:none!important; border-bottom:1px solid var(--rule)!important; }
 #article-container hr{ border:none!important; height:1px; background:var(--rule)!important; margin:2.4em 0!important; }
 
-#article-container code{ font-family:var(--font-mono)!important; font-size:.87em; background:var(--surface-2); color:var(--accent); padding:.12em .42em; border:1px solid var(--rule); border-radius:4px; }
+#article-container code{ font-family:var(--font-mono)!important; font-size:.87em; background:var(--surface-2); color:var(--text); padding:.12em .42em; border:1px solid var(--rule); border-radius:4px; }
 #article-container pre code,#article-container figure.highlight code{ background:none!important; border:none!important; padding:0!important; color:inherit!important; font-size:inherit!important; }
 
 /* ---------- 代码块：头部条 + 突破栏宽 ---------- */
@@ -283,15 +232,10 @@ html[data-mood="essay"] figure.highlight{ width:min(52rem,92vw); }
 
 /* ---------- 进度条 / 切换器 / 显现 ---------- */
 .read-progress{ position:fixed; top:0; left:0; height:2px; width:0; background:var(--accent); z-index:9999; transition:width .12s linear; }
-.palette-switch{
   position:fixed; left:16px; bottom:16px; z-index:9999; display:flex; gap:4px; align-items:center;
   padding:7px 10px; background:var(--surface); border:1px solid var(--rule); border-radius:8px;
   font-family:var(--font-mono); font-size:11px; box-shadow:0 10px 30px -12px rgba(0,0,0,.5);
 }
-.palette-switch .ps-label{ color:var(--muted); letter-spacing:.14em; margin-right:4px; }
-.palette-switch button{ background:transparent; border:1px solid transparent; color:var(--text-2); padding:4px 9px; cursor:pointer; font:inherit; border-radius:5px; transition:all .18s; }
-.palette-switch button:hover{ color:var(--text); border-color:var(--rule-2); }
-.palette-switch button.is-on{ background:var(--accent); color:var(--accent-ink); border-color:var(--accent); }
 .reveal{ opacity:0; transform:translateY(14px); transition:opacity .55s cubic-bezier(.2,.7,.2,1),transform .55s cubic-bezier(.2,.7,.2,1); }
 .reveal.reveal-in{ opacity:1; transform:none; }
 
@@ -311,4 +255,4 @@ html[data-mood="essay"] figure.highlight{ width:min(52rem,92vw); }
 @media (prefers-reduced-motion: reduce){
   *{ transition-duration:.01ms!important; animation-duration:.01ms!important; }
 }
-@media print{ .palette-switch,.read-progress,#rail-left,#rail-right{ display:none!important; } }
+@media print{ .read-progress,#rail-left,#rail-right{ display:none!important; } }

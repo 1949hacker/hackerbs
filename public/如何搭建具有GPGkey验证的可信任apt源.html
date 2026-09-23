@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="zh-CN" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>如何搭建具有GPGkey验证的可信任apt源 | hackerbs's Blog - 探索知识的宇宙</title><meta name="author" content="hackerbs.com"><meta name="copyright" content="hackerbs.com"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="1e1e2e"><meta name="description" content="本文将介绍如何搭建一个像docker-ce一样具有GPG key验证的源普通的用deb [trusted&#x3D;yes] http:&#x2F;&#x2F;url&#x2F; bookworm main添加的源在内网环境用还行，但若是在公网，就会存在没有验证，被篡改的风险，且具有GPG key验证的源也更专业 搭建自己的apt源后便可将自己的deb包上传到服务器，然后添加自己的apt源并导入GPG密钥 使用aptly管理apt仓库1">
+<!DOCTYPE html><html lang="zh-CN" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>如何搭建具有GPGkey验证的可信任apt源 | hackerbs's Blog - 探索知识的宇宙</title><meta name="author" content="hackerbs.com"><meta name="copyright" content="hackerbs.com"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="1F1B17"><meta name="description" content="本文将介绍如何搭建一个像docker-ce一样具有GPG key验证的源普通的用deb [trusted&#x3D;yes] http:&#x2F;&#x2F;url&#x2F; bookworm main添加的源在内网环境用还行，但若是在公网，就会存在没有验证，被篡改的风险，且具有GPG key验证的源也更专业 搭建自己的apt源后便可将自己的deb包上传到服务器，然后添加自己的apt源并导入GPG密钥 使用aptly管理apt仓库1">
 <meta property="og:type" content="article">
 <meta property="og:title" content="如何搭建具有GPGkey验证的可信任apt源">
 <meta property="og:url" content="https://hackerbs.com/%E5%A6%82%E4%BD%95%E6%90%AD%E5%BB%BA%E5%85%B7%E6%9C%89GPGkey%E9%AA%8C%E8%AF%81%E7%9A%84%E5%8F%AF%E4%BF%A1%E4%BB%BBapt%E6%BA%90.html">
@@ -133,13 +133,13 @@
       const activateDarkMode = () => {
         document.documentElement.dataset.theme = 'dark'
         if (metaThemeColor !== null) {
-          metaThemeColor.setAttribute('content', '1e1e2e')
+          metaThemeColor.setAttribute('content', '1F1B17')
         }
       }
       const activateLightMode = () => {
         document.documentElement.dataset.theme = 'light'
         if (metaThemeColor !== null) {
-          metaThemeColor.setAttribute('content', '1e1e2e')
+          metaThemeColor.setAttribute('content', '1F1B17')
         }
       }
 

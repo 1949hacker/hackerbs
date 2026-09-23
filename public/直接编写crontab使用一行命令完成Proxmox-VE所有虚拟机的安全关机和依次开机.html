@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="zh-CN" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>直接编写crontab使用一行命令完成Proxmox-VE所有虚拟机的安全关机和依次开机 | hackerbs's Blog - 探索知识的宇宙</title><meta name="author" content="hackerbs.com"><meta name="copyright" content="hackerbs.com"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="1e1e2e"><meta name="description" content="12345# 依次关机i&#x3D;$(qm list)&amp;&amp;vmid&#x3D;$(echo &quot;$i&quot; | awk &#x27;&#123;if (NR&gt;1) &#123;print $1&#125;&#125;&#x27;)&amp;&amp;for i in $vmid;do qm shutdown $i;done#依次开机，间隔一分钟i&#x3D;$(qm list)&amp;&amp;">
+<!DOCTYPE html><html lang="zh-CN" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>直接编写crontab使用一行命令完成Proxmox-VE所有虚拟机的安全关机和依次开机 | hackerbs's Blog - 探索知识的宇宙</title><meta name="author" content="hackerbs.com"><meta name="copyright" content="hackerbs.com"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="1F1B17"><meta name="description" content="12345# 依次关机i&#x3D;$(qm list)&amp;&amp;vmid&#x3D;$(echo &quot;$i&quot; | awk &#x27;&#123;if (NR&gt;1) &#123;print $1&#125;&#125;&#x27;)&amp;&amp;for i in $vmid;do qm shutdown $i;done#依次开机，间隔一分钟i&#x3D;$(qm list)&amp;&amp;">
 <meta property="og:type" content="article">
 <meta property="og:title" content="直接编写crontab使用一行命令完成Proxmox-VE所有虚拟机的安全关机和依次开机">
 <meta property="og:url" content="https://hackerbs.com/%E7%9B%B4%E6%8E%A5%E7%BC%96%E5%86%99crontab%E4%BD%BF%E7%94%A8%E4%B8%80%E8%A1%8C%E5%91%BD%E4%BB%A4%E5%AE%8C%E6%88%90Proxmox-VE%E6%89%80%E6%9C%89%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E5%AE%89%E5%85%A8%E5%85%B3%E6%9C%BA%E5%92%8C%E4%BE%9D%E6%AC%A1%E5%BC%80%E6%9C%BA.html">
@@ -135,13 +135,13 @@
       const activateDarkMode = () => {
         document.documentElement.dataset.theme = 'dark'
         if (metaThemeColor !== null) {
-          metaThemeColor.setAttribute('content', '1e1e2e')
+          metaThemeColor.setAttribute('content', '1F1B17')
         }
       }
       const activateLightMode = () => {
         document.documentElement.dataset.theme = 'light'
         if (metaThemeColor !== null) {
-          metaThemeColor.setAttribute('content', '1e1e2e')
+          metaThemeColor.setAttribute('content', '1F1B17')
         }
       }
 

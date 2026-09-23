@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="zh-CN" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Debian x86_64平台搭建arm docker环境 | hackerbs's Blog - 探索知识的宇宙</title><meta name="author" content="hackerbs.com"><meta name="copyright" content="hackerbs.com"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="1e1e2e"><meta name="description" content="在Debian x86_64平台搭建Docker arm环境的方法 123456# 安装QEMU用户模式工具：QEMU将用于在x86_64主机上模拟ARMv8架构apt install qemu-system binfmt-support qemu-user-static# 启用QEMU用户模式支持update-binfmts --enable qemu-armupdate-binfmts --e">
+<!DOCTYPE html><html lang="zh-CN" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Debian x86_64平台搭建arm docker环境 | hackerbs's Blog - 探索知识的宇宙</title><meta name="author" content="hackerbs.com"><meta name="copyright" content="hackerbs.com"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="1F1B17"><meta name="description" content="在Debian x86_64平台搭建Docker arm环境的方法 123456# 安装QEMU用户模式工具：QEMU将用于在x86_64主机上模拟ARMv8架构apt install qemu-system binfmt-support qemu-user-static# 启用QEMU用户模式支持update-binfmts --enable qemu-armupdate-binfmts --e">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Debian x86_64平台搭建arm docker环境">
 <meta property="og:url" content="https://hackerbs.com/Debian%20x86_64%E5%B9%B3%E5%8F%B0%E6%90%AD%E5%BB%BAarm%20docker%E7%8E%AF%E5%A2%83.html">
@@ -131,13 +131,13 @@
       const activateDarkMode = () => {
         document.documentElement.dataset.theme = 'dark'
         if (metaThemeColor !== null) {
-          metaThemeColor.setAttribute('content', '1e1e2e')
+          metaThemeColor.setAttribute('content', '1F1B17')
         }
       }
       const activateLightMode = () => {
         document.documentElement.dataset.theme = 'light'
         if (metaThemeColor !== null) {
-          metaThemeColor.setAttribute('content', '1e1e2e')
+          metaThemeColor.setAttribute('content', '1F1B17')
         }
       }
 

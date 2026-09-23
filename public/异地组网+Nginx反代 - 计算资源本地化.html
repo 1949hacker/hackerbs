@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="zh-CN" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>异地组网+Nginx反代 | 计算资源本地化 | hackerbs's Blog - 探索知识的宇宙</title><meta name="author" content="hackerbs.com"><meta name="copyright" content="hackerbs.com"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="1e1e2e"><meta name="description" content="本次部署的目的是利用本地高性能的计算资源和云服务器畅通无阻的公网，实现无公网环境也可正常部署业务。  本文所用到的技术如下   名称 作用 软件    单向异地组网 将云服务器和本地服务器组成局域网，因本地服务器没有公网，所以由云服务器建立UDP连接实现组网 WireGuard   反代 将对云服务器发起的访问根据配置的业务转发到本地服务器进行处理 Nginx   网络转发 配合wireguar">
+<!DOCTYPE html><html lang="zh-CN" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>异地组网+Nginx反代 | 计算资源本地化 | hackerbs's Blog - 探索知识的宇宙</title><meta name="author" content="hackerbs.com"><meta name="copyright" content="hackerbs.com"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="1F1B17"><meta name="description" content="本次部署的目的是利用本地高性能的计算资源和云服务器畅通无阻的公网，实现无公网环境也可正常部署业务。  本文所用到的技术如下   名称 作用 软件    单向异地组网 将云服务器和本地服务器组成局域网，因本地服务器没有公网，所以由云服务器建立UDP连接实现组网 WireGuard   反代 将对云服务器发起的访问根据配置的业务转发到本地服务器进行处理 Nginx   网络转发 配合wireguar">
 <meta property="og:type" content="article">
 <meta property="og:title" content="异地组网+Nginx反代 | 计算资源本地化">
 <meta property="og:url" content="https://hackerbs.com/%E5%BC%82%E5%9C%B0%E7%BB%84%E7%BD%91+Nginx%E5%8F%8D%E4%BB%A3%20-%20%E8%AE%A1%E7%AE%97%E8%B5%84%E6%BA%90%E6%9C%AC%E5%9C%B0%E5%8C%96.html">
@@ -136,13 +136,13 @@
       const activateDarkMode = () => {
         document.documentElement.dataset.theme = 'dark'
         if (metaThemeColor !== null) {
-          metaThemeColor.setAttribute('content', '1e1e2e')
+          metaThemeColor.setAttribute('content', '1F1B17')
         }
       }
       const activateLightMode = () => {
         document.documentElement.dataset.theme = 'light'
         if (metaThemeColor !== null) {
-          metaThemeColor.setAttribute('content', '1e1e2e')
+          metaThemeColor.setAttribute('content', '1F1B17')
         }
       }
 

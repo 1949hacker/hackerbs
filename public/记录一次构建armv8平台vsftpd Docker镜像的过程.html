@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="zh-CN" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>记录一次构建armv8平台vsftpd Docker镜像的过程 | hackerbs's Blog - 探索知识的宇宙</title><meta name="author" content="hackerbs.com"><meta name="copyright" content="hackerbs.com"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="1e1e2e"><meta name="description" content="因客户使用飞腾2000平台需要部署vsftpd，但因系统环境不同存在诸多部署问题，且无适配的armv8版本vsftpd容器，特此专门构建vsftpd镜像并记录构建过程 Dockerfile代码如下 123456789101112131415161718192021222324252627282930313233343536373839FROM arm64v8&#x2F;debianLABEL maintai">
+<!DOCTYPE html><html lang="zh-CN" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>记录一次构建armv8平台vsftpd Docker镜像的过程 | hackerbs's Blog - 探索知识的宇宙</title><meta name="author" content="hackerbs.com"><meta name="copyright" content="hackerbs.com"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="1F1B17"><meta name="description" content="因客户使用飞腾2000平台需要部署vsftpd，但因系统环境不同存在诸多部署问题，且无适配的armv8版本vsftpd容器，特此专门构建vsftpd镜像并记录构建过程 Dockerfile代码如下 123456789101112131415161718192021222324252627282930313233343536373839FROM arm64v8&#x2F;debianLABEL maintai">
 <meta property="og:type" content="article">
 <meta property="og:title" content="记录一次构建armv8平台vsftpd Docker镜像的过程">
 <meta property="og:url" content="https://hackerbs.com/%E8%AE%B0%E5%BD%95%E4%B8%80%E6%AC%A1%E6%9E%84%E5%BB%BAarmv8%E5%B9%B3%E5%8F%B0vsftpd%20Docker%E9%95%9C%E5%83%8F%E7%9A%84%E8%BF%87%E7%A8%8B.html">
@@ -132,13 +132,13 @@
       const activateDarkMode = () => {
         document.documentElement.dataset.theme = 'dark'
         if (metaThemeColor !== null) {
-          metaThemeColor.setAttribute('content', '1e1e2e')
+          metaThemeColor.setAttribute('content', '1F1B17')
         }
       }
       const activateLightMode = () => {
         document.documentElement.dataset.theme = 'light'
         if (metaThemeColor !== null) {
-          metaThemeColor.setAttribute('content', '1e1e2e')
+          metaThemeColor.setAttribute('content', '1F1B17')
         }
       }
 

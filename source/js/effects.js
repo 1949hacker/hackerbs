@@ -1,4 +1,4 @@
-/* 阅读引擎：左目录轨 / 右侧页边注 / 阅读模式 / 代码块头部条 / 进度 / 调色板 */
+/* 阅读引擎：左目录轨 / 右侧页边注 / 阅读模式 / 代码块头部条 / 进度 */
 (function () {
   function ready(fn) {
     if (document.readyState !== 'loading') fn();
@@ -151,37 +151,8 @@
       });
     }
 
-    /* ---------- 6) 调色板切换 ---------- */
-    var PALETTES = [
-      ['catppuccin', 'Catppuccin'],
-      ['rose-pine', 'Rosé Pine'],
-      ['github', 'GitHub'],
-      ['nord', 'Nord']
-    ];
-    var saved = null;
-    try { saved = localStorage.getItem('hb_palette'); } catch (e) {}
-    if (saved && saved !== 'catppuccin') root.setAttribute('data-palette', saved);
-
-    var bar2 = document.createElement('div');
-    bar2.className = 'palette-switch';
-    var label = document.createElement('span');
-    label.className = 'ps-label';
-    label.textContent = 'PALETTE';
-    bar2.appendChild(label);
-    PALETTES.forEach(function (p) {
-      var b = document.createElement('button');
-      b.type = 'button';
-      b.textContent = p[1];
-      if ((root.getAttribute('data-palette') || 'catppuccin') === p[0]) b.classList.add('is-on');
-      b.addEventListener('click', function () {
-        if (p[0] === 'catppuccin') root.removeAttribute('data-palette');
-        else root.setAttribute('data-palette', p[0]);
-        try { localStorage.setItem('hb_palette', p[0]); } catch (e) {}
-        Array.prototype.forEach.call(bar2.querySelectorAll('button'), function (x) { x.classList.remove('is-on'); });
-        b.classList.add('is-on');
-      });
-      bar2.appendChild(b);
-    });
-    document.body.appendChild(bar2);
+    /* ---------- 6) 清理历史遗留的调色板状态（配色已统一为单套暖色系） ---------- */
+    root.removeAttribute('data-palette');
+    try { localStorage.removeItem('hb_palette'); } catch (e) {}
   });
 })();
