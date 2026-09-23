@@ -41,7 +41,7 @@ external_link:
 filename_case: 0
 render_drafts: false
 post_asset_folder: false
-relative_link: true
+relative_link: false
 future: true
 highlight:
   enable: true
@@ -146,6 +146,7 @@ symbols_count_time:
   awl: 4
   wpm: 275
   suffix: "mins."
+
 
 
 
