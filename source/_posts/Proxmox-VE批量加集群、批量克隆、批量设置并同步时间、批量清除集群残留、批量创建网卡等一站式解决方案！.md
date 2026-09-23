@@ -1,11 +1,14 @@
 ---
-title: "Proxmox-VE批量加集群、批量克隆、批量设置并同步时间、批量清除集群残留、批量创建网卡等一站式解决方案！"
+title: Proxmox-VE批量加集群、批量克隆、批量设置并同步时间、批量清除集群残留、批量创建网卡等一站式解决方案！
 comments: true
-categories: [知识库, 虚拟化]
+categories:
+  - 知识库
+  - 虚拟化
 date: '2024-02-06 05:32:15'
 tags:
   - Proxmox-VE
   - 批量
+abbrlink: 2013c64b
 ---
 
 **本文章所有命令均在Proxmox-VE进行实测并列出了各种BUG，本文涉及的命令均为Linux KVM QEMU虚拟化通用命令，如命令有不兼容*十分拜托您务必联系我修正文章！十分感谢！***

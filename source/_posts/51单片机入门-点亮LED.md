@@ -1,11 +1,14 @@
 ---
-title: "51单片机入门-点亮LED"
+title: 51单片机入门-点亮LED
 comments: true
-categories: [知识库, 嵌入式]
+categories:
+  - 知识库
+  - 嵌入式
 date: '2023-09-25 10:14:36'
 tags:
   - 嵌入式开发
   - 51单片机
+abbrlink: 6d9225c6
 ---
 
 初次接触51单片机，记录下第一个程序，LED跑马灯，源代码如下：

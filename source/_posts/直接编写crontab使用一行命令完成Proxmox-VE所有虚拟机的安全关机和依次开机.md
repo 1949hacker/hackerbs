@@ -1,7 +1,9 @@
 ---
-title: "直接编写crontab使用一行命令完成Proxmox-VE所有虚拟机的安全关机和依次开机"
+title: 直接编写crontab使用一行命令完成Proxmox-VE所有虚拟机的安全关机和依次开机
 comments: true
-categories: [知识库, 虚拟化]
+categories:
+  - 知识库
+  - 虚拟化
 date: '2024-09-12 17:14:48'
 tags:
   - NAS
@@ -10,6 +12,7 @@ tags:
   - zfs
   - RAID
   - 磁盘阵列
+abbrlink: f5e07552
 ---
 
 ```shell

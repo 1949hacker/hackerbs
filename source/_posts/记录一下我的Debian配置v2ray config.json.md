@@ -1,13 +1,16 @@
 ---
-title: "记录一下我的Debian配置v2ray config.json"
+title: 记录一下我的Debian配置v2ray config.json
 comments: true
-categories: [知识库, 安全]
+categories:
+  - 知识库
+  - 安全
 date: '2024-06-13 16:41:09'
 tags:
   - debian
   - v2ray
   - v2ray客户端
   - config.json
+abbrlink: c95984cf
 ---
 
 # 配置内容如下

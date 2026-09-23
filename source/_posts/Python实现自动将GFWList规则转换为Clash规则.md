@@ -1,7 +1,9 @@
 ---
-title: "Python实现自动将GFWList规则转换为Clash规则"
+title: Python实现自动将GFWList规则转换为Clash规则
 comments: true
-categories: [知识库, 自动化]
+categories:
+  - 知识库
+  - 自动化
 date: '2025-03-05 14:50:15'
 tags:
   - Python
@@ -10,6 +12,7 @@ tags:
   - GFWList
   - GEO
   - 分流
+abbrlink: 934f0d99
 ---
 
 ## 环境介绍

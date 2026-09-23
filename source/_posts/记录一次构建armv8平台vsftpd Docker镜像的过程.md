@@ -1,12 +1,15 @@
 ---
-title: "记录一次构建armv8平台vsftpd Docker镜像的过程"
+title: 记录一次构建armv8平台vsftpd Docker镜像的过程
 comments: true
-categories: [知识库, 容器]
+categories:
+  - 知识库
+  - 容器
 date: '2023-09-12 20:53:20'
 tags:
   - Docker
   - armv8
   - vsftpd
+abbrlink: e0efa9e7
 ---
 
 因客户使用飞腾2000平台需要部署vsftpd，但因系统环境不同存在诸多部署问题，且无适配的armv8版本vsftpd容器，特此专门构建vsftpd镜像并记录构建过程

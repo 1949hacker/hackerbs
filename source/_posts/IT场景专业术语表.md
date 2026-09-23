@@ -1,13 +1,16 @@
 ---
-title: "IT场景专业术语表"
+title: IT场景专业术语表
 comments: true
-categories: [知识库, 基础]
+categories:
+  - 知识库
+  - 基础
 date: '2025-10-17 13:45:45'
 tags:
   - IT专业术语
   - 英语
   - 英文缩写
   - 中英对照
+abbrlink: 78f049b3
 ---
 
 # 用于各IT场景的专业术语的中英文对照

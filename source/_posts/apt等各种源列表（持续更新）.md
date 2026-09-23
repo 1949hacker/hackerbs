@@ -1,11 +1,14 @@
 ---
-title: "apt等各种源列表（持续更新）"
+title: apt等各种源列表（持续更新）
 comments: true
-categories: [知识库, 系统]
+categories:
+  - 知识库
+  - 系统
 date: '2024-01-28 19:12:01'
 tags:
   - apt源
   - docker源
+abbrlink: 48d5fe2c
 ---
 
 # 操作系统源

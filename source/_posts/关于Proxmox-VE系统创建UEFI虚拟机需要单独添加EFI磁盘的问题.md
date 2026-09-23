@@ -1,13 +1,16 @@
 ---
-title: "关于Proxmox-VE系统创建UEFI虚拟机需要单独添加EFI磁盘的问题"
+title: 关于Proxmox-VE系统创建UEFI虚拟机需要单独添加EFI磁盘的问题
 comments: true
-categories: [知识库, 虚拟化]
+categories:
+  - 知识库
+  - 虚拟化
 date: '2023-01-03 12:00:25'
 tags:
   - Proxmox-VE
   - 虚拟机
   - Promox-VE
   - UEFI
+abbrlink: 94711c35
 ---
 
 >在传统物理机上，如需使用UEFI引导，仅仅需要在硬盘上创建EFI分区即可，无论是Windows还是Linux均是如此，但在使用Proxmox-VE创建虚拟机时，却需要额外添加EFI磁盘，对此提出疑问并进行探讨。

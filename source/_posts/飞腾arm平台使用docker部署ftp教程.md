@@ -1,11 +1,14 @@
 ---
-title: "飞腾arm平台使用docker部署ftp教程"
+title: 飞腾arm平台使用docker部署ftp教程
 comments: true
-categories: [知识库, 容器]
+categories:
+  - 知识库
+  - 容器
 date: '2023-09-12 20:50:38'
 tags:
   - Docker
   - vsftpd
+abbrlink: 5376fb57
 ---
 
 **因飞腾平台为armv8，暂未发现简单易用的vsftpd Docker镜像，特此提供打包完毕的Docker镜像及教程以供各位使用**

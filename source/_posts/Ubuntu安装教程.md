@@ -1,7 +1,9 @@
 ---
-title: "Ubuntu安装教程"
+title: Ubuntu安装教程
 comments: true
-categories: [知识库, 系统]
+categories:
+  - 知识库
+  - 系统
 date: '2024-05-30 11:51:57'
 tags:
   - Ubuntu
@@ -9,6 +11,7 @@ tags:
   - Linux安装
   - Ubuntu服务器
   - Linux
+abbrlink: 51f91042
 ---
 
 ## ubuntu-20.04.6-live-server-amd64安装教程

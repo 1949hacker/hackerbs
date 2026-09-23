@@ -1,7 +1,9 @@
 ---
-title: "DELL服务器硬盘IO告警排障思路"
+title: DELL服务器硬盘IO告警排障思路
 comments: true
-categories: [知识库, 存储]
+categories:
+  - 知识库
+  - 存储
 date: '2025-09-17 11:04:28'
 tags:
   - DELL
@@ -10,6 +12,7 @@ tags:
   - 排障
   - 阵列
   - RAID
+abbrlink: 344636c9
 ---
 
 ## 系统报IO告警，在带外无异常的情况下，在操作系统中进行排障

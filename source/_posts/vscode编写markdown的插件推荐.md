@@ -1,11 +1,14 @@
 ---
-title: "vscode编写markdown的插件推荐"
+title: vscode编写markdown的插件推荐
 comments: true
-categories: [知识库, 工具]
+categories:
+  - 知识库
+  - 工具
 date: '2022-10-26 11:09:08'
 tags:
   - markdown
   - vscode
+abbrlink: 791816b4
 ---
 
 # 使用 VScode 编写 Markdown 的插件推荐及其技巧

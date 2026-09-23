@@ -1,13 +1,16 @@
 ---
-title: "如何搭建具有GPGkey验证的可信任apt源"
+title: 如何搭建具有GPGkey验证的可信任apt源
 comments: true
-categories: [知识库, 发布]
+categories:
+  - 知识库
+  - 发布
 date: '2024-06-21 17:13:04'
 tags:
   - apt
   - GPG key
   - 可信任apt源
   - apt源
+abbrlink: f589e55e
 ---
 
 # 本文将介绍如何搭建一个像docker-ce一样具有GPG key验证的源

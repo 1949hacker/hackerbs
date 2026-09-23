@@ -1,13 +1,16 @@
 ---
-title: "将二进制可执行程序构建为deb包"
+title: 将二进制可执行程序构建为deb包
 comments: true
-categories: [知识库, 发布]
+categories:
+  - 知识库
+  - 发布
 date: '2023-10-17 15:42:12'
 tags:
   - Debian
   - Linux
   - deb
   - 构建deb包
+abbrlink: 9c3afe55
 ---
 
 构建deb包所需依赖：

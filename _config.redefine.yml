@@ -1,0 +1,148 @@
+# ============================================================
+#  Redefine 主题配置（站点级覆盖）
+#  Hexo 会自动把本文件深合并进 themes/redefine/_config.yml
+#  只写需要改的项，其余沿用主题默认值
+# ============================================================
+
+# ---------- 基本信息 ----------
+info:
+  title: hackerbs's Blog
+  subtitle: 探索知识的宇宙
+  author: Labib
+  url: https://hackerbs.com
+
+# ---------- 配色（青春活力：明亮天蓝） ----------
+colors:
+  primary: "#0EA5E9"
+  default_mode: light
+
+# ---------- 图片 ----------
+defaults:
+  favicon: /images/redefine-favicon.svg
+  logo:
+  avatar: /images/redefine-avatar.svg
+
+# ---------- 首页横幅 ----------
+home_banner:
+  enable: true
+  style: fixed
+  title: hackerbs's Blog
+  subtitle:
+    text:
+      - 探索知识的宇宙
+      - 技术笔记与随笔
+  text_color:
+    light: "#ffffff"
+    dark: "#d1d1b6"
+
+# ---------- 导航栏 ----------
+navbar:
+  auto_hide: false
+  color:
+    left: "#f78736"
+    right: "#367df7"
+    transparency: 35
+  links:
+    Home:
+      path: /
+      icon: fa-regular fa-house
+    Categories:
+      path: /categories
+      icon: fa-regular fa-folder
+    Tags:
+      path: /tags
+      icon: fa-regular fa-tags
+    Archives:
+      path: /archives
+      icon: fa-regular fa-archive
+    # 想再加导航项，照这个格式追加即可：
+    # About:
+    #   path: /about
+    #   icon: fa-regular fa-user
+  search:
+    enable: true
+    preload: true
+
+# ---------- 首页（侧栏导航入口，仿 github.blog 的导航作用） ----------
+home:
+  sidebar:
+    enable: true
+    position: left
+    first_item: menu
+    announcement: 技术笔记与随笔
+    show_on_mobile: true
+    links:
+      Categories:
+        path: /categories
+        icon: fa-regular fa-folder
+      Tags:
+        path: /tags
+        icon: fa-regular fa-tags
+      Archives:
+        path: /archives
+        icon: fa-regular fa-archive
+  article_date_format: YYYY-MM-DD
+  excerpt_length: 200
+  categories:
+    enable: true
+    limit: 3
+  tags:
+    enable: true
+    limit: 3
+
+# ---------- 文章页 ----------
+articles:
+  style:
+    font_size: 16px
+    line_height: 1.7
+    image_border_radius: 14px
+    image_alignment: center
+    image_caption: false
+    link_icon: true
+    title_alignment: left
+  word_count:
+    enable: true
+    count: true
+    min2read: true
+  author_label:
+    enable: true
+    auto: false
+  code_block:
+    copy: true
+    style: mac
+    highlight_theme:
+      light: github
+      dark: vs2015
+
+# ---------- 评论（Giscus，基于 GitHub Discussions，零后端） ----------
+comment:
+  enable: true
+  system: giscus
+  config:
+    giscus:
+      repo: 1949hacker/hackerbs
+      repo_id: R_kgDOQ-taaw
+      category: Announcements
+      category_id: DIC_kwDOQ-ta84DGOiQ
+      mapping: pathname
+      strict: 0
+      reactions_enabled: 1
+      emit_metadata: 0
+      lang: zh-CN
+      input_position: bottom
+      loading: lazy
+
+# ---------- 插件开关（与站点 _config.yml 里的插件呼应） ----------
+plugins:
+  feed:
+    enable: true
+
+# ---------- 页脚 ----------
+footer:
+  runtime: true
+  statistics: true
+
+# ---------- 页面模板 ----------
+page_templates:
+  friends_column: 2
+  tags_style: blur

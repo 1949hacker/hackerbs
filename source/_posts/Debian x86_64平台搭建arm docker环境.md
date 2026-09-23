@@ -1,11 +1,14 @@
 ---
-title: "Debian x86_64平台搭建arm docker环境"
+title: Debian x86_64平台搭建arm docker环境
 comments: true
-categories: [知识库, 容器]
+categories:
+  - 知识库
+  - 容器
 date: '2023-09-12 21:51:36'
 tags:
   - Docker
   - ARM
+abbrlink: f0a2818a
 ---
 
 在Debian x86_64平台搭建Docker arm环境的方法

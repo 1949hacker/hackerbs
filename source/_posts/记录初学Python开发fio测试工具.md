@@ -1,11 +1,14 @@
 ---
-title: "记录初学Python开发fio测试工具"
+title: 记录初学Python开发fio测试工具
 comments: true
-categories: [知识库, 工具]
+categories:
+  - 知识库
+  - 工具
 date: '2023-03-20 18:19:44'
 tags:
   - python
   - fio
+abbrlink: f329a30a
 ---
 
 # 使用Python自动测试IOPS性能并格式化输出

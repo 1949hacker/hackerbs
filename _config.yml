@@ -14,7 +14,7 @@ timezone: 'Asia/Shanghai'
 # URL
 ## Set your site url here. For example, if you use GitHub Page, set url as 'https://username.github.io/project'
 url: https://hackerbs.com
-permalink: :year/:month/:day/:title/
+permalink: posts/:abbrlink.html
 permalink_defaults:
 pretty_urls:
   trailing_index: true # Set to false to remove trailing 'index.html' from permalinks
@@ -96,12 +96,83 @@ ignore:
 # Extensions
 ## Plugins: https://hexo.io/plugins/
 ## Themes: https://hexo.io/themes/
-theme: landscape
+theme: redefine
 
 # Deployment
 ## Docs: https://hexo.io/docs/one-command-deployment
 deploy:
   type: ''
+
+
+
+
+# ============================================================
+#  插件配置（Redefine 主题所需）
+# ============================================================
+
+# 本地搜索（hexo-generator-searchdb，主题导航栏搜索框使用）
+local_search:
+  enable: true
+  trigger: auto
+  top_n_per_article: 1
+  unescape: false
+  preload: true
+
+# 搜索索引（hexo-generator-search）
+search:
+  path: search.xml
+  field: post
+  content: true
+  format: html
+
+# 站点地图
+sitemap:
+  path: sitemap.xml
+
+# RSS 订阅
+feed:
+  type: atom
+  path: atom.xml
+  limit: 20
+
+# 字数统计与阅读时长（hexo-wordcount）
+word_count:
+  enable: true
+
+# 首页自动摘要
+excerpt:
+  depth: 2
+  excerpt_excludes:
+  more_excludes:
+  hideWholePostExcerpts: false
+
+# 相关文章
+related_posts:
+  enable: true
+  title: 相关文章
+  maxCount: 5
+  minCount: 2
+  refresh: false
+
+# 数学公式
+mathjax:
+  tags: none
+  single_dollars: true
+  cjk_width: 0.9
+  normal_width: 0.6
+  append_css: true
+  every_page: false
+
+# 文章短链接（避免中文 URL）
+abbrlink:
+  alg: crc32
+  rep: hex
+  drafts: false
+
+# HTML 压缩
+html_minifier:
+  enable: true
+  ignore_error: false
 
 
 

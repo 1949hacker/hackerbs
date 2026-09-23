@@ -1,7 +1,9 @@
 ---
-title: "异地组网+Nginx反代 | 计算资源本地化"
+title: 异地组网+Nginx反代 | 计算资源本地化
 comments: true
-categories: [知识库, 网络]
+categories:
+  - 知识库
+  - 网络
 date: '2025-02-17 16:59:52'
 tags:
   - wireguard
@@ -11,6 +13,7 @@ tags:
   - 异地组网
   - Nginx
   - 反向代理
+abbrlink: bf14bbf7
 ---
 
 > 本次部署的目的是利用本地高性能的计算资源和云服务器畅通无阻的公网，实现无公网环境也可正常部署业务。

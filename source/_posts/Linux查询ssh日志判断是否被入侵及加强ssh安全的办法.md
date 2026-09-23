@@ -1,13 +1,16 @@
 ---
-title: "Linux查询ssh日志判断是否被入侵及加强ssh安全的办法"
+title: Linux查询ssh日志判断是否被入侵及加强ssh安全的办法
 comments: true
-categories: [知识库, 安全]
+categories:
+  - 知识库
+  - 安全
 date: '2024-03-05 17:14:44'
 tags:
   - Linux
   - ssh
   - 网络安全
   - ssh爆破
+abbrlink: 8460605c
 ---
 
 ## 查询ssh登陆日志的办法

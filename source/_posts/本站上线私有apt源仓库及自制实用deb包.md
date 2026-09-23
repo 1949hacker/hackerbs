@@ -1,7 +1,9 @@
 ---
-title: "本站上线私有apt源仓库及自制实用deb包"
+title: 本站上线私有apt源仓库及自制实用deb包
 comments: true
-categories: [知识库, 发布]
+categories:
+  - 知识库
+  - 发布
 date: '2023-10-18 09:50:41'
 tags:
   - apt
@@ -10,6 +12,7 @@ tags:
   - apt源
   - yumdownloader
   - apt包下载工具
+abbrlink: 8993a07c
 ---
 
 # 本站apt源添加命令：

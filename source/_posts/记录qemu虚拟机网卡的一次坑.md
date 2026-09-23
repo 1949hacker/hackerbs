@@ -1,13 +1,16 @@
 ---
-title: "记录qemu虚拟机网卡的一次坑"
+title: 记录qemu虚拟机网卡的一次坑
 comments: true
-categories: [知识库, 虚拟化]
+categories:
+  - 知识库
+  - 虚拟化
 date: '2024-06-26 19:18:05'
 tags:
   - Proxmox-VE
   - 虚拟机
   - 虚拟网卡
   - qemu
+abbrlink: '466338e1'
 ---
 
 qemu的虚拟机网卡推荐设置如下

@@ -1,7 +1,9 @@
 ---
-title: "异常宕机BMC日志无参考价值时的排障思路"
+title: 异常宕机BMC日志无参考价值时的排障思路
 comments: true
-categories: [知识库, 运维]
+categories:
+  - 知识库
+  - 运维
 date: '2025-09-10 18:35:21'
 tags:
   - 带外
@@ -9,6 +11,7 @@ tags:
   - 排障
   - Linux
   - BMC
+abbrlink: bc56f366
 ---
 
 ## 巡检发现异常宕机，带外日志仅有一条热复位的记录

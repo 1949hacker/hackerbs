@@ -1,10 +1,13 @@
 ---
-title: "C++编写fio测试工具 | C++写脚本，我在发疯"
+title: C++编写fio测试工具 | C++写脚本，我在发疯
 comments: true
-categories: [知识库, 工具]
+categories:
+  - 知识库
+  - 工具
 date: '2024-11-15 14:05:38'
 tags:
   - C++ - C - fio - 脚本
+abbrlink: 95634cca
 ---
 
 ## 我有病，拿C++写测试工具

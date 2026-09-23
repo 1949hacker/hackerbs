@@ -1,12 +1,15 @@
 ---
-title: "Proxmox-VE 导入SylixOS VMware版"
+title: Proxmox-VE 导入SylixOS VMware版
 comments: true
-categories: [知识库, 虚拟化]
+categories:
+  - 知识库
+  - 虚拟化
 date: '2023-02-28 16:31:43'
 tags:
   - Proxmox-VE
   - SylixOS
   - VMware
+abbrlink: 3429cb36
 ---
 
 将SylixOS传到服务器

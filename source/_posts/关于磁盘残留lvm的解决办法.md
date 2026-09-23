@@ -1,7 +1,9 @@
 ---
-title: "关于磁盘残留lvm的解决办法"
+title: 关于磁盘残留lvm的解决办法
 comments: true
-categories: [知识库, 存储]
+categories:
+  - 知识库
+  - 存储
 date: '2024-11-28 10:28:48'
 tags:
   - Linux
@@ -9,6 +11,7 @@ tags:
   - 磁盘
   - 解决办法
   - dmsetup
+abbrlink: aeee2639
 ---
 
 很多时候从其他机器拿过来的盘通常是没有经过格式化的，这样就会出现一些残留的lvm信息，导致无法正常使用。

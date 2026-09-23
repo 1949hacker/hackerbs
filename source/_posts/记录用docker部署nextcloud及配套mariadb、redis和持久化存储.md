@@ -1,7 +1,9 @@
 ---
-title: "记录用docker部署nextcloud及配套mariadb、redis和持久化存储"
+title: 记录用docker部署nextcloud及配套mariadb、redis和持久化存储
 comments: true
-categories: [知识库, 容器]
+categories:
+  - 知识库
+  - 容器
 date: '2024-06-13 16:45:32'
 tags:
   - nextcloud
@@ -9,6 +11,7 @@ tags:
   - docker compose
   - mariadb
   - redis
+abbrlink: c57982aa
 ---
 
 # 使用docker compose便捷的部署nextcloud及其配套的mariadb和redis并实现数据持久存储在本地的办法

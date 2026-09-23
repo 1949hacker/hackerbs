@@ -1,13 +1,16 @@
 ---
-title: "国内docker hub无法使用的解决办法"
+title: 国内docker hub无法使用的解决办法
 comments: true
-categories: [知识库, 容器]
+categories:
+  - 知识库
+  - 容器
 date: '2024-06-12 18:16:26'
 tags:
   - docker
   - docker hub
   - docker pull
   - docker 代理
+abbrlink: dd002063
 ---
 
 # 首先你得有代理，比如v2ray，然后系统里有socks5，这个就不能放在网站上说明了，懂得都懂，需要技术支持的页面底部，联系我

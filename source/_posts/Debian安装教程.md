@@ -1,7 +1,9 @@
 ---
-title: "Debian安装教程"
+title: Debian安装教程
 comments: true
-categories: [知识库, 系统]
+categories:
+  - 知识库
+  - 系统
 date: '2024-06-03 14:29:16'
 tags:
   - Debian
@@ -9,6 +11,7 @@ tags:
   - Linux安装
   - Debian服务器
   - Linux
+abbrlink: 819a0479
 ---
 
 ## debian-live-12.5.0-amd64-standard安装教程

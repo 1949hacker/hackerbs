@@ -1,10 +1,13 @@
 ---
-title: "Linux技巧【持续更新】"
+title: Linux技巧【持续更新】
 comments: true
-categories: [知识库, 系统]
+categories:
+  - 知识库
+  - 系统
 date: '2022-11-17 16:15:48'
 tags:
   - Linux
+abbrlink: 8209c39
 ---
 
 >若您有任何技术问题，可以通过本站展示的联系方式咨询我

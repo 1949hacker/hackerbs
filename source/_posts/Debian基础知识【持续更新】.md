@@ -1,11 +1,14 @@
 ---
-title: "Debian基础知识【持续更新】"
+title: Debian基础知识【持续更新】
 comments: true
-categories: [知识库, 系统]
+categories:
+  - 知识库
+  - 系统
 date: '2023-03-01 15:45:44'
 tags:
   - Linux
   - Debian
+abbrlink: d71fabd6
 ---
 
 # 本文将持续更新Debian系统的各类基础知识，欢迎您持续关注，有任何问题可以在本页末尾评论或通过展示的联系方式联系我

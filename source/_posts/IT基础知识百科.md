@@ -1,12 +1,15 @@
 ---
-title: "IT基础知识百科"
+title: IT基础知识百科
 comments: true
-categories: [知识库, 基础]
+categories:
+  - 知识库
+  - 基础
 date: '2024-04-05 21:08:47'
 tags:
   - 基础
   - IT知识
   - 百科
+abbrlink: cee5e6ab
 ---
 
 ## 常见的SAS线缆

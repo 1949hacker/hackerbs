@@ -1,7 +1,11 @@
 ---
-title: "关于DELL PowerEdge报错Correctable memory error logging disabled for a memory device的说明"
+title: >-
+  关于DELL PowerEdge报错Correctable memory error logging disabled for a memory
+  device的说明
 comments: true
-categories: [知识库, 硬件]
+categories:
+  - 知识库
+  - 硬件
 date: '2025-09-04 16:16:54'
 tags:
   - DELL
@@ -10,6 +14,7 @@ tags:
   - 百科
   - 内存
   - iDRAC
+abbrlink: 842d4f12
 ---
 
 ## 关于DELL PowerEdge R740XD iDRAC报内存设备的可纠正内存错误日志记录已禁用问题的说明及解答

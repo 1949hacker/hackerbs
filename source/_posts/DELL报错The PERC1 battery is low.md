@@ -1,7 +1,9 @@
 ---
-title: "DELL报错The PERC1 battery is low"
+title: DELL报错The PERC1 battery is low
 comments: true
-categories: [知识库, 硬件]
+categories:
+  - 知识库
+  - 硬件
 date: '2025-09-04 14:56:26'
 tags:
   - DELL
@@ -10,6 +12,7 @@ tags:
   - 百科
   - BBU
   - 阵列卡
+abbrlink: 2921f881
 ---
 
 ## 关于DELL iDRAC日志中PERC报错问题的记录及解答

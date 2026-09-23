@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset> 
    <url>
-    <loc>https://hackerbs.com/2023/09/12/%E9%A3%9E%E8%85%BEarm%E5%B9%B3%E5%8F%B0%E4%BD%BF%E7%94%A8docker%E9%83%A8%E7%BD%B2ftp%E6%95%99%E7%A8%8B/</loc>
+    <loc>https://hackerbs.com/posts/fe4943a6.html</loc>
     
     <lastmod>
       2026-09-23
@@ -9,7 +9,7 @@
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url> <url>
-    <loc>https://hackerbs.com/2026/07/05/%E9%9A%8F%E7%AC%94%20-%20%E3%80%8A%E7%A0%B4%E5%B1%80%E7%9A%84%E7%89%A9%E7%90%86%E5%AD%A6%EF%BC%9A%E9%87%8D%E9%87%8F%E3%80%81%E6%9D%A0%E6%9D%86%E4%B8%8E%E6%B6%9F%E6%BC%AA%E3%80%8B/</loc>
+    <loc>https://hackerbs.com/posts/e836243c.html</loc>
     
     <lastmod>
       2026-09-23
@@ -17,7 +17,7 @@
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url> <url>
-    <loc>https://hackerbs.com/2020/10/01/%E9%9A%8F%E7%AC%94%20-%20%E3%80%8A%E6%B5%AE%E5%B0%98%E8%90%BD%E5%B0%BD%E7%B9%81%E5%8D%8E%E6%A2%A6%E3%80%8B/</loc>
+    <loc>https://hackerbs.com/posts/5376fb57.html</loc>
     
     <lastmod>
       2026-09-23
@@ -25,7 +25,7 @@
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url> <url>
-    <loc>https://hackerbs.com/2026/07/18/%E9%9A%8F%E7%AC%94%20-%20%E3%80%8A%E6%88%91%E5%A7%8B%E7%BB%88%E6%98%AF%E6%88%91%E3%80%8B/</loc>
+    <loc>https://hackerbs.com/posts/2a9cfac0.html</loc>
     
     <lastmod>
       2026-09-23
@@ -33,7 +33,7 @@
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url> <url>
-    <loc>https://hackerbs.com/2025/10/17/%E9%9A%8F%E7%AC%94%20-%20%E3%80%8A%E5%AD%98%E5%9C%A8%E7%9A%84%E7%97%95%E8%BF%B9%EF%BC%9A%E4%B8%8D%E5%9C%A8%E4%BA%8E%E7%9F%B3%E7%A2%91%EF%BC%8C%E8%80%8C%E4%BA%8E%E6%B6%9F%E6%BC%AA%E3%80%8B/</loc>
+    <loc>https://hackerbs.com/posts/f329a30a.html</loc>
     
     <lastmod>
       2026-09-23
@@ -41,7 +41,7 @@
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url> <url>
-    <loc>https://hackerbs.com/2024/06/13/%E8%AE%B0%E5%BD%95%E7%94%A8docker%E9%83%A8%E7%BD%B2nextcloud%E5%8F%8A%E9%85%8D%E5%A5%97mariadb%E3%80%81redis%E5%92%8C%E6%8C%81%E4%B9%85%E5%8C%96%E5%AD%98%E5%82%A8/</loc>
+    <loc>https://hackerbs.com/posts/cbb0c1a2.html</loc>
     
     <lastmod>
       2026-09-23
@@ -49,7 +49,7 @@
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url> <url>
-    <loc>https://hackerbs.com/2023/03/20/%E8%AE%B0%E5%BD%95%E5%88%9D%E5%AD%A6Python%E5%BC%80%E5%8F%91fio%E6%B5%8B%E8%AF%95%E5%B7%A5%E5%85%B7/</loc>
+    <loc>https://hackerbs.com/posts/99f1bc53.html</loc>
     
     <lastmod>
       2026-09-23
@@ -57,7 +57,7 @@
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url> <url>
-    <loc>https://hackerbs.com/2023/09/12/%E8%AE%B0%E5%BD%95%E4%B8%80%E6%AC%A1%E6%9E%84%E5%BB%BAarmv8%E5%B9%B3%E5%8F%B0vsftpd%20Docker%E9%95%9C%E5%83%8F%E7%9A%84%E8%BF%87%E7%A8%8B/</loc>
+    <loc>https://hackerbs.com/posts/c57982aa.html</loc>
     
     <lastmod>
       2026-09-23
@@ -65,7 +65,7 @@
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url> <url>
-    <loc>https://hackerbs.com/2025/09/09/%E8%AE%B0%E5%BD%95%E4%B8%80%E6%AC%A1%E5%88%86%E6%9E%90%5B%E6%9C%8D%E5%8A%A1%E5%99%A8SSD%E6%8A%A5%E6%95%85%E9%9A%9C%E9%9A%8F%E5%90%8E%E8%87%AA%E8%A1%8C%E6%81%A2%E5%A4%8D%E6%AD%A3%E5%B8%B8%E7%8E%B0%E8%B1%A1%5D/</loc>
+    <loc>https://hackerbs.com/posts/c95984cf.html</loc>
     
     <lastmod>
       2026-09-23
@@ -73,7 +73,7 @@
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url> <url>
-    <loc>https://hackerbs.com/2024/06/13/%E8%AE%B0%E5%BD%95%E4%B8%80%E4%B8%8B%E6%88%91%E7%9A%84Debian%E9%85%8D%E7%BD%AEv2ray%20config.json/</loc>
+    <loc>https://hackerbs.com/posts/e0efa9e7.html</loc>
     
     <lastmod>
       2026-09-23
@@ -81,7 +81,7 @@
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url> <url>
-    <loc>https://hackerbs.com/2024/06/26/%E8%AE%B0%E5%BD%95qemu%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%BD%91%E5%8D%A1%E7%9A%84%E4%B8%80%E6%AC%A1%E5%9D%91/</loc>
+    <loc>https://hackerbs.com/posts/bf14bbf7.html</loc>
     
     <lastmod>
       2026-09-23
@@ -89,7 +89,7 @@
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url> <url>
-    <loc>https://hackerbs.com/2024/04/03/%E7%9B%B8%E7%89%87%E7%A1%85%E8%84%82%E7%89%87%E7%9F%A5%E8%AF%86/</loc>
+    <loc>https://hackerbs.com/posts/f5e07552.html</loc>
     
     <lastmod>
       2026-09-23
@@ -97,7 +97,7 @@
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url> <url>
-    <loc>https://hackerbs.com/2024/09/12/%E7%9B%B4%E6%8E%A5%E7%BC%96%E5%86%99crontab%E4%BD%BF%E7%94%A8%E4%B8%80%E8%A1%8C%E5%91%BD%E4%BB%A4%E5%AE%8C%E6%88%90Proxmox-VE%E6%89%80%E6%9C%89%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E5%AE%89%E5%85%A8%E5%85%B3%E6%9C%BA%E5%92%8C%E4%BE%9D%E6%AC%A1%E5%BC%80%E6%9C%BA/</loc>
+    <loc>https://hackerbs.com/posts/d1cb5397.html</loc>
     
     <lastmod>
       2026-09-23
@@ -105,7 +105,7 @@
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url> <url>
-    <loc>https://hackerbs.com/2023/10/18/%E6%9C%AC%E7%AB%99%E4%B8%8A%E7%BA%BF%E7%A7%81%E6%9C%89apt%E6%BA%90%E4%BB%93%E5%BA%93%E5%8F%8A%E8%87%AA%E5%88%B6%E5%AE%9E%E7%94%A8deb%E5%8C%85/</loc>
+    <loc>https://hackerbs.com/posts/8993a07c.html</loc>
     
     <lastmod>
       2026-09-23
@@ -113,7 +113,7 @@
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url> <url>
-    <loc>https://hackerbs.com/2024/04/02/%E6%9C%AA%E6%95%B4%E7%90%86%E7%9A%84%E9%9A%8F%E6%89%8B%E6%8A%80%E6%9C%AF%E7%AC%94%E8%AE%B0%EF%BC%88%E5%AE%9E%E6%97%B6%E6%9B%B4%E6%96%B0%EF%BC%8C%E5%90%84%E7%A7%8D%E4%B9%B1%E4%B8%83%E5%85%AB%E7%B3%9F%E7%9A%84%E6%8A%80%E6%9C%AF%E9%83%BD%E4%BC%9A%E8%AE%B0%E5%BD%95%E5%9C%A8%E8%BF%99%E5%84%BF%EF%BC%89/</loc>
+    <loc>https://hackerbs.com/posts/466338e1.html</loc>
     
     <lastmod>
       2026-09-23
@@ -121,7 +121,7 @@
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url> <url>
-    <loc>https://hackerbs.com/2025/09/11/%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%A8%B3%E5%AE%9A%E6%80%A7%E5%8F%8A%E5%9F%BA%E5%87%86%E6%B5%8B%E8%AF%95%E6%96%B9%E6%B3%95/</loc>
+    <loc>https://hackerbs.com/posts/bc56f366.html</loc>
     
     <lastmod>
       2026-09-23
@@ -129,7 +129,7 @@
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url> <url>
-    <loc>https://hackerbs.com/2025/09/10/%E5%BC%82%E5%B8%B8%E5%AE%95%E6%9C%BABMC%E6%97%A5%E5%BF%97%E6%97%A0%E5%8F%82%E8%80%83%E4%BB%B7%E5%80%BC%E6%97%B6%E7%9A%84%E6%8E%92%E9%9A%9C%E6%80%9D%E8%B7%AF/</loc>
+    <loc>https://hackerbs.com/posts/6de77932.html</loc>
     
     <lastmod>
       2026-09-23
@@ -137,7 +137,7 @@
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url> <url>
-    <loc>https://hackerbs.com/2025/02/17/%E5%BC%82%E5%9C%B0%E7%BB%84%E7%BD%91+Nginx%E5%8F%8D%E4%BB%A3%20-%20%E8%AE%A1%E7%AE%97%E8%B5%84%E6%BA%90%E6%9C%AC%E5%9C%B0%E5%8C%96/</loc>
+    <loc>https://hackerbs.com/posts/c82ca31d.html</loc>
     
     <lastmod>
       2026-09-23
@@ -145,7 +145,7 @@
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url> <url>
-    <loc>https://hackerbs.com/2023/10/17/%E5%B0%86%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%8F%AF%E6%89%A7%E8%A1%8C%E7%A8%8B%E5%BA%8F%E6%9E%84%E5%BB%BA%E4%B8%BAdeb%E5%8C%85/</loc>
+    <loc>https://hackerbs.com/posts/7ee1356d.html</loc>
     
     <lastmod>
       2026-09-23
@@ -153,7 +153,7 @@
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url> <url>
-    <loc>https://hackerbs.com/2024/06/21/%E5%A6%82%E4%BD%95%E6%90%AD%E5%BB%BA%E5%85%B7%E6%9C%89GPGkey%E9%AA%8C%E8%AF%81%E7%9A%84%E5%8F%AF%E4%BF%A1%E4%BB%BBapt%E6%BA%90/</loc>
+    <loc>https://hackerbs.com/posts/9c3afe55.html</loc>
     
     <lastmod>
       2026-09-23
@@ -161,7 +161,7 @@
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url> <url>
-    <loc>https://hackerbs.com/2024/06/12/%E5%9B%BD%E5%86%85docker%20hub%E6%97%A0%E6%B3%95%E4%BD%BF%E7%94%A8%E7%9A%84%E8%A7%A3%E5%86%B3%E5%8A%9E%E6%B3%95/</loc>
+    <loc>https://hackerbs.com/posts/aeee2639.html</loc>
     
     <lastmod>
       2026-09-23
@@ -169,7 +169,7 @@
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url> <url>
-    <loc>https://hackerbs.com/2024/11/28/%E5%85%B3%E4%BA%8E%E7%A3%81%E7%9B%98%E6%AE%8B%E7%95%99lvm%E7%9A%84%E8%A7%A3%E5%86%B3%E5%8A%9E%E6%B3%95/</loc>
+    <loc>https://hackerbs.com/posts/f589e55e.html</loc>
     
     <lastmod>
       2026-09-23
@@ -177,7 +177,7 @@
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url> <url>
-    <loc>https://hackerbs.com/2025/09/18/%E5%85%B3%E4%BA%8E%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%A1%AC%E7%9B%98%E6%95%85%E9%9A%9C%E4%BD%86%E5%B8%A6%E5%A4%96%E6%B2%A1%E6%9C%89%E9%94%99%E8%AF%AF%E6%97%A5%E5%BF%97%E7%9A%84%E6%8E%92%E9%9A%9C%E4%B8%8E%E6%8A%A5%E4%BF%AE%E7%AC%94%E8%AE%B0/</loc>
+    <loc>https://hackerbs.com/posts/842d4f12.html</loc>
     
     <lastmod>
       2026-09-23
@@ -185,7 +185,7 @@
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url> <url>
-    <loc>https://hackerbs.com/2023/01/03/%E5%85%B3%E4%BA%8EProxmox-VE%E7%B3%BB%E7%BB%9F%E5%88%9B%E5%BB%BAUEFI%E8%99%9A%E6%8B%9F%E6%9C%BA%E9%9C%80%E8%A6%81%E5%8D%95%E7%8B%AC%E6%B7%BB%E5%8A%A0EFI%E7%A3%81%E7%9B%98%E7%9A%84%E9%97%AE%E9%A2%98/</loc>
+    <loc>https://hackerbs.com/posts/dd002063.html</loc>
     
     <lastmod>
       2026-09-23
@@ -193,7 +193,7 @@
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url> <url>
-    <loc>https://hackerbs.com/2025/09/04/%E5%85%B3%E4%BA%8EDELL%20PowerEdge%E6%8A%A5%E9%94%99Correctable%20memory%20error%20logging%20disabled%20for%20a%20memory%20device%E7%9A%84%E8%AF%B4%E6%98%8E/</loc>
+    <loc>https://hackerbs.com/posts/934f0d99.html</loc>
     
     <lastmod>
       2026-09-23
@@ -201,7 +201,7 @@
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url> <url>
-    <loc>https://hackerbs.com/2022/10/26/vscode%E7%BC%96%E5%86%99markdown%E7%9A%84%E6%8F%92%E4%BB%B6%E6%8E%A8%E8%8D%90/</loc>
+    <loc>https://hackerbs.com/posts/48d5fe2c.html</loc>
     
     <lastmod>
       2026-09-23
@@ -209,7 +209,7 @@
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url> <url>
-    <loc>https://hackerbs.com/2024/01/28/apt%E7%AD%89%E5%90%84%E7%A7%8D%E6%BA%90%E5%88%97%E8%A1%A8%EF%BC%88%E6%8C%81%E7%BB%AD%E6%9B%B4%E6%96%B0%EF%BC%89/</loc>
+    <loc>https://hackerbs.com/posts/791816b4.html</loc>
     
     <lastmod>
       2026-09-23
@@ -217,7 +217,7 @@
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url> <url>
-    <loc>https://hackerbs.com/2024/05/30/Ubuntu%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B/</loc>
+    <loc>https://hackerbs.com/posts/51f91042.html</loc>
     
     <lastmod>
       2026-09-23
@@ -225,7 +225,7 @@
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url> <url>
-    <loc>https://hackerbs.com/2025/03/05/Python%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%8A%A8%E5%B0%86GFWList%E8%A7%84%E5%88%99%E8%BD%AC%E6%8D%A2%E4%B8%BAClash%E8%A7%84%E5%88%99/</loc>
+    <loc>https://hackerbs.com/posts/94711c35.html</loc>
     
     <lastmod>
       2026-09-23
@@ -233,7 +233,7 @@
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url> <url>
-    <loc>https://hackerbs.com/2024/02/06/Proxmox-VE%E6%89%B9%E9%87%8F%E5%8A%A0%E9%9B%86%E7%BE%A4%E3%80%81%E6%89%B9%E9%87%8F%E5%85%8B%E9%9A%86%E3%80%81%E6%89%B9%E9%87%8F%E8%AE%BE%E7%BD%AE%E5%B9%B6%E5%90%8C%E6%AD%A5%E6%97%B6%E9%97%B4%E3%80%81%E6%89%B9%E9%87%8F%E6%B8%85%E9%99%A4%E9%9B%86%E7%BE%A4%E6%AE%8B%E7%95%99%E3%80%81%E6%89%B9%E9%87%8F%E5%88%9B%E5%BB%BA%E7%BD%91%E5%8D%A1%E7%AD%89%E4%B8%80%E7%AB%99%E5%BC%8F%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88%EF%BC%81/</loc>
+    <loc>https://hackerbs.com/posts/3429cb36.html</loc>
     
     <lastmod>
       2026-09-23
@@ -241,7 +241,7 @@
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url> <url>
-    <loc>https://hackerbs.com/2023/02/28/Proxmox-VE%20%E5%AF%BC%E5%85%A5SylixOS%20VMware%E7%89%88/</loc>
+    <loc>https://hackerbs.com/posts/2013c64b.html</loc>
     
     <lastmod>
       2026-09-23
@@ -249,7 +249,7 @@
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url> <url>
-    <loc>https://hackerbs.com/2024/03/05/Linux%E6%9F%A5%E8%AF%A2ssh%E6%97%A5%E5%BF%97%E5%88%A4%E6%96%AD%E6%98%AF%E5%90%A6%E8%A2%AB%E5%85%A5%E4%BE%B5%E5%8F%8A%E5%8A%A0%E5%BC%BAssh%E5%AE%89%E5%85%A8%E7%9A%84%E5%8A%9E%E6%B3%95/</loc>
+    <loc>https://hackerbs.com/posts/8460605c.html</loc>
     
     <lastmod>
       2026-09-23
@@ -257,7 +257,7 @@
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url> <url>
-    <loc>https://hackerbs.com/2022/11/17/Linux%E6%8A%80%E5%B7%A7%E3%80%90%E6%8C%81%E7%BB%AD%E6%9B%B4%E6%96%B0%E3%80%91/</loc>
+    <loc>https://hackerbs.com/posts/8209c39.html</loc>
     
     <lastmod>
       2026-09-23
@@ -265,7 +265,7 @@
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url> <url>
-    <loc>https://hackerbs.com/2024/04/05/IT%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E7%99%BE%E7%A7%91/</loc>
+    <loc>https://hackerbs.com/posts/cee5e6ab.html</loc>
     
     <lastmod>
       2026-09-23
@@ -273,7 +273,7 @@
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url> <url>
-    <loc>https://hackerbs.com/2025/10/17/IT%E5%9C%BA%E6%99%AF%E4%B8%93%E4%B8%9A%E6%9C%AF%E8%AF%AD%E8%A1%A8/</loc>
+    <loc>https://hackerbs.com/posts/78f049b3.html</loc>
     
     <lastmod>
       2026-09-23
@@ -281,7 +281,7 @@
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url> <url>
-    <loc>https://hackerbs.com/2024/06/03/Debian%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B/</loc>
+    <loc>https://hackerbs.com/posts/2921f881.html</loc>
     
     <lastmod>
       2026-09-23
@@ -289,7 +289,7 @@
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url> <url>
-    <loc>https://hackerbs.com/2023/03/01/Debian%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E3%80%90%E6%8C%81%E7%BB%AD%E6%9B%B4%E6%96%B0%E3%80%91/</loc>
+    <loc>https://hackerbs.com/posts/6d9225c6.html</loc>
     
     <lastmod>
       2026-09-23
@@ -297,7 +297,7 @@
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url> <url>
-    <loc>https://hackerbs.com/2023/09/12/Debian%20x86_64%E5%B9%B3%E5%8F%B0%E6%90%AD%E5%BB%BAarm%20docker%E7%8E%AF%E5%A2%83/</loc>
+    <loc>https://hackerbs.com/posts/819a0479.html</loc>
     
     <lastmod>
       2026-09-23
@@ -305,7 +305,7 @@
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url> <url>
-    <loc>https://hackerbs.com/2025/09/17/DELL%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%A1%AC%E7%9B%98IO%E5%91%8A%E8%AD%A6%E6%8E%92%E9%9A%9C%E6%80%9D%E8%B7%AF/</loc>
+    <loc>https://hackerbs.com/posts/95634cca.html</loc>
     
     <lastmod>
       2026-09-23
@@ -313,7 +313,7 @@
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url> <url>
-    <loc>https://hackerbs.com/2025/09/04/DELL%E6%8A%A5%E9%94%99The%20PERC1%20battery%20is%20low/</loc>
+    <loc>https://hackerbs.com/posts/344636c9.html</loc>
     
     <lastmod>
       2026-09-23
@@ -321,7 +321,7 @@
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url> <url>
-    <loc>https://hackerbs.com/2024/11/15/C++%E7%BC%96%E5%86%99fio%E6%B5%8B%E8%AF%95%E5%B7%A5%E5%85%B7%20-%20C++%E5%86%99%E8%84%9A%E6%9C%AC%EF%BC%8C%E6%88%91%E5%9C%A8%E5%8F%91%E7%96%AF/</loc>
+    <loc>https://hackerbs.com/posts/d71fabd6.html</loc>
     
     <lastmod>
       2026-09-23
@@ -329,7 +329,7 @@
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url> <url>
-    <loc>https://hackerbs.com/2022/11/21/51%E5%8D%95%E7%89%87%E6%9C%BA%E7%9A%84%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</loc>
+    <loc>https://hackerbs.com/posts/a06d2079.html</loc>
     
     <lastmod>
       2026-09-23
@@ -337,7 +337,7 @@
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url> <url>
-    <loc>https://hackerbs.com/2023/09/25/51%E5%8D%95%E7%89%87%E6%9C%BA%E5%85%A5%E9%97%A8-%E7%82%B9%E4%BA%AELED/</loc>
+    <loc>https://hackerbs.com/posts/f0a2818a.html</loc>
     
     <lastmod>
       2026-09-23

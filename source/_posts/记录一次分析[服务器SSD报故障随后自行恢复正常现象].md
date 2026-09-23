@@ -1,7 +1,9 @@
 ---
-title: "记录一次分析[服务器SSD报故障随后自行恢复正常现象]"
+title: '记录一次分析[服务器SSD报故障随后自行恢复正常现象]'
 comments: true
-categories: [知识库, 存储]
+categories:
+  - 知识库
+  - 存储
 date: '2025-09-09 17:36:21'
 tags:
   - Inspur
@@ -11,6 +13,7 @@ tags:
   - 硬盘
   - 带外
   - BMC
+abbrlink: cbb0c1a2
 ---
 
 日常巡检时发现带外出现INTEL SSD故障告警，随后又自行恢复，间隔约30分钟，无人工介入。
