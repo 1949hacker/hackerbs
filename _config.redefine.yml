@@ -18,9 +18,9 @@ colors:
 
 # ---------- 图片 ----------
 defaults:
-  favicon: /images/redefine-favicon.svg
-  logo:
-  avatar: /images/redefine-avatar.svg
+  favicon: /images/favicon.png
+  logo: /images/logo.png
+  avatar: /images/avatar.png
 
 # ---------- 首页横幅 ----------
 home_banner:
